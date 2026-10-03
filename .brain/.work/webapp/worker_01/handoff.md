@@ -12,8 +12,9 @@ All 3 MVP phases for this worker and every upstream dependency must be accepted 
 
 ## Current execution status
 - **MVP-01**: **IMPLEMENTED & VALIDATED**. Safe archive intake (`.zip`, `.tar`, `.tar.gz`, `.tar.bz2`), streaming zip bomb protection, path traversal defenses, symlink escape rejection, sandbox read-only lifecycle, and `ScanManifest` generation implemented in `backend/app/intake/`. Verified with 13 unit tests (100% pass).
-- **MVP-02**: **IMPLEMENTED & VALIDATED**. Deterministic discovery across source code (Python AST/regex, Java, JS/TS, Go, C/C++, Rust), package manifests (`package.json`, `pom.xml`, `requirements.txt`), configurations (TLS protocols, cipher suites, SSH), and X.509 certificates with strict private-key redaction. Verified with 8 tests (21/21 overall suite pass). Emits canonical observations and `DiscoverySummary`.
-- **MVP-03**: Ready to implement coverage accounting, denominator tracking, and benchmark readiness.
+- **MVP-02**: **IMPLEMENTED & VALIDATED**. Deterministic discovery across source code (Python AST/regex, Java, JS/TS, Go, C/C++, Rust), package manifests (`package.json`, `pom.xml`, `requirements.txt`), configurations (TLS protocols, cipher suites, SSH), and X.509 certificates with strict private-key redaction. Verified with 8 tests. Emits canonical observations and `DiscoverySummary`.
+- **MVP-03**: **IMPLEMENTED & VALIDATED**. Coverage accounting, denominator tracking, blind-spot visibility, partial scan error resilience, and ground-truth benchmark runner. Achieved AC-06 target ($\ge 80\%$ precision and recall). Verified with 4 tests (25/25 suite total).
+- **Handoff status**: All Worker 01 MVP deliverables are fully implemented, tested, and ready for integration with Worker 02, Worker 03, and Worker 04.
 
 ## Dependencies / blockers
 See each phase and `.work/shared/blocker_log.md`. Production work starts only after `merging_phase_mvp.md`.
