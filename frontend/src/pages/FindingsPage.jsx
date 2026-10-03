@@ -1,13 +1,14 @@
-import { useEffect } from 'react';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function FindingsPage() {
-  useEffect(() => {
-    document.title = 'Findings & Inventory | ASTRA';
-  }, []);
+  usePageTitle('Findings');
 
   return (
-    <main id="findings-page" style={{ padding: '2rem' }}>
+    <div id="findings-page" className="page-content">
       <h1>Cryptographic Findings</h1>
-    </main>
+      <p style={{ color: 'var(--text-muted)', marginTop: 'var(--space-sm)' }}>
+        Identified cryptographic algorithms, key lengths, certificates, and compliance findings.
+      </p>
+    </div>
   );
 }

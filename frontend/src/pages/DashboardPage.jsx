@@ -1,13 +1,14 @@
-import { useEffect } from 'react';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function DashboardPage() {
-  useEffect(() => {
-    document.title = 'Dashboard | ASTRA';
-  }, []);
+  usePageTitle('Dashboard');
 
   return (
-    <main id="dashboard-page" style={{ padding: '2rem' }}>
+    <div id="dashboard-page" className="page-content">
       <h1>Dashboard</h1>
-    </main>
+      <p style={{ color: 'var(--text-muted)', marginTop: 'var(--space-sm)' }}>
+        Cryptographic inventory, risk posture, and post-quantum readiness overview.
+      </p>
+    </div>
   );
 }

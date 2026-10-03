@@ -1,13 +1,14 @@
-import { useEffect } from 'react';
+import { usePageTitle } from '../hooks/usePageTitle';
 
 export default function ScanPage() {
-  useEffect(() => {
-    document.title = 'New Scan | ASTRA';
-  }, []);
+  usePageTitle('New Scan');
 
   return (
-    <main id="scan-page" style={{ padding: '2rem' }}>
+    <div id="scan-page" className="page-content">
       <h1>New Scan</h1>
-    </main>
+      <p style={{ color: 'var(--text-muted)', marginTop: 'var(--space-sm)' }}>
+        Upload source code or binary archives for automated cryptographic discovery.
+      </p>
+    </div>
   );
 }
