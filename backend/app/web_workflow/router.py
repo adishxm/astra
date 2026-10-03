@@ -5,15 +5,15 @@ from typing import Any, Dict, List, Optional
 from app.inventory.models import CanonicalEvidence, AuditRecord, InventoryExport
 from app.web_workflow.hardening import (
     AirGappedBundleManager,
-    TamperEvidentAuditChainer,
+    LocalReviewEventLog,
     ProductionHealthEvaluator,
-    ChainedAuditEvent,
+    LocalReviewEvent,
 )
 
 router = APIRouter(prefix="/api/v1/workflow", tags=["Worker 04"])
 
 # In-memory chain for demo and verification
-_GLOBAL_AUDIT_CHAIN: List[ChainedAuditEvent] = []
+_GLOBAL_AUDIT_CHAIN: List[LocalReviewEvent] = []
 
 
 @router.post("/audit", response_model=AuditRecord)
