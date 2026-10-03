@@ -31,15 +31,45 @@ describe('ScanDetailPage', () => {
       overall_coverage_percentage: 100.0,
       total_files_in_archive: 2,
       total_assessed_files: 2,
+      total_unsupported_files: 0,
+      total_skipped_files: 0,
+      total_failed_files: 0,
+      total_observations_found: 2,
+      scan_status_label: 'COMPLETE_WITH_COVERAGE_ACCOUNTING',
       surface_breakdown: {
         SOURCE_CODE: {
           surface: 'SOURCE_CODE',
           total_files: 1,
           assessed_files: 1,
           files_with_findings: 1,
+          files_with_no_findings: 0,
+          unsupported_files: 0,
+          failed_files: 0,
           coverage_percentage: 100.0,
         },
       },
+      unsupported_extensions: ['.md'],
+      collector_health: {
+        'detector-source-code-v1': 'OK',
+      },
+    },
+    manifest: {
+      files: [
+        {
+          relative_path: 'crypto.py',
+          size_bytes: 500,
+          file_extension: '.py',
+          is_supported: true,
+          skip_reason: null,
+        },
+        {
+          relative_path: 'docs.md',
+          size_bytes: 300,
+          file_extension: '.md',
+          is_supported: false,
+          skip_reason: null,
+        },
+      ],
     },
     canonical_assets: [
       {
@@ -129,7 +159,7 @@ describe('ScanDetailPage', () => {
     expect(screen.getByText(/scan result unavailable/i)).toBeInTheDocument();
   });
 
-  it('renders complete scan details, metrics, surfaces, and findings table', () => {
+  it('renders complete scan details, metrics, and switches between tabs', () => {
     vi.spyOn(useApiModule, 'useApi').mockReturnValue({
       data: mockScanDetail,
       loading: false,
@@ -144,11 +174,34 @@ describe('ScanDetailPage', () => {
     expect(screen.getByText('COMPLETED')).toBeInTheDocument();
     expect(screen.getByText(/edcb54e8c8b2e04a1380807d36d5b7a43ca3c25f4cff275073214177e8a67875/i)).toBeInTheDocument();
     expect(screen.getByText('COMPLETE_WITH_COVERAGE_ACCOUNTING')).toBeInTheDocument();
-    expect(screen.getAllByText('SOURCE_CODE')[0]).toBeInTheDocument();
+
+    // Default tab: Findings
     expect(screen.getByText('RSA-2048')).toBeInTheDocument();
+
+    // Switch to Coverage & Accounting tab
+    const coverageTab = screen.getByRole('tab', { name: /coverage & accounting/i });
+    fireEvent.click(coverageTab);
+    expect(screen.getByTestId('coverage-overview')).toBeInTheDocument();
+
+    // Switch to Discovery Surfaces tab
+    const surfacesTab = screen.getByRole('tab', { name: /discovery surfaces/i });
+    fireEvent.click(surfacesTab);
+    expect(screen.getByTestId('surface-breakdown')).toBeInTheDocument();
+
+    // Switch to Coverage Gaps tab
+    const gapsTab = screen.getByRole('tab', { name: /coverage gaps/i });
+    fireEvent.click(gapsTab);
+    expect(screen.getByTestId('coverage-gaps-table')).toBeInTheDocument();
+    expect(screen.getByText('docs.md')).toBeInTheDocument();
+
+    // Switch to Engine Health tab
+    const healthTab = screen.getByRole('tab', { name: /engine health/i });
+    fireEvent.click(healthTab);
+    expect(screen.getByTestId('collector-health')).toBeInTheDocument();
+    expect(screen.getByText('detector-source-code-v1')).toBeInTheDocument();
   });
 
-  it('opens finding detail modal when clicking Inspect on a finding', () => {
+  it('opens finding detail modal with evidence inspection', () => {
     vi.spyOn(useApiModule, 'useApi').mockReturnValue({
       data: mockScanDetail,
       loading: false,
@@ -163,5 +216,6 @@ describe('ScanDetailPage', () => {
 
     expect(screen.getByText(/Finding Details: RSA-2048/i)).toBeInTheDocument();
     expect(screen.getByText(/RSA.generate\(2048\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Observed Raw Evidence/i)).toBeInTheDocument();
   });
 });

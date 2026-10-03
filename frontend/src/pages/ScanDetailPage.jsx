@@ -9,23 +9,31 @@ import ProgressRing from '../components/common/ProgressRing';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 import ErrorBanner from '../components/common/ErrorBanner';
 import EmptyState from '../components/common/EmptyState';
+import TabBar, { TabPanel } from '../components/common/TabBar';
 import { FindingsTable, FindingDetailModal } from '../components/findings';
+import {
+  CoverageOverview,
+  SurfaceBreakdown,
+  CoverageGapsTable,
+  CollectorHealth,
+} from '../components/coverage';
 import './ScanDetailPage.css';
 
 /**
- * Scan Results & Findings Detail Page.
+ * Scan Results, Coverage & Findings Detail Page.
  */
 export default function ScanDetailPage() {
   const { scanId } = useParams();
   usePageTitle(`Scan ${scanId || 'Details'}`);
 
   const { data: scan, loading, error, refetch } = useApi(scanId ? `/api/v1/scans/${scanId}` : null);
+  const [activeTab, setActiveTab] = useState('findings');
   const [selectedFinding, setSelectedFinding] = useState(null);
 
   if (loading) {
     return (
       <div className="scan-detail-page" data-testid="scan-detail-loading">
-        <LoadingSpinner label="Loading scan results and cryptographic findings..." />
+        <LoadingSpinner label="Loading scan results, coverage, and findings..." />
       </div>
     );
   }
@@ -64,20 +72,36 @@ export default function ScanDetailPage() {
   const targetName = scan.target_name || scan.manifest?.archive_name || 'Target Archive';
   const status = scan.status ? scan.status.toUpperCase() : 'UNKNOWN';
   const createdAt = scan.created_at ? new Date(scan.created_at).toLocaleString() : 'Date unrecorded';
-  const assetCount = typeof scan.asset_count === 'number' ? scan.asset_count : (scan.canonical_assets?.length ?? 'N/A');
+  const assetCount = typeof scan.asset_count === 'number' ? scan.asset_count : (scan.canonical_assets?.length ?? 0);
   const coveragePct = scan.coverage?.overall_coverage_percentage ?? scan.summary?.coverage_percentage ?? scan.coverage_percentage ?? null;
   const cleanStateLabel = scan.clean_state_label || scan.coverage?.scan_status_label || scan.summary?.clean_state_label || 'UNASSESSED';
   const dnaHash = scan.cryptographic_dna_hash || scan.dna_hash || null;
   const canonicalAssets = scan.canonical_assets || [];
   const riskEvaluations = scan.risk_evaluations || [];
   const summary = scan.summary || {};
-  const surfaceBreakdown = scan.coverage?.surface_breakdown || {};
+  const coverage = scan.coverage || {};
+  const manifest = scan.manifest || {};
+  const surfaceBreakdown = coverage.surface_breakdown || {};
+  const unsupportedExtensions = coverage.unsupported_extensions || [];
+  const manifestFiles = manifest.files || [];
+  const collectorHealth = coverage.collector_health || {};
 
   // Urgency counts
   const critCount = summary.critical_urgency_count ?? 0;
   const highCount = summary.high_urgency_count ?? 0;
   const medCount = summary.medium_urgency_count ?? 0;
   const lowCount = summary.low_urgency_count ?? 0;
+
+  // Gaps count
+  const gapCount = manifestFiles.filter((f) => !f.is_supported || f.skip_reason).length;
+
+  const tabs = [
+    { id: 'findings', label: 'Findings & Primitives', badge: String(assetCount) },
+    { id: 'coverage', label: 'Coverage & Accounting' },
+    { id: 'surfaces', label: 'Discovery Surfaces' },
+    { id: 'gaps', label: 'Coverage Gaps', badge: gapCount > 0 ? String(gapCount) : undefined },
+    { id: 'health', label: 'Engine Health' },
+  ];
 
   return (
     <div className="scan-detail-page" data-testid="scan-detail-page">
@@ -89,7 +113,7 @@ export default function ScanDetailPage() {
               ← Dashboard
             </Link>
             <span>/</span>
-            <span>Scan Results</span>
+            <span>Scan Results & Coverage</span>
           </div>
 
           <h1 className="scan-title">
@@ -124,7 +148,7 @@ export default function ScanDetailPage() {
 
         <div>
           <Button variant="outline" size="sm" onClick={refetch}>
-            Refresh Results
+            Refresh Analysis
           </Button>
         </div>
       </header>
@@ -152,8 +176,8 @@ export default function ScanDetailPage() {
                 {coveragePct !== null ? `${coveragePct.toFixed(1)}%` : 'N/A'}
               </span>
               <span className="metric-subtext">
-                {scan.coverage?.total_assessed_files ?? summary.assessed_files ?? 0} of{' '}
-                {scan.coverage?.total_files_in_archive ?? summary.total_files ?? 0} files assessed
+                {coverage.total_assessed_files ?? summary.assessed_files ?? 0} of{' '}
+                {coverage.total_files_in_archive ?? summary.total_files ?? 0} files assessed
               </span>
             </div>
             {coveragePct !== null && (
@@ -203,45 +227,67 @@ export default function ScanDetailPage() {
         </Card>
       </section>
 
-      {/* Surface Breakdown Section */}
-      {Object.keys(surfaceBreakdown).length > 0 && (
-        <section className="scan-surfaces-section" aria-label="Surface Coverage Breakdown">
-          <h3 className="section-heading" style={{ fontSize: 'var(--font-size-md)' }}>
-            Surface Assessment Breakdown
-          </h3>
-          <div className="surface-cards-grid">
-            {Object.entries(surfaceBreakdown).map(([surfaceKey, surfaceData]) => (
-              <div key={surfaceKey} className="surface-card">
-                <div className="surface-name">
-                  <span>{surfaceKey}</span>
-                  <span style={{ fontFamily: 'var(--font-mono)' }}>
-                    {surfaceData.coverage_percentage?.toFixed(0)}%
-                  </span>
-                </div>
-                <div className="surface-stats">
-                  <span>{surfaceData.assessed_files} / {surfaceData.total_files} files</span>
-                  <span>{surfaceData.files_with_findings} with findings</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Cryptographic Findings Section */}
-      <section className="scan-findings-section" aria-label="Discovered Findings">
-        <div className="section-header-row">
-          <h2 className="section-heading">Cryptographic Findings & Observations</h2>
-          <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>
-            Select any row to inspect sanitized code evidence and detector provenance.
-          </span>
-        </div>
-
-        <FindingsTable
-          canonicalAssets={canonicalAssets}
-          riskEvaluations={riskEvaluations}
-          onSelectFinding={(finding) => setSelectedFinding(finding)}
+      {/* Analysis Navigation Tabs */}
+      <section aria-label="Scan Analysis Sections" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+        <TabBar
+          tabs={tabs}
+          value={activeTab}
+          onChange={setActiveTab}
+          ariaLabel="Scan detail view tabs"
         />
+
+        {/* Tab 1: Findings Table */}
+        <TabPanel id="findings" active={activeTab === 'findings'}>
+          <div className="scan-findings-section">
+            <div className="section-header-row">
+              <h2 className="section-heading">Cryptographic Findings & Observations</h2>
+              <span style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)' }}>
+                Inspect detected primitives, source locations, confidence levels, and sanitized evidence.
+              </span>
+            </div>
+
+            <FindingsTable
+              canonicalAssets={canonicalAssets}
+              riskEvaluations={riskEvaluations}
+              onSelectFinding={(finding) => setSelectedFinding(finding)}
+            />
+          </div>
+        </TabPanel>
+
+        {/* Tab 2: Coverage & Accounting */}
+        <TabPanel id="coverage" active={activeTab === 'coverage'}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+            <CoverageOverview coverage={coverage} summary={summary} />
+            <SurfaceBreakdown
+              surfaceBreakdown={surfaceBreakdown}
+              onSelectSurface={() => setActiveTab('findings')}
+            />
+          </div>
+        </TabPanel>
+
+        {/* Tab 3: Discovery Surfaces */}
+        <TabPanel id="surfaces" active={activeTab === 'surfaces'}>
+          <SurfaceBreakdown
+            surfaceBreakdown={surfaceBreakdown}
+            onSelectSurface={() => setActiveTab('findings')}
+          />
+        </TabPanel>
+
+        {/* Tab 4: Coverage Gaps & Unsupported Files */}
+        <TabPanel id="gaps" active={activeTab === 'gaps'}>
+          <CoverageGapsTable
+            manifestFiles={manifestFiles}
+            unsupportedExtensions={unsupportedExtensions}
+          />
+        </TabPanel>
+
+        {/* Tab 5: Collector Engine Diagnostic */}
+        <TabPanel id="health" active={activeTab === 'health'}>
+          <CollectorHealth
+            health={collectorHealth}
+            evaluatedAt={coverage.evaluated_at}
+          />
+        </TabPanel>
       </section>
 
       {/* Finding Detail Modal */}

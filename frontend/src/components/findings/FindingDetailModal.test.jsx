@@ -45,10 +45,10 @@ describe('FindingDetailModal', () => {
     expect(screen.getByText(/Finding Details: RSA-2048/i)).toBeInTheDocument();
     expect(screen.getByText('rsa-2048-crypto.py-10')).toBeInTheDocument();
     expect(screen.getByText('2048 bits')).toBeInTheDocument();
-    expect(screen.getByText('crypto_service.py:10-12')).toBeInTheDocument();
-    expect(screen.getByText('detector-source-code-v1')).toBeInTheDocument();
-    expect(screen.getByText(/Identified RSA-2048 constructor/i)).toBeInTheDocument();
-    expect(screen.getByText(/c7f8132721b51c65c823888216059d498d643aba34078d925342fab90902eb8a/i)).toBeInTheDocument();
+    expect(screen.getAllByText('crypto_service.py:10-12')[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/detector-source-code-v1/i)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/Identified RSA-2048 constructor/i)[0]).toBeInTheDocument();
+    expect(screen.getAllByText(/c7f8132721b51c65c823888216059d498d643aba34078d925342fab90902eb8a/i)[0]).toBeInTheDocument();
   });
 
   it('calls onClose when clicking the close button', () => {

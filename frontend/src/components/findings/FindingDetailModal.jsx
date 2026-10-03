@@ -2,6 +2,7 @@ import React from 'react';
 import Modal from '../common/Modal';
 import Badge from '../common/Badge';
 import Button from '../common/Button';
+import EvidenceViewer from '../coverage/EvidenceViewer';
 import './FindingDetailModal.css';
 
 /**
@@ -29,7 +30,7 @@ export function sanitizeEvidenceContent(text) {
 }
 
 /**
- * Finding Detail Modal presenting complete observation context and evidence.
+ * Finding Detail Modal presenting complete observation context and evidence provenance.
  */
 export default function FindingDetailModal({ finding, open, isOpen, onClose }) {
   const isModalOpen = Boolean(open ?? isOpen);
@@ -41,8 +42,6 @@ export default function FindingDetailModal({ finding, open, isOpen, onClose }) {
         : finding.relativePath)
     : 'Unknown location';
 
-  const sanitizedExcerpt = sanitizeEvidenceContent(finding.sanitizedExcerpt);
-
   // Urgency / Risk level if evaluated
   const riskUrgency = finding.riskEvaluation?.urgency;
   const riskScore = finding.riskEvaluation?.risk_score;
@@ -51,6 +50,7 @@ export default function FindingDetailModal({ finding, open, isOpen, onClose }) {
     <Modal
       open={isModalOpen}
       onClose={onClose}
+      size="lg"
       title={`Finding Details: ${finding.algorithm || finding.primaryName}`}
       data-testid="finding-detail-modal"
     >
@@ -168,36 +168,10 @@ export default function FindingDetailModal({ finding, open, isOpen, onClose }) {
           </div>
         </div>
 
-        {/* Confidence Rationale */}
-        {finding.confidenceRationale && (
-          <div className="detail-section">
-            <h4 className="detail-section-title">🔍 Confidence Rationale</h4>
-            <p style={{ margin: 0, fontSize: 'var(--font-size-sm)', color: 'var(--text-main)' }}>
-              {finding.confidenceRationale}
-            </p>
-          </div>
-        )}
-
-        {/* Sanitized Evidence Excerpt */}
+        {/* Evidence Provenance: Raw Observed Evidence vs Derived Interpretation */}
         <div className="detail-section">
-          <h4 className="detail-section-title">📄 Sanitized Evidence Excerpt</h4>
-          <pre className="evidence-box">
-            <code>{sanitizedExcerpt}</code>
-          </pre>
-          <div className="redaction-notice">
-            🔒 Private keys and raw credentials are automatically redacted by ASTRA intake engine.
-          </div>
+          <EvidenceViewer observation={finding} />
         </div>
-
-        {/* Evidence Digest */}
-        {finding.evidenceDigest && (
-          <div className="detail-section">
-            <div className="evidence-digest-wrapper">
-              <span>SHA-256 Digest:</span>
-              <span className="evidence-digest-hash">{finding.evidenceDigest}</span>
-            </div>
-          </div>
-        )}
 
         {/* Modal Actions */}
         <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 'var(--space-sm)' }}>
