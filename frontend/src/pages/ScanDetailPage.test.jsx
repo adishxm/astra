@@ -192,6 +192,12 @@ describe('ScanDetailPage', () => {
     expect(screen.getByTestId('risk-factor-breakdown')).toBeInTheDocument();
     expect(screen.getByTestId('risk-table-container')).toBeInTheDocument();
 
+    // Switch to Migration Plan tab
+    const migrationTab = screen.getByRole('tab', { name: /migration plan/i });
+    fireEvent.click(migrationTab);
+    expect(screen.getByTestId('migration-summary')).toBeInTheDocument();
+    expect(screen.getByTestId('migration-table')).toBeInTheDocument();
+
     // Switch to Coverage & Accounting tab
     const coverageTab = screen.getByRole('tab', { name: /coverage & accounting/i });
     fireEvent.click(coverageTab);

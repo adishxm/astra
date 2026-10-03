@@ -9,6 +9,7 @@ import ScanDetailPage from './pages/ScanDetailPage';
 import FindingsPage from './pages/FindingsPage';
 import RiskPage from './pages/RiskPage';
 import CbomPage from './pages/CbomPage';
+import MigrationPage from './pages/MigrationPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 const DevStyleGuide = import.meta.env.DEV
@@ -39,6 +40,8 @@ export default function App() {
           <Route path="/findings" element={<FindingsPage />} />
           <Route path="/cbom" element={<CbomPage />} />
           <Route path="/risk" element={<RiskPage />} />
+          <Route path="/migration" element={<MigrationPage />} />
+          <Route path="/roadmap" element={<MigrationPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
 

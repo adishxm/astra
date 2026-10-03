@@ -31,6 +31,12 @@ import {
   CbomExportModal,
   normalizeCbomInventory,
 } from '../components/cbom';
+import {
+  MigrationSummary,
+  MigrationRoadmapView,
+  MigrationTable,
+  MigrationDetailModal,
+} from '../components/migration';
 import './ScanDetailPage.css';
 
 /**
@@ -45,6 +51,7 @@ export default function ScanDetailPage() {
   const [selectedFinding, setSelectedFinding] = useState(null);
   const [selectedRiskItem, setSelectedRiskItem] = useState(null);
   const [selectedCbomItem, setSelectedCbomItem] = useState(null);
+  const [selectedMigrationTask, setSelectedMigrationTask] = useState(null);
   const [isExportOpen, setIsExportOpen] = useState(false);
 
   if (loading) {
@@ -122,6 +129,7 @@ export default function ScanDetailPage() {
     { id: 'findings', label: 'Findings & Primitives', badge: String(assetCount) },
     { id: 'cbom', label: 'CBOM', badge: cbomComponents.length > 0 ? String(cbomComponents.length) : undefined },
     { id: 'risk', label: 'Risk Assessment', badge: riskEvaluations.length > 0 ? String(riskEvaluations.length) : undefined },
+    { id: 'migration', label: 'Migration Plan', badge: backlogItems.length > 0 ? String(backlogItems.length) : undefined },
     { id: 'coverage', label: 'Coverage & Accounting' },
     { id: 'surfaces', label: 'Discovery Surfaces' },
     { id: 'gaps', label: 'Coverage Gaps', badge: gapCount > 0 ? String(gapCount) : undefined },
@@ -351,7 +359,32 @@ export default function ScanDetailPage() {
           </div>
         </TabPanel>
 
-        {/* Tab 4: Coverage & Accounting */}
+        {/* Tab 4: Migration Planning */}
+        <TabPanel id="migration" active={activeTab === 'migration'}>
+          <div className="scan-migration-section" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+            <MigrationSummary
+              tasks={backlogItems}
+              scan={scan}
+            />
+
+            <MigrationRoadmapView
+              tasks={backlogItems}
+              onSelectTask={(task) => setSelectedMigrationTask(task)}
+            />
+
+            <div style={{ marginTop: 'var(--space-md)' }}>
+              <div className="section-header-row" style={{ marginBottom: 'var(--space-sm)' }}>
+                <h3 className="section-heading">Actionable Post-Quantum Migration Tasks</h3>
+              </div>
+              <MigrationTable
+                tasks={backlogItems}
+                onSelectTask={(task) => setSelectedMigrationTask(task)}
+              />
+            </div>
+          </div>
+        </TabPanel>
+
+        {/* Tab 5: Coverage & Accounting */}
         <TabPanel id="coverage" active={activeTab === 'coverage'}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
             <CoverageOverview coverage={coverage} summary={summary} />
@@ -362,7 +395,7 @@ export default function ScanDetailPage() {
           </div>
         </TabPanel>
 
-        {/* Tab 5: Discovery Surfaces */}
+        {/* Tab 6: Discovery Surfaces */}
         <TabPanel id="surfaces" active={activeTab === 'surfaces'}>
           <SurfaceBreakdown
             surfaceBreakdown={surfaceBreakdown}
@@ -370,7 +403,7 @@ export default function ScanDetailPage() {
           />
         </TabPanel>
 
-        {/* Tab 6: Coverage Gaps & Unsupported Files */}
+        {/* Tab 7: Coverage Gaps & Unsupported Files */}
         <TabPanel id="gaps" active={activeTab === 'gaps'}>
           <CoverageGapsTable
             manifestFiles={manifestFiles}
@@ -378,7 +411,7 @@ export default function ScanDetailPage() {
           />
         </TabPanel>
 
-        {/* Tab 7: Collector Engine Diagnostic */}
+        {/* Tab 8: Collector Engine Diagnostic */}
         <TabPanel id="health" active={activeTab === 'health'}>
           <CollectorHealth
             health={collectorHealth}
@@ -406,6 +439,14 @@ export default function ScanDetailPage() {
         component={selectedCbomItem}
         open={Boolean(selectedCbomItem)}
         onClose={() => setSelectedCbomItem(null)}
+      />
+
+      {/* Migration Detail Modal */}
+      <MigrationDetailModal
+        task={selectedMigrationTask}
+        open={Boolean(selectedMigrationTask)}
+        onClose={() => setSelectedMigrationTask(null)}
+        scanId={scanId}
       />
 
       {/* CycloneDX 1.6 Export Modal */}

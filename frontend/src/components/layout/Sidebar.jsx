@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, ScanLine, ShieldAlert, Package, Flame } from 'lucide-react';
+import { LayoutDashboard, ScanLine, ShieldAlert, Package, Flame, GitFork } from 'lucide-react';
 import './Sidebar.css';
 
 const NAV_ITEMS = [
@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { to: '/findings', label: 'Findings', icon: <ShieldAlert size={18} aria-hidden="true" />, end: false },
   { to: '/cbom', label: 'CBOM', icon: <Package size={18} aria-hidden="true" />, end: false },
   { to: '/risk', label: 'Risk Assessment', icon: <Flame size={18} aria-hidden="true" />, end: false },
+  { to: '/migration', label: 'Migration Plan', icon: <GitFork size={18} aria-hidden="true" />, end: false },
 ];
 
 export default function Sidebar() {
