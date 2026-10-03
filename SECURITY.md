@@ -22,6 +22,6 @@ ASTRA is built with strict boundary security principles:
 
 If you discover a security vulnerability within ASTRA:
 1. Do not open a public issue on GitHub.
-2. Send a vulnerability report directly to the security team at `topasingh903811@gmail.com`.
+2. Send a vulnerability report directly to the security team at `parinidhijain101@gmail.com`.
 3. Include steps to reproduce the vulnerability, sample inputs (redacted of sensitive data), and potential impact.
 4. We acknowledge receipts within 48 hours and work with you on a coordinated disclosure timeline.

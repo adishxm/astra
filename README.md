@@ -620,7 +620,7 @@ ASTRA operates under strict enterprise security principles:
 4. **Zero Outbound Telemetry**:
    No outbound network calls, analytics pings, or third-party API dependencies exist. All analysis runs entirely on local CPU.
 5. **Vulnerability Reporting**:
-   To report a security vulnerability, please email `topasingh903811@gmail.com`. Do not file public GitHub issues for security vulnerabilities.
+   To report a security vulnerability, please email `parinidhijain101@gmail.com`. Do not file public GitHub issues for security vulnerabilities.
 
 ---
 

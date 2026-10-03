@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "ASTRA by Team HEXARK is an open-source cryptographic discovery and CBOM prototype aligned with SIH26164 (ECDAT). Scan source, manifests, configs and certificates, evaluate Mosca PQC migration risk, and export CycloneDX 1.6 CBOM."
 readme = "README.md"
 authors = [
-    { name = "Team HEXARK", email = "topasingh903811@gmail.com" }
+    { name = "Team HEXARK", email = "parinidhijain101@gmail.com" }
 ]
 license = "MIT"
 classifiers = [

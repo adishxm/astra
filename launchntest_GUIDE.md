@@ -597,7 +597,7 @@ ASTRA enforces strict boundary security by design. For details, see [`SECURITY.m
 ### Reporting Vulnerabilities
 
 If you discover a security vulnerability, **do not open a public GitHub issue**. Instead:
-1. Email `topasingh903811@gmail.com` with reproduction steps and impact assessment.
+1. Email `parinidhijain101@gmail.com` with reproduction steps and impact assessment.
 2. We acknowledge receipt within 48 hours and coordinate responsible disclosure.
 
 ---
