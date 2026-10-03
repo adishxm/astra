@@ -210,7 +210,9 @@ class ScanService:
         # 1. Collect files & build manifest
         all_files = []
         for root, _, files in os.walk(dir_path):
-            for file in files:
+            for file in sorted(files):
+                if file in ("observations.json", ".DS_Store", "Thumbs.db"):
+                    continue
                 full_p = Path(root) / file
                 try:
                     rel_p = str(full_p.relative_to(dir_path)).replace("\\", "/")
@@ -218,6 +220,8 @@ class ScanService:
                     all_files.append((rel_p, size))
                 except Exception:
                     continue
+
+        all_files.sort(key=lambda x: x[0])
 
         extracted_entries = []
         for rel_p, size in all_files:

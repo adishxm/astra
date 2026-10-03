@@ -27,14 +27,15 @@ from app.inventory.cbom_reconciliation import CBOMReconciliationEngine
 # Security & environment policies
 ASTRA_HOSTED_MODE = os.getenv("ASTRA_HOSTED_MODE", "false").lower() in ("1", "true", "yes")
 ASTRA_ALLOW_DIRECTORY_SCAN = os.getenv(
-    "ASTRA_ALLOW_DIRECTORY_SCAN", "false"
+    "ASTRA_ALLOW_DIRECTORY_SCAN", "false" if ASTRA_HOSTED_MODE else "true"
 ).lower() in ("1", "true", "yes")
 
 app = FastAPI(
     title="ASTRA - Enterprise Cryptographic Discovery & Analysis Tool",
     description=(
-        "Provenance-aware, coverage-accounted cryptographic discovery, "
-        "Mosca-horizon risk evaluation, and post-quantum migration engine (SIH26164 ECDAT)."
+        "ASTRA by Team HEXARK is an open-source cryptographic discovery and CBOM prototype "
+        "aligned with SIH26164 (ECDAT). Scan source, manifests, configs and certificates, "
+        "evaluate Mosca PQC migration risk, and export CycloneDX 1.6 CBOM."
     ),
     version="1.0.0",
     docs_url="/docs",
@@ -72,7 +73,7 @@ def get_health():
         "service": "ASTRA Cryptographic Engine",
         "version": "1.0.0",
         "team": "HEXARK",
-        "profile": "LOCAL_DEMO",
+        "profile": "AIR_GAPPED_SOVEREIGN_ENTERPRISE",
         "hosted_mode": ASTRA_HOSTED_MODE,
         "directory_scan_permitted": ASTRA_ALLOW_DIRECTORY_SCAN,
         "privacy_notice": {

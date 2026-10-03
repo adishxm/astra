@@ -2,7 +2,7 @@
   "name": "astra-dashboard",
   "version": "1.0.0",
   "private": true,
-  "description": "ASTRA - Enterprise Cryptographic Discovery & Post-Quantum Cryptography Governance Dashboard",
+  "description": "ASTRA by Team HEXARK is an open-source cryptographic discovery and CBOM prototype aligned with SIH26164 (ECDAT). Scan source, manifests, configs and certificates, evaluate Mosca PQC migration risk, and export CycloneDX 1.6 CBOM.",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -17,8 +17,8 @@
     "post-quantum",
     "compliance"
   ],
-  "author": "ASTRA Core Engineering Team",
-  "license": "Apache-2.0",
+  "author": "Team HEXARK",
+  "license": "MIT",
   "devDependencies": {
     "vite": "^5.0.0"
   }

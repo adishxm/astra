@@ -10,7 +10,7 @@
 [![CycloneDX CBOM](https://img.shields.io/badge/CycloneDX-1.6%20CBOM-orange.svg)](https://cyclonedx.org/)
 [![Profile: Sovereign](https://img.shields.io/badge/Profile-Air--Gapped%20Sovereign-red.svg)]()
 
-> **ASTRA (Algorithm Security Tracking and Risk Assessment)**: A provenance-aware, coverage-accounted cryptographic discovery, Mosca-horizon post-quantum migration analysis, and standardized CycloneDX 1.6 Cryptographic Bill of Materials (CBOM) engine for enterprise codebases, dependencies, configurations, and certificate stores. Aligned with **SIH26164 (ECDAT)** and engineered by Team **HEXARK**.
+> **ASTRA by Team HEXARK is an open-source cryptographic discovery and CBOM prototype aligned with SIH26164 (ECDAT). Scan source, manifests, configs and certificates, evaluate Mosca PQC migration risk, and export CycloneDX 1.6 CBOM.**
 
 ---
 
@@ -620,7 +620,7 @@ ASTRA operates under strict enterprise security principles:
 4. **Zero Outbound Telemetry**:
    No outbound network calls, analytics pings, or third-party API dependencies exist. All analysis runs entirely on local CPU.
 5. **Vulnerability Reporting**:
-   To report a security vulnerability, please email `topasingh903811@gmail.com`. Do not file public GitHub issues for security vulnerabilities.
+   To report a security vulnerability, please email `parinidhijain101@gmail.com`. Do not file public GitHub issues for security vulnerabilities.
 
 ---
 
