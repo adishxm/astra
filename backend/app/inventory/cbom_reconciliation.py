@@ -103,7 +103,20 @@ class CBOMReconciliationEngine:
     def validate_cyclonedx_16(data: Dict[str, Any]) -> CBOMValidationResult:
         """Validate CBOM JSON conformity to CycloneDX 1.6 cryptographic profile."""
         errors: List[str] = []
-
+        try:
+            import jsonschema  # type: ignore
+            from pathlib import Path
+        except ImportError:
+            errors.append("jsonschema is not installed, cannot validate schema")
+            return CBOMValidationResult(
+                is_valid=False,
+                spec_format="CycloneDX-1.6-CBOM" if data.get("specVersion") == "1.6" else f"CycloneDX-{data.get('specVersion')}",
+                component_count=0,
+                crypto_components_count=0,
+                validation_errors=errors,
+                schema_version=str(data.get("specVersion", "")),
+            )
+            
         bom_format = data.get("bomFormat")
         if bom_format != "CycloneDX":
             errors.append(f"Invalid bomFormat: expected 'CycloneDX', got '{bom_format}'")
@@ -111,6 +124,14 @@ class CBOMReconciliationEngine:
         spec_version = str(data.get("specVersion", ""))
         if spec_version != "1.6":
             errors.append(f"specVersion '{spec_version}' is not CycloneDX 1.6-aligned")
+
+        schema_path = Path(__file__).parent / "bom-1.6.schema.json"
+        try:
+            with open(schema_path, "r", encoding="utf-8") as f:
+                schema = json.load(f)
+            jsonschema.validate(instance=data, schema=schema)
+        except Exception as e:
+            errors.append(str(e))
 
         components = data.get("components", [])
         if not isinstance(components, list):
@@ -124,21 +145,13 @@ class CBOMReconciliationEngine:
         crypto_count = 0
         for idx, comp in enumerate(components):
             if not isinstance(comp, dict):
-                errors.append(f"Component at index {idx} is not an object")
                 continue
-
             comp_type = comp.get("type", "")
-            has_crypto_props = "cryptoProperties" in comp or comp_type == "cryptographic-asset"
-
-            if has_crypto_props:
+            if comp_type == "cryptographic-asset":
                 crypto_count += 1
                 crypto_prop = comp.get("cryptoProperties", {})
-                if not crypto_prop and comp_type == "cryptographic-asset":
+                if not crypto_prop:
                     errors.append(f"Component '{comp.get('name')}' marked cryptographic-asset lacks cryptoProperties")
-                elif crypto_prop:
-                    algo_name = crypto_prop.get("algorithmProperties", {}).get("name")
-                    if not algo_name:
-                        errors.append(f"Component '{comp.get('name')}' cryptoProperties missing algorithm name")
 
         is_valid = len(errors) == 0
         return CBOMValidationResult(

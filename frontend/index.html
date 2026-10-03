@@ -95,6 +95,7 @@
       letter-spacing: -0.02em;
       background: linear-gradient(90deg, #fff, #cbd5e1);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
     }
 
@@ -454,6 +455,7 @@
       background: #334155;
       outline: none;
       -webkit-appearance: none;
+      appearance: none;
     }
 
     input[type=range]::-webkit-slider-thumb {
@@ -987,16 +989,48 @@
       const aBody = document.getElementById('audit-tbody');
       aBody.innerHTML = '';
       currentScan.auditChain.forEach(ev => {
-        aBody.innerHTML += `
-          <tr>
-            <td><code>#${ev.seq}</code></td>
-            <td style="font-family: var(--font-mono); font-size: 0.78rem;">${ev.ts}</td>
-            <td><strong>${ev.action}</strong></td>
-            <td><code>${ev.actor}</code></td>
-            <td style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--text-dim);">${ev.prev.substring(0, 12)}...</td>
-            <td style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--cyan);">${ev.hash.substring(0, 16)}...</td>
-          </tr>
-        `;
+        const tr = document.createElement('tr');
+        
+        const tdSeq = document.createElement('td');
+        const codeSeq = document.createElement('code');
+        codeSeq.textContent = `#${ev.seq}`;
+        tdSeq.appendChild(codeSeq);
+        
+        const tdTs = document.createElement('td');
+        tdTs.style.fontFamily = 'var(--font-mono)';
+        tdTs.style.fontSize = '0.78rem';
+        tdTs.textContent = ev.ts;
+        
+        const tdAction = document.createElement('td');
+        const strongAction = document.createElement('strong');
+        strongAction.textContent = ev.action;
+        tdAction.appendChild(strongAction);
+        
+        const tdActor = document.createElement('td');
+        const codeActor = document.createElement('code');
+        codeActor.textContent = ev.actor;
+        tdActor.appendChild(codeActor);
+        
+        const tdPrev = document.createElement('td');
+        tdPrev.style.fontFamily = 'var(--font-mono)';
+        tdPrev.style.fontSize = '0.72rem';
+        tdPrev.style.color = 'var(--text-dim)';
+        tdPrev.textContent = (ev.prev || "").substring(0, 12) + "...";
+        
+        const tdHash = document.createElement('td');
+        tdHash.style.fontFamily = 'var(--font-mono)';
+        tdHash.style.fontSize = '0.72rem';
+        tdHash.style.color = 'var(--cyan)';
+        tdHash.textContent = (ev.hash || "").substring(0, 16) + "...";
+
+        tr.appendChild(tdSeq);
+        tr.appendChild(tdTs);
+        tr.appendChild(tdAction);
+        tr.appendChild(tdActor);
+        tr.appendChild(tdPrev);
+        tr.appendChild(tdHash);
+        
+        aBody.appendChild(tr);
       });
     }
 

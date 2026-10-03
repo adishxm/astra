@@ -143,12 +143,8 @@ class ScanStore:
         """Persist scan record to memory and JSON file."""
         self._memory_cache[record.scan_id] = record
         file_path = self.storage_dir / f"{record.scan_id}.json"
-        try:
-            with open(file_path, "w", encoding="utf-8") as f:
-                json.dump(record.to_dict(), f, indent=2)
-        except Exception:
-            # Fall back gracefully to memory cache if disk write fails
-            pass
+        with open(file_path, "w", encoding="utf-8") as f:
+            json.dump(record.to_dict(), f, indent=2, default=str)
 
     def get(self, scan_id: str) -> Optional[ScanRecord]:
         """Retrieve scan record by ID."""
@@ -322,16 +318,24 @@ class ScanService:
 
         # 7. Generate CycloneDX 1.6 CBOM
         components = []
+        seen_comps = set()
         for asset in canonical_assets:
             for obs in asset.observations:
                 algo = obs.algorithm or "UNKNOWN"
+                comp_name = f"{algo}-{asset.asset_id[:8]}"
+                
+                # Ensure uniqueItems for CBOM components array
+                if comp_name in seen_comps:
+                    continue
+                seen_comps.add(comp_name)
+                
                 comp = {
                     "type": "cryptographic-asset",
-                    "name": f"{algo}-{asset.asset_id[:8]}",
+                    "name": comp_name,
                     "cryptoProperties": {
                         "assetType": "algorithm",
                         "algorithmProperties": {
-                            "name": algo,
+                            "primitive": "unknown",
                             "parameterSetIdentifier": str(obs.key_size_bits or "standard"),
                             "executionEnvironment": "software-plain-ram",
                         },
@@ -342,7 +346,7 @@ class ScanService:
         cbom_data = {
             "bomFormat": "CycloneDX",
             "specVersion": "1.6",
-            "serialNumber": f"urn:uuid:{scan_id}",
+            "serialNumber": f"urn:uuid:{uuid.uuid5(uuid.NAMESPACE_URL, scan_id)}",
             "version": 1,
             "metadata": {
                 "timestamp": datetime.now(timezone.utc).isoformat(),

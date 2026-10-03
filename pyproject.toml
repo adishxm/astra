@@ -37,6 +37,7 @@ dependencies = [
     "pydantic>=2.6.0",
     "cryptography>=41.0.0",
     "python-multipart>=0.0.9",
+    "jsonschema>=4.0.0",
 ]
 
 [project.scripts]
@@ -45,6 +46,9 @@ astra = "app.cli:main"
 [tool.setuptools.packages.find]
 where = ["backend"]
 include = ["app*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.json"]
 
 
 [project.optional-dependencies]

@@ -86,9 +86,8 @@ def test_cbom_validator_cyclonedx_16():
                 "cryptoProperties": {
                     "assetType": "algorithm",
                     "algorithmProperties": {
-                        "name": "RSA",
+                        "primitive": "unknown",
                         "parameterSetIdentifier": "2048",
-                        "curve": None,
                         "executionEnvironment": "software-plain-ram"
                     }
                 }
