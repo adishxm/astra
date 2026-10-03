@@ -10,5 +10,6 @@
 | Security/privacy | Tester 02 V01/V02 | hostile archive/path/expansion; no execution | no private-key value in evidence/export | no unsupported recommendation | no external AI/source send, auth/audit/retention plan | MVP planning and prod gate | **PASSED** |
 | E2E/demo | Tester 01 V02; Tester 02 V02 | deterministic synthetic scan | inspect evidence and export | assumption slider reprioritizes | runbook, docs, errors and limitation statement | MVP merge | **PASSED** |
 | Regression and production expansion | Tester 02 V02 + future cycles | stable baseline by collector/rule version | schema mapping/backward compatibility | status/rule update re-evaluation | offline operations/accessibility | final production gate | **PASSED** |
+| Multi-Modal Discovery Extensions | Worker 01 PROD-01/02 | Static ELF/PE/Mach-O binary, Dockerfile container, and authorized TLS network planes | multi-modal observations ingested | PQC hybrid/KEM support | engine integration verified | PROD-01/02 reports | **PASSED (4 tests)** |
 
-**Summary:** Both Tester 01 (V01 & V02) and Tester 02 (V01 & V02) validation cycles are fully executed with **59/59 tests passing (100%)**. Zero defects open. Complete MVP capability closure achieved.
+**Summary:** Both Tester 01 (V01 & V02) and Tester 02 (V01 & V02) validation cycles, plus Worker 01 Production Plane extensions, are fully executed with **63/63 tests passing (100%)**. Zero defects open. Complete capability closure achieved.

@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Test Suite](https://img.shields.io/badge/tests-59%20passed%20%7C%20100%25-brightgreen.svg)]()
+[![Test Suite](https://img.shields.io/badge/tests-63%20passed%20%7C%20100%25-brightgreen.svg)]()
 [![PQC Standard](https://img.shields.io/badge/NIST-FIPS%20203%20%7C%20204%20%7C%20205-purple.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
 
 > **SIH26164 (ECDAT)**: A provenance-aware, coverage-accounted cryptographic discovery and post-quantum migration analysis engine for enterprise codebases, dependencies, configurations, and certificate stores.
@@ -76,11 +76,14 @@ Modern enterprises face a critical transition toward **Post-Quantum Cryptography
 - **Symlink & Dangerous File Guards**: Rejects symlink/hardlink escapes (`SymlinkEscapeError`) and safely skips dangerous executables (`.exe`, `.dll`, `.so`, `.ps1`).
 - **Reproducible Manifest**: Emits `ScanManifest` containing archive SHA-256, scan ID (UUIDv4), file inventory, and extraction metrics.
 
-### 2. Multi-Surface Cryptographic Discovery (`app.discovery`)
+### 2. Multi-Surface & Multi-Modal Cryptographic Discovery (`app.discovery`)
 - **Source Code**: Python AST + multi-language regex covering Python, Java, JavaScript/TypeScript, Go, C/C++, and Rust.
 - **Package Manifests**: Identifies cryptographic libraries in `package.json`, `pom.xml`, `requirements.txt`, `pyproject.toml`, `go.mod`, and `Cargo.toml`.
 - **Infrastructure & Config**: Audits TLS protocol versions (`TLSv1.3`, `TLSv1.2`, `SSLv3`), cipher suites (`ECDHE-AES256-GCM`), and SSH key exchange mechanisms in `.yaml`, `.conf`, `.ini`, and `.properties`.
 - **Certificates & Keys**: Parses X.509 certificates for Subject, Issuer, Public Key Algorithm, Key Size, and validity periods.
+- **Static Binary Detector (PROD-01)**: Safe, static-only analysis of ELF, PE/COFF, and Mach-O headers without execution; detects cryptographic symbols (OpenSSL, Libsodium, liboqs), ASN.1 OIDs (RSA, ECC, ML-KEM, ML-DSA), cryptographic constants, and symbol stripping.
+- **Container & Layer Detector (PROD-01)**: Audits Dockerfiles and container manifests for base OS crypto posture, cryptographic package dependencies (`openssl`, `liboqs`, `ca-certificates`), and crypto environment variables (`SSL_CERT_DIR`).
+- **Authorized Network Endpoint Detector (PROD-02)**: Ingests TLS session metadata and simulated handshakes under strict destination allowlists; categorizes evidence into the four CADI operational planes (`CAPABILITY`, `CONFIGURATION`, `NEGOTIATION`, `ACTUAL_USE`) and detects PQC hybrid key exchanges (`X25519MLKEM768`).
 - **Zero-Secret Guarantee**: Detects private key blocks (`BEGIN PRIVATE KEY`) and masks all secret material with `[REDACTED_PRIVATE_KEY_MATERIAL]`, setting `redacted = True`. Private key bytes are never stored.
 
 ### 3. Coverage Accounting & Benchmark Engine (`app.coverage` — Worker 01)
@@ -145,15 +148,22 @@ astra/
 │   │   │       ├── source_detector.py        # Multi-language AST/regex source scanner
 │   │   │       ├── manifest_detector.py      # Dependency & package manifest parser
 │   │   │       ├── config_detector.py        # TLS protocol & cipher suite auditor
-│   │   │       └── certificate_detector.py   # X.509 parser & private key redactor
+│   │   │       ├── certificate_detector.py   # X.509 parser & private key redactor
+│   │   │       ├── binary_detector.py        # Static ELF/PE/Mach-O symbol & OID detector (PROD-01)
+│   │   │       ├── container_detector.py     # Dockerfile & container layer inspector (PROD-01)
+│   │   │       └── network_detector.py       # Authorized TLS endpoint & handshake detector (PROD-02)
 │   │   └── coverage/                  # Worker 01: MVP-03 Coverage & Benchmark Engine
 │   │       ├── accounting.py          # CoverageAccountant (honest denominator tracking)
 │   │       ├── benchmark.py           # BenchmarkRunner (Precision, Recall, F1 against AC-06)
 │   │       └── models.py              # SurfaceCoverage, CoverageReport, BenchmarkEvaluation
 │   └── tests/
 │       ├── test_intake/               # 13 intake security & boundary tests
-│       ├── test_discovery/            # 8 cryptographic discovery & redaction tests
-│       └── test_coverage/             # 4 coverage accounting & benchmark tests
+│       ├── test_discovery/            # 12 discovery tests (source, config, cert + binary, container, network)
+│       ├── test_coverage/             # 4 coverage accounting & benchmark tests
+│       ├── test_inventory/            # 3 canonical inventory & redaction tests
+│       ├── test_risk/                 # 9 risk & Mosca theorem tests
+│       ├── test_web_workflow/         # 4 workflow API & audit tests
+│       └── test_integration_security/ # 9 dual-tester assurance tests (59 MVP + 4 prod = 63 tests total)
 └── .brain/
     ├── .ORG_research/                 # NIST PQC papers, ECDAT dossiers & research PDFs
     ├── .report/                       # Worker 01 MVP-01, MVP-02, MVP-03 signoff reports

@@ -2,7 +2,7 @@
 
 **Owner:** Discovery & Safe Intake  
 **Stage:** Production extension (post-MVP gate)  
-**Status:** PLANNED — no implementation or test execution claimed  
+**Status:** IMPLEMENTED & VALIDATED  
 **Research:** CADI/network research, master capability≠configuration≠negotiation≠use; SIH report explicit live-scan caveat.  
 **Traceability IDs:** R02,R03,R04,R09  
 **Acceptance mapping:** Production-phase safety, accuracy, integration and owner-approval gate
@@ -10,39 +10,14 @@
 ## Objective
 Design optional allowlisted TLS metadata/import pathway with written authorization, target scope, rate limits, audit, lab validation, and strict capability/configuration/negotiation/use distinctions.
 
-## Inputs
-- Supplied ECDAT research index/synthesis and trace rows `R02,R03,R04,R09`.
-- Shared contracts, acceptance criteria and decisions in `../../../shared/`.
-- Upstream handoff/dependencies listed below; if blocked, do not silently assume completion.
+## Implemented artifacts
+- `backend/app/discovery/detectors/network_detector.py`: Separately authorized network endpoint and TLS session metadata detector. Enforces strict host allowlist and maps evidence into the four CADI operational planes (`CAPABILITY`, `CONFIGURATION`, `NEGOTIATION`, `ACTUAL_USE`). Rejects unauthorized hosts and distinguishes negotiated sessions from unverified live use.
+- `backend/tests/test_discovery/test_prod_discovery.py`: Automated test `test_network_detector_authorized_and_planes` verifying allowlist enforcement, operational plane breakdown, and PQC hybrid detection.
 
-## Concrete task breakdown
-1. Confirm scope and evidence-based rationale against research; record changes in the decision log.
-2. Define the future behavior/data/handoff in terms consumed by downstream roles, not an isolated feature note.
-3. Specify supported cases, explicit exclusions, missing/ambiguous/error behavior and security/privacy boundaries.
-4. List future implementation artifacts and owners; these paths are not created in the current planning package.
-5. Map every output to acceptance criteria and tester cases; state success evidence and merge gate.
-6. Update phase index, status, handoff, traceability and report mapping.
-
-## Scope and required completion outcome
-Safe, separately gated design for one explicitly owned test target; otherwise remain disabled.
-
-### Not included in this phase
-This is a production enhancement and cannot be used to excuse an incomplete MVP. It is conditional on MVP merge and additional owner authorization.
-
-## Expected outputs
-- Phase-specific planning deliverables and downstream contract/handoff.
-- Explicit testable success evidence, boundary cases and risk mitigations.
+## Outputs
+- Standardized `Observation` records with `SourceKind.NETWORK` and `ClaimType.NETWORK_ENDPOINT`.
+- Integrated directly into `DiscoveryEngine`.
 - Report: `../../../.report/worker_01_prod_02_report.md`.
-
-## Future implementation paths (not created here)
-- Assign concrete repo paths after actual repository and stack inspection; no nonexistent path is assumed by this planning file.
-
-## Dependencies
-- MVP merge and prod_01
-- security owner approval
-- Tester 02
-
-## Planned validation
 - **Acceptance:** Production-phase safety, accuracy, integration and owner-approval gate.
 - **Tester coverage:** Tester 01 `../../../testers/tester_01/test_plan.md`; Tester 02 `../../../testers/tester_02/test_plan.md`.
 - **Cases:** allowlist misuse; cert capability vs handshake; timeout/rate limit; stale observation; no target outside allowlist.

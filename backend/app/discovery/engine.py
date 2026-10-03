@@ -9,9 +9,12 @@ import time
 from pathlib import Path
 from typing import List, Optional
 
+from app.discovery.detectors.binary_detector import BinaryCryptoDetector
 from app.discovery.detectors.certificate_detector import CertificateCryptoDetector
 from app.discovery.detectors.config_detector import ConfigCryptoDetector
+from app.discovery.detectors.container_detector import ContainerCryptoDetector
 from app.discovery.detectors.manifest_detector import ManifestCryptoDetector
+from app.discovery.detectors.network_detector import NetworkEndpointDetector
 from app.discovery.detectors.source_detector import SourceCryptoDetector
 from app.discovery.models import (
     DiscoverySummary,
@@ -28,6 +31,9 @@ class DiscoveryEngine:
         self.manifest_detector = ManifestCryptoDetector()
         self.config_detector = ConfigCryptoDetector()
         self.cert_detector = CertificateCryptoDetector()
+        self.binary_detector = BinaryCryptoDetector()
+        self.container_detector = ContainerCryptoDetector()
+        self.network_detector = NetworkEndpointDetector()
 
     def run_discovery(
         self,
@@ -48,6 +54,9 @@ class DiscoveryEngine:
             self.manifest_detector.DETECTOR_ID: "OK",
             self.config_detector.DETECTOR_ID: "OK",
             self.cert_detector.DETECTOR_ID: "OK",
+            self.binary_detector.DETECTOR_ID: "OK",
+            self.container_detector.DETECTOR_ID: "OK",
+            self.network_detector.DETECTOR_ID: "OK",
         }
 
         # Scan each file in the sandbox
@@ -118,6 +127,48 @@ class DiscoveryEngine:
                 except Exception as e:
                     failed_count += 1
                     collector_health[self.cert_detector.DETECTOR_ID] = f"ERROR: {e}"
+
+            # 5. Check Binary Detector (Static safe analysis)
+            if self.binary_detector.can_analyze(file_path):
+                matched_detector = True
+                try:
+                    obs = self.binary_detector.analyze_file(
+                        file_path, file_entry.relative_path, manifest.scan_id
+                    )
+                    if obs:
+                        observations.extend(obs)
+                        file_had_findings = True
+                except Exception as e:
+                    failed_count += 1
+                    collector_health[self.binary_detector.DETECTOR_ID] = f"ERROR: {e}"
+
+            # 6. Check Container Detector
+            if self.container_detector.can_analyze(file_path):
+                matched_detector = True
+                try:
+                    obs = self.container_detector.analyze_file(
+                        file_path, file_entry.relative_path, manifest.scan_id
+                    )
+                    if obs:
+                        observations.extend(obs)
+                        file_had_findings = True
+                except Exception as e:
+                    failed_count += 1
+                    collector_health[self.container_detector.DETECTOR_ID] = f"ERROR: {e}"
+
+            # 7. Check Network Endpoint Detector
+            if self.network_detector.can_analyze(file_path):
+                matched_detector = True
+                try:
+                    obs = self.network_detector.analyze_file(
+                        file_path, file_entry.relative_path, manifest.scan_id
+                    )
+                    if obs:
+                        observations.extend(obs)
+                        file_had_findings = True
+                except Exception as e:
+                    failed_count += 1
+                    collector_health[self.network_detector.DETECTOR_ID] = f"ERROR: {e}"
 
             if not matched_detector:
                 unsupported_count += 1
