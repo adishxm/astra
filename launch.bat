@@ -1,6 +1,6 @@
 @echo off
 cd /d "%~dp0"
-title ASTRA - Enterprise Cryptographic Discovery Launcher
+title HEXARK - ASTRA Enterprise Cryptographic Discovery Launcher
 cls
 
 :: --- Display Banner ---
@@ -94,7 +94,7 @@ if %ERRORLEVEL% NEQ 0 (
 echo  ===================================================================
 echo   Starting ASTRA Backend [port %BACKEND_PORT%]...
 echo  ===================================================================
-start "ASTRA-Backend" cmd /k "title ASTRA-Backend && cd /d "%~dp0backend" && python -m uvicorn app.main:app --host 127.0.0.1 --port %BACKEND_PORT% --reload"
+start "HEXARK-Backend" cmd /k "title HEXARK-Backend && cd /d "%~dp0backend" && python -m uvicorn app.main:app --host 127.0.0.1 --port %BACKEND_PORT% --reload"
 
 echo  [*] Waiting for backend to be ready at http://127.0.0.1:%BACKEND_PORT%/health ...
 python scripts\launcher_utils.py --wait-url "http://127.0.0.1:%BACKEND_PORT%/health" 30 >nul 2>&1
@@ -113,7 +113,7 @@ if exist "frontend\package.json" (
         echo   Starting ASTRA Dashboard Frontend [port 5173]...
         echo  ===================================================================
         echo VITE_API_BASE_URL=http://127.0.0.1:%BACKEND_PORT%> "frontend\.env.local"
-        start "ASTRA-Frontend" cmd /k "title ASTRA-Frontend && cd /d "%~dp0frontend" && call npm run dev"
+        start "HEXARK-Frontend" cmd /k "title HEXARK-Frontend && cd /d "%~dp0frontend" && call npm run dev"
 
         echo  [*] Waiting for frontend to be ready at http://127.0.0.1:5173 ...
         python scripts\launcher_utils.py --wait-url "http://127.0.0.1:5173" 30 >nul 2>&1
@@ -140,7 +140,7 @@ if %HAS_FRONTEND% EQU 1 (
 echo.
 echo  +-----------------------------------------------------------------+
 echo  ^|                                                                 ^|
-echo  ^|   ASTRA ECDAT is now running!                                   ^|
+echo  ^|   HEXARK - ASTRA ECDAT is now running!                            ^|
 echo  ^|   Backend:   http://127.0.0.1:%BACKEND_PORT%                            ^|
 echo  ^|   API Docs:  http://127.0.0.1:%BACKEND_PORT%/docs                       ^|
 if %HAS_FRONTEND% EQU 1 (
