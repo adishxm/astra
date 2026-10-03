@@ -1,0 +1,14 @@
+services:
+  astra-engine:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: astra-ecdat
+    ports:
+      - "8000:8000"
+    environment:
+      - ASTRA_ENV=production
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./temp_scans:/app/temp_scans
+    restart: unless-stopped
