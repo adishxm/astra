@@ -1,0 +1,67 @@
+/* TabBar Component Styles */
+.tab-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: transparent;
+  padding: 0 var(--space-xs);
+  position: relative;
+}
+
+.tab-item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-lg);
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.tab-item:hover:not(:disabled) {
+  color: var(--text-main);
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.tab-item--active {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.tab-item--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tab-item__icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.tab-item__indicator {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--primary);
+  box-shadow: 0 0 8px var(--primary-glow);
+  border-radius: 2px 2px 0 0;
+}
+
+/* TabPanel */
+.tab-panel {
+  padding: var(--space-lg) 0;
+}
+
+.tab-panel:focus-visible {
+  outline: none;
+}
