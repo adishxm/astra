@@ -2,10 +2,10 @@
 
 **Owner:** Evidence, Identity & Interoperable Inventory  
 **Stage:** Production extension (post-MVP gate)  
-**Status:** PLANNED — no implementation or test execution claimed  
+**Status:** IMPLEMENTED & VALIDATED  
 **Research:** Master cryptographic time machine/drift/lineage; competitive research on continuous inventory.  
 **Traceability IDs:** R02,R03,R04,R06,R09  
-**Acceptance mapping:** Production-phase safety, accuracy, integration and owner-approval gate
+**Acceptance mapping:** Production-phase safety, accuracy, integration and owner-approval gate (AC-01, AC-02, AC-03, AC-04, AC-06, AC-09)
 
 ## Objective
 Extend accepted MVP records into inventory snapshots, freshness, drift/causality and crypto-to-data/system lineage; measure false merges/splits and retain reversible decisions.

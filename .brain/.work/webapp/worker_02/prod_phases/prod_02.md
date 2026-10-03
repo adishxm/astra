@@ -2,10 +2,10 @@
 
 **Owner:** Evidence, Identity & Interoperable Inventory  
 **Stage:** Production extension (post-MVP gate)  
-**Status:** PLANNED — no implementation or test execution claimed  
+**Status:** IMPLEMENTED & VALIDATED  
 **Research:** BF-CBOM and CycloneDX research; competitive dossier says CBOM is table stakes.  
 **Traceability IDs:** R05,R06,R07,R11  
-**Acceptance mapping:** Production-phase safety, accuracy, integration and owner-approval gate
+**Acceptance mapping:** Production-phase safety, accuracy, integration and owner-approval gate (AC-01, AC-02, AC-03, AC-05, AC-07, AC-11)
 
 ## Objective
 Validate mapping against selected current schema; compare multiple generators on identical fixtures, retain mapping gaps and source provenance.

@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Test Suite](https://img.shields.io/badge/tests-63%20passed%20%7C%20100%25-brightgreen.svg)]()
+[![Test Suite](https://img.shields.io/badge/tests-67%20passed%20%7C%20100%25-brightgreen.svg)]()
 [![PQC Standard](https://img.shields.io/badge/NIST-FIPS%20203%20%7C%20204%20%7C%20205-purple.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
 
 > **SIH26164 (ECDAT)**: A provenance-aware, coverage-accounted cryptographic discovery and post-quantum migration analysis engine for enterprise codebases, dependencies, configurations, and certificate stores.
@@ -18,6 +18,7 @@ Modern enterprises face a critical transition toward **Post-Quantum Cryptography
 2. **Deterministic Cryptographic Discovery**: Emits canonical observations with SHA-256 evidence digests, exact line numbers, calibrated confidence bands, and strict zero-secret leakage.
 3. **Truthful Coverage Accounting**: Separates assessed code from unassessed formats. Absence of findings is explicitly labeled `NO_FINDINGS_IN_SUPPORTED_SCOPE`—never falsely marked "Safe".
 4. **Post-Quantum Readiness**: Detects both classical (quantum-vulnerable) algorithms (RSA, ECC, Diffie-Hellman) and modern NIST PQC standards (ML-KEM/Kyber, ML-DSA/Dilithium, SLH-DSA/SPHINCS+, Falcon).
+5. **Continuous Temporal Lineage & CBOM Reconciliation**: Tracks cryptographic posture drift across code versions via deterministic Cryptographic DNA hashing, catches algorithm downgrade regressions, and reconciles multi-scanner CBOMs into unified CycloneDX 1.6 specifications.
 
 ---
 
@@ -45,6 +46,8 @@ Modern enterprises face a critical transition toward **Post-Quantum Cryptography
                        │   - Package Manifest Parsers           │
                        │   - TLS & SSH Config Inspectors        │
                        │   - X.509 Certificate Metadata Parser  │
+                       │   - Static Binary & Container Scanners │
+                       │   - Authorized Endpoint Detectors      │
                        │   - Strict Secret / Key Redaction      │
                        └───────────────────┬────────────────────┘
                                            │ Canonical Observations
@@ -62,21 +65,24 @@ Modern enterprises face a critical transition toward **Post-Quantum Cryptography
 │    Worker 02     │             │    Worker 03     │             │    Worker 04     │
 │ Canonical Evidence│             │ Contextual Risk  │             │ Workflow, Web UI │
 │ & CBOM Projection│             │ & Migration Queue│             │  & Review Portal │
+│ - Temporal Time  │             │ - Mosca Theorem  │             │ - Drilldown API  │
+│   Machine & DNA  │             │ - Sensitivity    │             │ - Audit Log      │
+│ - Reconciliation │             │ - Dated PQC      │             │ - CI/CD Export   │
 └──────────────────┘             └──────────────────┘             └──────────────────┘
 ```
 
 ---
 
-## Core Capabilities (Worker 01 — Completed)
+## Core Capabilities
 
-### 1. Safe Intake & Scan Boundary (`app.intake`)
+### 1. Safe Intake & Scan Boundary (`app.intake` — Worker 01)
 - **Container Format Verification**: Inspects file magic bytes (ZIP, GZIP, BZIP2, TAR) to prevent extension spoofing.
 - **Decompression Bomb Protection**: Active streaming byte counters enforce maximum compression ratios ($100:1$), total uncompressed sizes ($500\text{ MB}$), and single-file thresholds ($50\text{ MB}$).
 - **Directory Traversal Prevention**: Strips leading slashes, blocks parent directory backtracking (`../`), null bytes (`\0`), and drive specifiers.
 - **Symlink & Dangerous File Guards**: Rejects symlink/hardlink escapes (`SymlinkEscapeError`) and safely skips dangerous executables (`.exe`, `.dll`, `.so`, `.ps1`).
 - **Reproducible Manifest**: Emits `ScanManifest` containing archive SHA-256, scan ID (UUIDv4), file inventory, and extraction metrics.
 
-### 2. Multi-Surface & Multi-Modal Cryptographic Discovery (`app.discovery`)
+### 2. Multi-Surface & Multi-Modal Cryptographic Discovery (`app.discovery` — Worker 01)
 - **Source Code**: Python AST + multi-language regex covering Python, Java, JavaScript/TypeScript, Go, C/C++, and Rust.
 - **Package Manifests**: Identifies cryptographic libraries in `package.json`, `pom.xml`, `requirements.txt`, `pyproject.toml`, `go.mod`, and `Cargo.toml`.
 - **Infrastructure & Config**: Audits TLS protocol versions (`TLSv1.3`, `TLSv1.2`, `SSLv3`), cipher suites (`ECDHE-AES256-GCM`), and SSH key exchange mechanisms in `.yaml`, `.conf`, `.ini`, and `.properties`.
@@ -97,6 +103,8 @@ Modern enterprises face a critical transition toward **Post-Quantum Cryptography
 - **Asset Identity & Disambiguation**: Aggregates multi-source evidence into unified component identities (`AssetIdentity`) with uncertainty tracking.
 - **Parametric Sanitization**: Allowlist-based filtering ensures secrets and internal values are redacted (`[REDACTED]`) prior to ingestion.
 - **Relational Context Graph & CBOM Export**: Structures parent-child component relationships, audit trail logging, and privacy-safe CycloneDX-aligned inventory exports (`AC-03`, `AC-05`, `AC-09`).
+- **Temporal Cryptographic Time Machine (PROD-01)**: Implements point-in-time `InventorySnapshot` models and deterministic SHA-256 Cryptographic DNA hashing. Computes temporal drift deltas (`added`, `removed`, `modified`) and triggers high-urgency alerts on cryptographic strength downgrade regressions (e.g. `AES-256` $\to$ `DES`).
+- **CycloneDX 1.6 Conformance & Multi-Scanner Reconciliation (PROD-02)**: Schema validator for CycloneDX 1.6 cryptographic asset profiles. Multi-generator reconciliation engine computes the **Discrepancy Index** ($D$) across disparate scanners (ASTRA, IBM CBOM, CycloneDX CLI), preserves minority scanner claims, and generates unified, non-lossy CBOMs.
 
 ### 5. Contextual Risk & Mosca Horizon Engine (`app.risk` — Worker 03)
 - **Mosca Theorem Formulation**: Formally evaluates $X$ (data shelf-life) $+ Y$ (migration duration) $> Z$ (quantum threat horizon). Assets violating this inequality represent immediate Store-Now-Decrypt-Later (SNDL) risks and are automatically escalated to `CRITICAL`.
@@ -152,21 +160,27 @@ astra/
 │   │   │       ├── binary_detector.py        # Static ELF/PE/Mach-O symbol & OID detector (PROD-01)
 │   │   │       ├── container_detector.py     # Dockerfile & container layer inspector (PROD-01)
 │   │   │       └── network_detector.py       # Authorized TLS endpoint & handshake detector (PROD-02)
-│   │   └── coverage/                  # Worker 01: MVP-03 Coverage & Benchmark Engine
-│   │       ├── accounting.py          # CoverageAccountant (honest denominator tracking)
-│   │       ├── benchmark.py           # BenchmarkRunner (Precision, Recall, F1 against AC-06)
-│   │       └── models.py              # SurfaceCoverage, CoverageReport, BenchmarkEvaluation
+│   │   ├── coverage/                  # Worker 01: MVP-03 Coverage & Benchmark Engine
+│   │   │   ├── accounting.py          # CoverageAccountant (honest denominator tracking)
+│   │   │   ├── benchmark.py           # BenchmarkRunner (Precision, Recall, F1 against AC-06)
+│   │   │   └── models.py              # SurfaceCoverage, CoverageReport, BenchmarkEvaluation
+│   │   ├── inventory/                 # Worker 02: Canonical Inventory, Lineage & CBOM
+│   │   │   ├── models.py              # CanonicalEvidence, AssetIdentity, redaction
+│   │   │   ├── temporal.py            # TemporalLineageEngine & DNA Drift Tracking (PROD-01)
+│   │   │   └── cbom_reconciliation.py # CycloneDX 1.6 & Multi-Scanner Reconciler (PROD-02)
+│   │   ├── risk/                      # Worker 03: Mosca Horizon & Contextual Risk
+│   │   └── web_workflow/              # Worker 04: Workflow API & Review Portal
 │   └── tests/
 │       ├── test_intake/               # 13 intake security & boundary tests
 │       ├── test_discovery/            # 12 discovery tests (source, config, cert + binary, container, network)
 │       ├── test_coverage/             # 4 coverage accounting & benchmark tests
-│       ├── test_inventory/            # 3 canonical inventory & redaction tests
+│       ├── test_inventory/            # 7 canonical inventory, temporal & CBOM tests (3 MVP + 4 prod)
 │       ├── test_risk/                 # 9 risk & Mosca theorem tests
 │       ├── test_web_workflow/         # 4 workflow API & audit tests
-│       └── test_integration_security/ # 9 dual-tester assurance tests (59 MVP + 4 prod = 63 tests total)
+│       └── test_integration_security/ # 9 dual-tester assurance tests (59 MVP + 8 prod = 67 tests total)
 └── .brain/
     ├── .ORG_research/                 # NIST PQC papers, ECDAT dossiers & research PDFs
-    ├── .report/                       # Worker 01 MVP-01, MVP-02, MVP-03 signoff reports
+    ├── .report/                       # Worker signoff reports (MVP-01..03, PROD-01..02)
     └── .work/                         # Shared architecture, contracts, and worker roles
 ```
 
