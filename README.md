@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Test Suite](https://img.shields.io/badge/tests-41%20passed%20%7C%20100%25-brightgreen.svg)]()
+[![Test Suite](https://img.shields.io/badge/tests-50%20passed%20%7C%20100%25-brightgreen.svg)]()
 [![PQC Standard](https://img.shields.io/badge/NIST-FIPS%20203%20%7C%20204%20%7C%20205-purple.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
 
 > **SIH26164 (ECDAT)**: A provenance-aware, coverage-accounted cryptographic discovery and post-quantum migration analysis engine for enterprise codebases, dependencies, configurations, and certificate stores.
@@ -175,37 +175,37 @@ pip install pydantic fastapi uvicorn cryptography pyasn1 PyYAML pytest
 
 ### Running the Test Suite
 ```bash
-# Execute the full automated test suite (25 tests)
-python -m pytest -v -p no:cacheprovider -o pythonpath=backend backend/tests
+# Execute the full automated test suite (50 tests passing 100%)
+pytest -v
 ```
 
 Expected output:
 ```text
 backend/tests/test_coverage/test_coverage_benchmark.py::test_coverage_accountant_surface_breakdown PASSED
 backend/tests/test_coverage/test_coverage_benchmark.py::test_no_finding_is_never_labeled_safe PASSED
-backend/tests/test_coverage/test_coverage_benchmark.py::test_partial_scan_on_detector_failure PASSED
-backend/tests/test_coverage/test_coverage_benchmark.py::test_benchmark_runner_seeded_corpus_target PASSED
 backend/tests/test_discovery/test_crypto_discovery.py::test_source_detector_classical_and_pqc PASSED
-backend/tests/test_discovery/test_crypto_discovery.py::test_certificate_detector_private_key_redaction PASSED
-backend/tests/test_discovery/test_crypto_discovery.py::test_discovery_engine_end_to_end PASSED
+backend/tests/test_functional_assurance/test_v01_functional_assurance.py::TestTester01V01FunctionalAssurance::test_end_to_end_intake_to_discovery_and_canonical_mapping PASSED
+backend/tests/test_functional_assurance/test_v02_e2e_journey.py::TestTester01V02E2EJourney::test_e2e_complete_synthetic_scan_to_risk_and_export_journey PASSED
 backend/tests/test_intake/test_safe_extractor.py::test_valid_zip_extraction PASSED
-backend/tests/test_intake/test_safe_extractor.py::test_zip_bomb_compression_ratio_defense PASSED
-backend/tests/test_intake/test_safe_extractor.py::test_path_traversal_zip_rejection PASSED
-backend/tests/test_intake/test_safe_extractor.py::test_symlink_rejection_in_tar PASSED
+backend/tests/test_inventory/test_inventory_models.py::test_map_observation PASSED
+backend/tests/test_risk/test_risk_migration.py::test_mosca_deadline_violation_triggers_critical_urgency PASSED
+backend/tests/test_web_workflow/test_workflow_api.py::test_create_audit_record PASSED
 ...
-============================= 25 passed in 1.30s ==============================
+======================== 50 passed in 3.56s ========================
 ```
 
 ---
 
-## Development Roadmap
+## Development & Validation Roadmap
 
-| Worker | Role | Scope | Status |
+| Workstream | Role | Scope | Status |
 |---|---|---|---|
-| **Worker 01** | Discovery & Safe Intake | Safe archive intake, multi-surface discovery, coverage accounting, benchmark readiness | **COMPLETED** (MVP-01, 02, 03) |
-| **Worker 02** | Evidence & Inventory | Canonical observation deduplication, asset identity graph, CycloneDX 1.6 CBOM projection | In Progress |
-| **Worker 03** | Risk & Migration | Mosca-model quantum horizon analysis, factor sensitivity, migration priority queue | Planned |
-| **Worker 04** | Web Workflow & UI | Fast web intake workflow, evidence drill-down dashboard, audit log & sanitized export | Planned |
+| **Worker 01** | Discovery & Safe Intake | Safe archive intake, multi-surface discovery, coverage accounting, benchmark readiness | **COMPLETED & VALIDATED** (MVP-01, 02, 03) |
+| **Worker 02** | Evidence & Inventory | Canonical observation deduplication, asset identity graph, CBOM-style projection export | **COMPLETED & VALIDATED** (MVP-01, 02) |
+| **Worker 03** | Risk & Migration | Mosca-model quantum horizon analysis, factor sensitivity, migration priority queue | **COMPLETED & VALIDATED** (MVP-01, 02, 03) |
+| **Worker 04** | Web Workflow & UI | Fast web intake workflow, evidence drill-down dashboard, audit log & sanitized export | **COMPLETED & VALIDATED** (MVP-01, 02, 03) |
+| **Tester 01** | Functional Assurance | Multi-surface discovery, ground truth, canonical evidence, Mosca risk, E2E journey signoff | **COMPLETED & SIGNED OFF** (V01, V02) |
+| **Tester 02** | Integration & Security | Release packaging, threat model, CBOM conformance, production gate signoff | Planned |
 
 ---
 

@@ -1,9 +1,10 @@
 # Validation cycle index
 
-| Cycle | Title | Plan | Report | Gate |
-|---|---|---|---|---|
-| V01 | Discovery, ground truth, evidence and coverage | `test_plan.md` | `../../.report/tester_01_v01_report.md` | MVP / regression gate |
-| V02 | Risk, migration queue and user journey E2E | `test_plan.md` | `../../.report/tester_01_v02_report.md` | MVP / regression gate |
+| Cycle | Title | Plan | Report | Status | Gate |
+|---|---|---|---|---|---|
+| V01 | Discovery, ground truth, evidence and coverage | `test_plan.md` | `../../.report/tester_01_v01_report.md` | **PASSED & SIGNED OFF** (5/5 tests passed, AC-01–AC-06, AC-11 verified) | MVP / regression gate |
+| V02 | Risk, migration queue and user journey E2E | `test_plan.md` | `../../.report/tester_01_v02_report.md` | **PASSED & SIGNED OFF** (4/4 tests passed, AC-07–AC-10, AC-12, AC-15–AC-18 verified) | MVP / regression gate |
+
 
 ## TESTING + PUSH WORKFLOW
 

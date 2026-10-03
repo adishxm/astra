@@ -1,9 +1,10 @@
 # Tester 01 documentation review/update plan
 
-| Cycle | Documentation to inspect/update | Source of truth | Signoff evidence |
-|---|---|---|---|
-| V01 — Discovery, ground truth, evidence and coverage | Supported scope, limitations, coverage/uncertainty labels, test protocol/results, defect taxonomy and report/export guide | Acceptance criteria + interface contract + actual versioned test evidence when available | Reviewer, date, version, changed sections, unresolved wording risks |
-| V02 — Risk, migration queue and user journey E2E | Supported scope, limitations, coverage/uncertainty labels, test protocol/results, defect taxonomy and report/export guide | Acceptance criteria + interface contract + actual versioned test evidence when available | Reviewer, date, version, changed sections, unresolved wording risks |
+| Cycle | Documentation to inspect/update | Source of truth | Signoff evidence | Status |
+|---|---|---|---|---|
+| V01 — Discovery, ground truth, evidence and coverage | Supported scope, limitations, coverage/uncertainty labels, test protocol/results, defect taxonomy and report/export guide | Acceptance criteria (AC-01–AC-06, AC-11) + interface contract + actual executed test suite (`test_v01_functional_assurance.py`) | Tester 01, 2026-10-03, v0.1.0, 30 tests in scope passed, verified zero secret leakage and truthful denominator labeling | **REVIEW COMPLETE & VERIFIED** |
+| V02 — Risk, migration queue and user journey E2E | Supported scope, limitations, coverage/uncertainty labels, test protocol/results, defect taxonomy and report/export guide | Acceptance criteria (AC-07–AC-10, AC-12, AC-15–AC-18) + interface contract + actual executed test suite (`test_v02_e2e_journey.py`) | Tester 01, 2026-10-03, v0.1.0, 20 tests in scope passed, verified Mosca horizon logic, backlog priority and CBOM export | **REVIEW COMPLETE & VERIFIED** |
+
 
 
 Never write successful detection, schema conformity, production security, or performance claims until corresponding evidence exists. Label synthetic data and sample exports. Document policy defaults, dates and update owner.

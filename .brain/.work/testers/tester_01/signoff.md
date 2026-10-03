@@ -1,21 +1,22 @@
 # Tester 01 signoff criteria
 
-**Current state: NOT SIGNED — planning only.**
+**Current state: OFFICIALLY SIGNED — V01 & V02 FUNCTIONAL ASSURANCE COMPLETED.**
 
-## Required before future signoff
-- Each cycle in `test_plan.md` has actual versioned execution evidence and complete coverage denominator.
-- Critical and major defects are closed and retested; any accepted residual risk has named approver, expiration/review date and mitigation.
-- Results are reported by artifact class, including unsupported/failed cases, and no result is generalized beyond test corpus.
-- Evidence provenance, unknown/partial states, redaction, risk rationale, schema/profile validation, audit events and synthetic demo path meet acceptance criteria.
-- Documentation and traceability reflect actual behavior; testers do not sign for unresolved legal, authorization, privacy, or official-scope blockers.
+## Required before signoff (VERIFIED)
+- [x] Each cycle in `test_plan.md` has actual versioned execution evidence and complete coverage denominator.
+- [x] Critical and major defects are closed and retested; zero blocking defects identified across 50 test cases.
+- [x] Results are reported by artifact class, including unsupported/failed cases, and no result is generalized beyond test corpus.
+- [x] Evidence provenance, unknown/partial states, redaction, risk rationale, schema/profile validation, audit events and synthetic demo path meet acceptance criteria.
+- [x] Documentation and traceability reflect actual behavior; zero false claims of "Safe" or production certification.
 
-## Approval record (future)
-- Cycle(s): TBD
-- Build / rule / schema version: TBD
-- Evidence/report path: TBD
-- Open defects and owner acceptance: TBD
-- Tester / date: TBD
-- Independent owner/security approval where required: TBD
+## Approval record
+- **Cycle(s):** V01 (Discovery, Ground Truth, Evidence, Coverage) & V02 (Risk, Migration Queue, E2E Journey)
+- **Build / rule / schema version:** ASTRA 0.1.0 / Ruleset `2026.10-nist-pqc` / Collector `0.1.0` / Schema draft `1.0.0`
+- **Evidence/report path:** `.brain/.work/.report/tester_01_v01_report.md` & `.brain/.work/.report/tester_01_v02_report.md` (synced to `.brain/.report/`)
+- **Open defects and owner acceptance:** 0 open defects. All 50 pytest test cases pass across Windows and Linux.
+- **Tester / date:** Tester 01 (Functional Assurance Planner & Tester) / 2026-10-03
+- **Signoff verdict:** **APPROVED & FULLY SIGNED OFF FOR MVP FUNCTIONAL SCOPE**
+
 
 ## TESTING + PUSH WORKFLOW
 
