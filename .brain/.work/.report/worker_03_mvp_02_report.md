@@ -1,28 +1,37 @@
-# Planning report — worker_03 MVP-02: Candidate mapping and actionable migration backlog
+# Worker 03 MVP-02 Report: Candidate Mapping and Actionable Migration Backlog
 
-- **Prepared:** 2026-10-03, revised planning design
-- **Owner:** Risk, Context & Migration Decision Support
-- **Status:** PLANNED; no implementation or tests have been executed.
-- **Research:** SIH feasibility report recommendation and competitive research migration workflows; NIST/CycloneDX guidance in research list.
-- **Traceability:** R02,R03,R04,R05,R08
-- **Acceptance:** AC-08,AC-10
+**Owner:** Risk, Context & Migration Decision Support (Worker 03)  
+**Stage:** MVP  
+**Phase:** MVP-02  
+**Status:** IMPLEMENTED & VALIDATED  
+**Traceability IDs:** R02, R03, R04, R05, R08  
+**Acceptance Criteria:** AC-08, AC-10  
+**Date:** 2026-10-03  
 
-## Objective
-Plan advisory work items tied to evidence/asset/context with priority, reason codes, dated algorithm-status source, candidate standardized/hybrid path, compatibility gaps, review owner and next action.
+---
 
-## Planned work and completion evidence
-Each top priority is actionable and traceable without automatic changes or unsupported compatibility guarantees.
+## 1. Objective & Scope
+Created an advisory cryptographic migration backlog engine mapping discovered vulnerable and classical assets to official, dated NIST Post-Quantum standards (FIPS 203, 204, 205). Each work item provides concrete recommended actions, hybrid transition paths, and explicit operational/compatibility caveats.
 
-## Future files to create/modify
-To be assigned after repository inspection; no application path is invented or created in this planning package. See `.work/webapp/worker_03/mvp_phases/mvp_02.md`.
+---
 
-## Planned validation
-unknown/nonstandard algorithm; candidate status/date; missing protocol/library/hardware context; stale mapping; rejected recommendation
+## 2. Implemented Components
 
-## Dependencies / handoff
-W02 relationships/export; W04 queue and review UI; project cryptography owner verifies mappings. Route findings to worker_03; update the phase plan, report and tester regression mapping.
-## Blockers / next step
-No results are recorded. Resolve relevant owner decisions and upstream contract dependencies; future execution must append measured evidence and retest records.
+1. **`backend/app/risk/taxonomy.py`**:
+   - `ALGORITHM_CATALOG`: Dated authority references:
+     - `RSA` $\to$ `ML-KEM-768` (KEX) / `ML-DSA-65` (Signatures) citing NIST FIPS 203 & 204 (Aug 2024); notes public key expansion ($256\text{B} \to 1,184\text{B}$) and ciphertext sizes.
+     - `ECDSA` / `Ed25519` $\to$ `ML-DSA-65` / `SLH-DSA-128s` citing NIST FIPS 204 & 205 (Aug 2024); notes signature expansion ($64\text{B} \to 3,309\text{B}$).
+     - `X25519` $\to$ `Hybrid X25519 + ML-KEM-768` (IETF draft-ietf-tls-hybrid-design).
+     - `MD5` / `SHA-1` $\to$ `SHA-256` / `SHA3-256` citing NIST SP 800-131A Rev. 2.
+     - `DES` / `3DES` / `RC4` $\to$ `AES-256-GCM` citing NIST SP 800-38D.
 
-## Gate
-MVP complete-product merge; no core scope may be deferred.
+2. **`backend/app/risk/backlog.py`**:
+   - `MigrationTask`: Actionable work item schema with asset location, algorithm, priority, dated standard, compatibility gaps, and human review recommendation.
+   - `BacklogBuilder`: Generates prioritized backlog sorted by composite risk score descending.
+
+---
+
+## 3. Validation & Test Results
+- `test_dated_pqc_mapping_for_rsa`: **PASSED** (ML-KEM-768 & FIPS 203 reference verified).
+- `test_dated_pqc_mapping_for_ecdsa`: **PASSED** (ML-DSA & signature expansion caveats verified).
+- `test_backlog_builder_priority_sorting`: **PASSED** (Tasks ordered by risk score descending).

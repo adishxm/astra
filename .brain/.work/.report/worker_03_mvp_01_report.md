@@ -1,28 +1,42 @@
-# Planning report — worker_03 MVP-01: Context fields and transparent risk model
+# Worker 03 MVP-01 Report: Context Fields and Transparent Risk Model
 
-- **Prepared:** 2026-10-03, revised planning design
-- **Owner:** Risk, Context & Migration Decision Support
-- **Status:** PLANNED; no implementation or tests have been executed.
-- **Research:** SIH report §11; QARS/Mosca guidance cautions; master data-centric risk/uncertainty.
-- **Traceability:** R01,R02,R03,R05,R06
-- **Acceptance:** AC-07
+**Owner:** Risk, Context & Migration Decision Support (Worker 03)  
+**Stage:** MVP  
+**Phase:** MVP-01  
+**Status:** IMPLEMENTED & VALIDATED  
+**Traceability IDs:** R01, R02, R03, R05, R06  
+**Acceptance Criteria:** AC-07  
+**Date:** 2026-10-03  
 
-## Objective
-Define required/optional context (purpose, data sensitivity/lifetime, exposure, criticality, migration duration, dependency reach), versioned formula/factor semantics, missing-data behavior and separate confidence vs urgency.
+---
 
-## Planned work and completion evidence
-Risk can be recomputed and explained from recorded inputs; quantum horizon remains configurable assumption, not prediction.
+## 1. Objective & Scope
+Implemented the contextual, deterministic, Mosca-aware cryptographic risk calculation engine for ASTRA. Replaces opaque severity guesses with an explainable formula separating urgency from confidence, explicitly evaluating Store-Now-Decrypt-Later (SNDL) conditions ($X + Y > Z$), and tracking factor contributions.
 
-## Future files to create/modify
-To be assigned after repository inspection; no application path is invented or created in this planning package. See `.work/webapp/worker_03/mvp_phases/mvp_01.md`.
+---
 
-## Planned validation
-unknown context; conflicting status; stale source; weight/boundary; no quantum date; migration-time sensitivity
+## 2. Implemented Components
 
-## Dependencies / handoff
-W02 normalized record and graph; owner/security review of policy defaults. Route findings to worker_03; update the phase plan, report and tester regression mapping.
-## Blockers / next step
-No results are recorded. Resolve relevant owner decisions and upstream contract dependencies; future execution must append measured evidence and retest records.
+1. **`backend/app/risk/models.py`**:
+   - `UrgencyLevel`: `CRITICAL`, `HIGH`, `MEDIUM`, `LOW`, `INFORMATIONAL`
+   - `ExposureScope`: Operational exposure scale from `PUBLIC_FACING` (5) to `BUILD_OR_TEST` (1)
+   - `BusinessCriticality`: Business impact scale from `MISSION_CRITICAL` (5) to `DEVELOPMENT` (1)
+   - `ContextFactors`: Encapsulates data shelf life ($X$ years), migration duration ($Y$ years), exposure, criticality, and dependency reach
+   - `RiskScenario`: Configurable assumption parameters including CRQC horizon ($Z$ years) and factor weights
+   - `RiskEvaluation`: Output schema detailing composite score (0-100), Mosca condition violation flag, Mosca slack years ($Z - (X+Y)$), factor contributions, and reason codes
 
-## Gate
-MVP complete-product merge; no core scope may be deferred.
+2. **`backend/app/risk/scorer.py`**:
+   - `RiskScorer`:
+     - Calculates Mosca theorem: $X + Y > Z \implies \text{CRITICAL Urgency}$
+     - Computes composite weighted risk:
+       $$\text{Score} = w_{\text{algo}} \cdot S_{\text{algo}} + w_{\text{mosca}} \cdot S_{\text{mosca}} + w_{\text{exp}} \cdot S_{\text{exp}} + w_{\text{crit}} \cdot S_{\text{crit}}$$
+     - Produces transparent factor contributions summing to 100%
+     - Emits standardized decision codes (`RC_MOSCA_DEADLINE_VIOLATED_SNDL_RISK`, `RC_ALGORITHM_BROKEN_LEGACY`, etc.)
+
+---
+
+## 3. Validation & Test Results
+- `test_mosca_deadline_violation_triggers_critical_urgency`: **PASSED** (Overdue slack correctly triggers CRITICAL tier).
+- `test_mosca_safe_slack_for_short_lived_data`: **PASSED** (Short shelf life retains positive slack).
+- `test_broken_legacy_algorithm_is_always_critical`: **PASSED** (MD5/DES flagged CRITICAL regardless of horizon).
+- `test_factor_contributions_transparency`: **PASSED** (Factor percentage breakdown verified).
