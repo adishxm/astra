@@ -178,6 +178,13 @@ describe('ScanDetailPage', () => {
     // Default tab: Findings
     expect(screen.getByText('RSA-2048')).toBeInTheDocument();
 
+    // Switch to CBOM tab
+    const cbomTab = screen.getByRole('tab', { name: /cbom/i });
+    fireEvent.click(cbomTab);
+    expect(screen.getByTestId('cbom-summary')).toBeInTheDocument();
+    expect(screen.getByTestId('cbom-algorithm-matrix')).toBeInTheDocument();
+    expect(screen.getByTestId('cbom-inventory-table')).toBeInTheDocument();
+
     // Switch to Risk Assessment tab
     const riskTab = screen.getByRole('tab', { name: /risk assessment/i });
     fireEvent.click(riskTab);

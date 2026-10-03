@@ -1,0 +1,178 @@
+/* CbomAlgorithmMatrix.css */
+
+.cbom-matrix-card {
+  padding: var(--space-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.cbom-matrix-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-sm);
+}
+
+.cbom-matrix-title-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.matrix-icon {
+  color: var(--cyan);
+}
+
+.cbom-matrix-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.matrix-badge {
+  font-size: 11px;
+  font-family: var(--font-mono);
+  color: var(--primary);
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+}
+
+.matrix-families-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-md);
+}
+
+.family-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.family-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-xs);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.08);
+  padding-bottom: var(--space-xs);
+}
+
+.family-name {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.family-count-badge {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  background: rgba(148, 163, 184, 0.1);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.family-algos-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.algo-card-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(30, 41, 59, 0.4);
+  border: 1px solid rgba(148, 163, 184, 0.08);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.algo-card-item:hover {
+  background: rgba(99, 102, 241, 0.12);
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: translateY(-1px);
+}
+
+.algo-card-item:focus-visible {
+  outline: 2px solid var(--primary);
+}
+
+.algo-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.algo-title {
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--text-main);
+}
+
+.algo-count-tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cyan);
+}
+
+.algo-meta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.algo-purpose-pill {
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: rgba(148, 163, 184, 0.1);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.algo-param-pill {
+  font-size: 10px;
+  font-family: var(--font-mono);
+  color: #67e8f9;
+  background: rgba(8, 145, 178, 0.2);
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.algo-surfaces-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 2px;
+}
+
+.surface-micro-tag {
+  font-size: 9px;
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  background: rgba(15, 23, 42, 0.6);
+  padding: 0 4px;
+  border-radius: 2px;
+}

@@ -23,6 +23,14 @@ import {
   RiskTable,
   RiskDetailModal,
 } from '../components/risk';
+import {
+  CbomSummary,
+  CbomInventoryTable,
+  CbomAlgorithmMatrix,
+  CbomDetailModal,
+  CbomExportModal,
+  normalizeCbomInventory,
+} from '../components/cbom';
 import './ScanDetailPage.css';
 
 /**
@@ -36,6 +44,8 @@ export default function ScanDetailPage() {
   const [activeTab, setActiveTab] = useState('findings');
   const [selectedFinding, setSelectedFinding] = useState(null);
   const [selectedRiskItem, setSelectedRiskItem] = useState(null);
+  const [selectedCbomItem, setSelectedCbomItem] = useState(null);
+  const [isExportOpen, setIsExportOpen] = useState(false);
 
   if (loading) {
     return (
@@ -96,6 +106,9 @@ export default function ScanDetailPage() {
   const scenario = scan.scenario || null;
   const context = scan.context || null;
 
+  // Normalize CBOM items
+  const cbomComponents = normalizeCbomInventory(canonicalAssets, scan.observations || []);
+
   // Urgency counts
   const critCount = summary.critical_urgency_count ?? 0;
   const highCount = summary.high_urgency_count ?? 0;
@@ -107,6 +120,7 @@ export default function ScanDetailPage() {
 
   const tabs = [
     { id: 'findings', label: 'Findings & Primitives', badge: String(assetCount) },
+    { id: 'cbom', label: 'CBOM', badge: cbomComponents.length > 0 ? String(cbomComponents.length) : undefined },
     { id: 'risk', label: 'Risk Assessment', badge: riskEvaluations.length > 0 ? String(riskEvaluations.length) : undefined },
     { id: 'coverage', label: 'Coverage & Accounting' },
     { id: 'surfaces', label: 'Discovery Surfaces' },
@@ -265,7 +279,32 @@ export default function ScanDetailPage() {
           </div>
         </TabPanel>
 
-        {/* Tab 2: Risk Assessment */}
+        {/* Tab 2: CBOM (Cryptographic Bill of Materials) */}
+        <TabPanel id="cbom" active={activeTab === 'cbom'}>
+          <div className="scan-cbom-section" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+            <CbomSummary
+              components={cbomComponents}
+              scan={scan}
+              onExportClick={() => setIsExportOpen(true)}
+            />
+
+            <CbomAlgorithmMatrix
+              components={cbomComponents}
+            />
+
+            <div style={{ marginTop: 'var(--space-md)' }}>
+              <div className="section-header-row" style={{ marginBottom: 'var(--space-sm)' }}>
+                <h3 className="section-heading">CycloneDX 1.6 Cryptographic Components</h3>
+              </div>
+              <CbomInventoryTable
+                components={cbomComponents}
+                onSelectComponent={(item) => setSelectedCbomItem(item)}
+              />
+            </div>
+          </div>
+        </TabPanel>
+
+        {/* Tab 3: Risk Assessment */}
         <TabPanel id="risk" active={activeTab === 'risk'}>
           <div className="scan-risk-section" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
             <RiskSummary
@@ -312,7 +351,7 @@ export default function ScanDetailPage() {
           </div>
         </TabPanel>
 
-        {/* Tab 3: Coverage & Accounting */}
+        {/* Tab 4: Coverage & Accounting */}
         <TabPanel id="coverage" active={activeTab === 'coverage'}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
             <CoverageOverview coverage={coverage} summary={summary} />
@@ -323,7 +362,7 @@ export default function ScanDetailPage() {
           </div>
         </TabPanel>
 
-        {/* Tab 4: Discovery Surfaces */}
+        {/* Tab 5: Discovery Surfaces */}
         <TabPanel id="surfaces" active={activeTab === 'surfaces'}>
           <SurfaceBreakdown
             surfaceBreakdown={surfaceBreakdown}
@@ -331,7 +370,7 @@ export default function ScanDetailPage() {
           />
         </TabPanel>
 
-        {/* Tab 5: Coverage Gaps & Unsupported Files */}
+        {/* Tab 6: Coverage Gaps & Unsupported Files */}
         <TabPanel id="gaps" active={activeTab === 'gaps'}>
           <CoverageGapsTable
             manifestFiles={manifestFiles}
@@ -339,7 +378,7 @@ export default function ScanDetailPage() {
           />
         </TabPanel>
 
-        {/* Tab 6: Collector Engine Diagnostic */}
+        {/* Tab 7: Collector Engine Diagnostic */}
         <TabPanel id="health" active={activeTab === 'health'}>
           <CollectorHealth
             health={collectorHealth}
@@ -360,6 +399,21 @@ export default function ScanDetailPage() {
         evaluation={selectedRiskItem}
         open={Boolean(selectedRiskItem)}
         onClose={() => setSelectedRiskItem(null)}
+      />
+
+      {/* CBOM Detail Modal */}
+      <CbomDetailModal
+        component={selectedCbomItem}
+        open={Boolean(selectedCbomItem)}
+        onClose={() => setSelectedCbomItem(null)}
+      />
+
+      {/* CycloneDX 1.6 Export Modal */}
+      <CbomExportModal
+        open={isExportOpen}
+        onClose={() => setIsExportOpen(false)}
+        scanId={scanId}
+        archiveName={targetName}
       />
     </div>
   );

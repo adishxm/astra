@@ -1,0 +1,91 @@
+/* CbomExportModal.css */
+
+.cbom-export-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.export-spec-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: rgba(6, 78, 59, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-md);
+}
+
+.export-spec-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.export-spec-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--emerald);
+}
+
+.export-spec-subtext {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.export-loading-box {
+  padding: var(--space-3xl) 0;
+  display: flex;
+  justify-content: center;
+}
+
+.export-content-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.export-meta-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.export-meta-row code {
+  font-family: var(--font-mono);
+  color: var(--primary);
+}
+
+.export-json-preview {
+  background: rgba(10, 15, 29, 0.95);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-main);
+  overflow-x: auto;
+  max-height: 350px;
+}
+
+.cbom-export-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--border-subtle);
+  margin-top: var(--space-md);
+}
+
+.export-actions-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
