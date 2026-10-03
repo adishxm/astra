@@ -28,6 +28,7 @@ MANIFEST
 
 # Virtual environments
 .env
+.venv/
 .venv
 env/
 venv/
@@ -38,6 +39,7 @@ venv.bak/
 # Testing & Coverage
 .pytest_cache/
 .coverage
+coverage/
 htmlcov/
 .tox/
 .nox/

@@ -1,0 +1,557 @@
+{
+  "status": "completed",
+  "scan_id": "scan-cf529d73",
+  "target_name": "synthetic_sample.zip",
+  "created_at": "2026-10-03T16:58:45.449871+00:00",
+  "asset_count": 16,
+  "coverage_percentage": 57.14,
+  "clean_state_label": "COMPLETE_WITH_COVERAGE_ACCOUNTING",
+  "dna_hash": "edcb54e8c8b2e04a1380807d36d5b7a43ca3c25f4cff275073214177e8a67875",
+  "canonical_assets": [
+    {
+      "asset_id": "rsa-2048-crypto_service.py-22",
+      "primary_name": "RSA-2048",
+      "observations": [
+        {
+          "canonical_id": "1800dbc68264217929aa076deba48cf7274894f90430007d94e745d8306fbade",
+          "asset_id": "rsa-2048-crypto_service.py-22",
+          "claim_type": "ALGORITHM_USE",
+          "source_kind": "SOURCE_CODE",
+          "algorithm": "RSA-2048",
+          "protocol": null,
+          "purpose": "ASYMMETRIC",
+          "key_size_bits": 2048,
+          "curve_name": null,
+          "evidence_digest": "c7f8132721b51c65c823888216059d498d643aba34078d925342fab90902eb8a",
+          "sanitized_excerpt": "algorithm_tag = \"RSA-2048\"  # String literal detected by ASTRA",
+          "redacted": false,
+          "detector_id": "detector-source-code-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "CONFIRMED",
+          "confidence_rationale": "Pattern match for RSA-2048 in .py source code",
+          "state": "OBSERVED",
+          "observed_at": "2026-10-03T16:58:45.443110+00:00",
+          "relative_path": "crypto_service.py",
+          "start_line": 22,
+          "end_line": 22,
+          "raw_parameters": {
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "rsa-crypto_service.py-22",
+      "primary_name": "RSA",
+      "observations": [
+        {
+          "canonical_id": "a55f63e944545e944c820067c2a542d5ae3d1c841ee8282db5c6a7d719b0bfa5",
+          "asset_id": "rsa-crypto_service.py-22",
+          "claim_type": "ALGORITHM_USE",
+          "source_kind": "SOURCE_CODE",
+          "algorithm": "RSA",
+          "protocol": null,
+          "purpose": "ASYMMETRIC",
+          "key_size_bits": null,
+          "curve_name": null,
+          "evidence_digest": "c7f8132721b51c65c823888216059d498d643aba34078d925342fab90902eb8a",
+          "sanitized_excerpt": "algorithm_tag = \"RSA-2048\"  # String literal detected by ASTRA",
+          "redacted": false,
+          "detector_id": "detector-source-code-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "HIGH",
+          "confidence_rationale": "Pattern match for RSA in .py source code",
+          "state": "OBSERVED",
+          "observed_at": "2026-10-03T16:58:45.444125+00:00",
+          "relative_path": "crypto_service.py",
+          "start_line": 22,
+          "end_line": 22,
+          "raw_parameters": {
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "aes-256-crypto_service.py-28",
+      "primary_name": "AES-256",
+      "observations": [
+        {
+          "canonical_id": "e4d17810a9a34fc776a883ebcf5d423801d726044b5dcffaaaa977ec1279e68b",
+          "asset_id": "aes-256-crypto_service.py-28",
+          "claim_type": "ALGORITHM_USE",
+          "source_kind": "SOURCE_CODE",
+          "algorithm": "AES-256",
+          "protocol": null,
+          "purpose": "ENCRYPTION",
+          "key_size_bits": 256,
+          "curve_name": null,
+          "evidence_digest": "275cdb3aeabcabe6538c15d821c778394a5c29f8e8c1b4e1b4f17573536aa256",
+          "sanitized_excerpt": "cipher_type = \"AES-256\"  # Confirmed classical symmetric",
+          "redacted": false,
+          "detector_id": "detector-source-code-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "CONFIRMED",
+          "confidence_rationale": "Pattern match for AES-256 in .py source code",
+          "state": "OBSERVED",
+          "observed_at": "2026-10-03T16:58:45.444125+00:00",
+          "relative_path": "crypto_service.py",
+          "start_line": 28,
+          "end_line": 28,
+          "raw_parameters": {
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "aes-crypto_service.py-28",
+      "primary_name": "AES",
+      "observations": [
+        {
+          "canonical_id": "0e34ed2600daf3b7a05bf32b60f8dd2c7d971aebed30b9eb6d92af0d1501c169",
+          "asset_id": "aes-crypto_service.py-28",
+          "claim_type": "ALGORITHM_USE",
+          "source_kind": "SOURCE_CODE",
+          "algorithm": "AES",
+          "protocol": null,
+          "purpose": "ENCRYPTION",
+          "key_size_bits": null,
+          "curve_name": null,
+          "evidence_digest": "275cdb3aeabcabe6538c15d821c778394a5c29f8e8c1b4e1b4f17573536aa256",
+          "sanitized_excerpt": "cipher_type = \"AES-256\"  # Confirmed classical symmetric",
+          "redacted": false,
+          "detector_id": "detector-source-code-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "HIGH",
+          "confidence_rationale": "Pattern match for AES in .py source code",
+          "state": "OBSERVED",
+          "observed_at": "2026-10-03T16:58:45.444125+00:00",
+          "relative_path": "crypto_service.py",
+          "start_line": 28,
+          "end_line": 28,
+          "raw_parameters": {
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "ml-kem-crypto_service.py-34",
+      "primary_name": "ML-KEM",
+      "observations": [
+        {
+          "canonical_id": "cd066ee6c5cfc0a66532ae3f81528ff2b56675f004fd14c00cb77d791691ec1c",
+          "asset_id": "ml-kem-crypto_service.py-34",
+          "claim_type": "ALGORITHM_USE",
+          "source_kind": "SOURCE_CODE",
+          "algorithm": "ML-KEM",
+          "protocol": null,
+          "purpose": "KEY_EXCHANGE",
+          "key_size_bits": null,
+          "curve_name": null,
+          "evidence_digest": "a44aaee135be583ad42633c20b565350c8de4f495177f2866f2fa1073f26d86b",
+          "sanitized_excerpt": "pqc_algorithm = \"ML-KEM-768\"  # Post-Quantum KEM",
+          "redacted": false,
+          "detector_id": "detector-source-code-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "CONFIRMED",
+          "confidence_rationale": "Pattern match for ML-KEM in .py source code",
+          "state": "OBSERVED",
+          "observed_at": "2026-10-03T16:58:45.444125+00:00",
+          "relative_path": "crypto_service.py",
+          "start_line": 34,
+          "end_line": 34,
+          "raw_parameters": {
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "md5-crypto_service.py-42",
+      "primary_name": "MD5",
+      "observations": [
+        {
+          "canonical_id": "d06c1515f285be65d3a78ee86a1777f058be32ee8d67878216d9371f20415f37",
+          "asset_id": "md5-crypto_service.py-42",
+          "claim_type": "ALGORITHM_USE",
+          "source_kind": "SOURCE_CODE",
+          "algorithm": "MD5",
+          "protocol": null,
+          "purpose": "HASHING",
+          "key_size_bits": null,
+          "curve_name": null,
+          "evidence_digest": "6cdffd3440fd2ba970cba01ca871d6ab1aa4fd1633e2fee13c56ba9e6ee1ca08",
+          "sanitized_excerpt": "return hashlib.md5(data).hexdigest()",
+          "redacted": false,
+          "detector_id": "detector-source-code-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "HIGH",
+          "confidence_rationale": "Pattern match for MD5 in .py source code",
+          "state": "OBSERVED",
+          "observed_at": "2026-10-03T16:58:45.444125+00:00",
+          "relative_path": "crypto_service.py",
+          "start_line": 42,
+          "end_line": 42,
+          "raw_parameters": {
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "config-tlsv1.3-nginx.conf-15",
+      "primary_name": "TLSv1.3",
+      "observations": [
+        {
+          "canonical_id": "f21810ea14b4073a63805f60a76797b31b9b3cc15968159b50f4a8ad4205cf67",
+          "asset_id": "config-tlsv1.3-nginx.conf-15",
+          "claim_type": "CONFIG_PARAMETER",
+          "source_kind": "CONFIG",
+          "algorithm": "TLSv1.3",
+          "protocol": null,
+          "purpose": "PROTOCOL",
+          "key_size_bits": null,
+          "curve_name": null,
+          "evidence_digest": "362aa5db902a643bd7f6985d56264f1eec859c742066de9c27739cd8eed92820",
+          "sanitized_excerpt": "ssl_protocols TLSv1.2 TLSv1.3;",
+          "redacted": false,
+          "detector_id": "detector-config-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "CONFIRMED",
+          "confidence_rationale": "Found cryptographic configuration setting for TLSv1.3",
+          "state": "DECLARED",
+          "observed_at": "2026-10-03T16:58:45.445133+00:00",
+          "relative_path": "nginx.conf",
+          "start_line": 15,
+          "end_line": 15,
+          "raw_parameters": {
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "config-tlsv1.2-nginx.conf-15",
+      "primary_name": "TLSv1.2",
+      "observations": [
+        {
+          "canonical_id": "b7ea4d6a6645774e8901f47c51e13780032059c3278e2ed58e388216af5a8e99",
+          "asset_id": "config-tlsv1.2-nginx.conf-15",
+          "claim_type": "CONFIG_PARAMETER",
+          "source_kind": "CONFIG",
+          "algorithm": "TLSv1.2",
+          "protocol": null,
+          "purpose": "PROTOCOL",
+          "key_size_bits": null,
+          "curve_name": null,
+          "evidence_digest": "362aa5db902a643bd7f6985d56264f1eec859c742066de9c27739cd8eed92820",
+          "sanitized_excerpt": "ssl_protocols TLSv1.2 TLSv1.3;",
+          "redacted": false,
+          "detector_id": "detector-config-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "CONFIRMED",
+          "confidence_rationale": "Found cryptographic configuration setting for TLSv1.2",
+          "state": "DECLARED",
+          "observed_at": "2026-10-03T16:58:45.445133+00:00",
+          "relative_path": "nginx.conf",
+          "start_line": 15,
+          "end_line": 15,
+          "raw_parameters": {
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "config-tlsv1.0-nginx.conf-15",
+      "primary_name": "TLSv1.0",
+      "observations": [
+        {
+          "canonical_id": "f0a72acfcaf2c8062503bccf75b792877beab0cfea74d8f57e9de6ec19b7b903",
+          "asset_id": "config-tlsv1.0-nginx.conf-15",
+          "claim_type": "CONFIG_PARAMETER",
+          "source_kind": "CONFIG",
+          "algorithm": "TLSv1.0",
+          "protocol": null,
+          "purpose": "PROTOCOL",
+          "key_size_bits": null,
+          "curve_name": null,
+          "evidence_digest": "362aa5db902a643bd7f6985d56264f1eec859c742066de9c27739cd8eed92820",
+          "sanitized_excerpt": "ssl_protocols TLSv1.2 TLSv1.3;",
+          "redacted": false,
+          "detector_id": "detector-config-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "CONFIRMED",
+          "confidence_rationale": "Found cryptographic configuration setting for TLSv1.0",
+          "state": "DECLARED",
+          "observed_at": "2026-10-03T16:58:45.445133+00:00",
+          "relative_path": "nginx.conf",
+          "start_line": 15,
+          "end_line": 15,
+          "raw_parameters": {
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "config-ecdhe-aes256-gcm-nginx.conf-16",
+      "primary_name": "ECDHE-AES256-GCM",
+      "observations": [
+        {
+          "canonical_id": "8e34bb085ecee8c9fd79b8bfc7a66a529ee935473bd8b85f3427b09a284b372e",
+          "asset_id": "config-ecdhe-aes256-gcm-nginx.conf-16",
+          "claim_type": "CONFIG_PARAMETER",
+          "source_kind": "CONFIG",
+          "algorithm": "ECDHE-AES256-GCM",
+          "protocol": null,
+          "purpose": "CIPHER_SUITE",
+          "key_size_bits": null,
+          "curve_name": null,
+          "evidence_digest": "577dea74aebe104559fdd06b0e4d6f721c89c1d5b04faaaa472661443b1a463b",
+          "sanitized_excerpt": "ssl_ciphers ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256;",
+          "redacted": false,
+          "detector_id": "detector-config-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "CONFIRMED",
+          "confidence_rationale": "Found cryptographic configuration setting for ECDHE-AES256-GCM",
+          "state": "DECLARED",
+          "observed_at": "2026-10-03T16:58:45.445133+00:00",
+          "relative_path": "nginx.conf",
+          "start_line": 16,
+          "end_line": 16,
+          "raw_parameters": {
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "config-ecdhe-aes128-gcm-nginx.conf-16",
+      "primary_name": "ECDHE-AES128-GCM",
+      "observations": [
+        {
+          "canonical_id": "04021669ef21c8c1c2556940d601984824f6c9dbb961173d84a5f922693532e7",
+          "asset_id": "config-ecdhe-aes128-gcm-nginx.conf-16",
+          "claim_type": "CONFIG_PARAMETER",
+          "source_kind": "CONFIG",
+          "algorithm": "ECDHE-AES128-GCM",
+          "protocol": null,
+          "purpose": "CIPHER_SUITE",
+          "key_size_bits": null,
+          "curve_name": null,
+          "evidence_digest": "577dea74aebe104559fdd06b0e4d6f721c89c1d5b04faaaa472661443b1a463b",
+          "sanitized_excerpt": "ssl_ciphers ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES128-GCM-SHA256;",
+          "redacted": false,
+          "detector_id": "detector-config-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "CONFIRMED",
+          "confidence_rationale": "Found cryptographic configuration setting for ECDHE-AES128-GCM",
+          "state": "DECLARED",
+          "observed_at": "2026-10-03T16:58:45.445133+00:00",
+          "relative_path": "nginx.conf",
+          "start_line": 16,
+          "end_line": 16,
+          "raw_parameters": {
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "manifest-crypto-js-package.json",
+      "primary_name": "crypto-js",
+      "observations": [
+        {
+          "canonical_id": "dedd6546bc88aaa46968cc250181a7e79467a19e480a79cb78eb29e3b456aca0",
+          "asset_id": "manifest-crypto-js-package.json",
+          "claim_type": "DEPENDENCY_REFERENCE",
+          "source_kind": "MANIFEST",
+          "algorithm": "crypto-js",
+          "protocol": null,
+          "purpose": "CRYPTOGRAPHIC_LIBRARY",
+          "key_size_bits": null,
+          "curve_name": null,
+          "evidence_digest": "06e5050a653cfadd74ce2b447236f2c8b347e354a9d09a1096f4f25502a8ec5e",
+          "sanitized_excerpt": "\"crypto-js\": \"^4.2.0\"",
+          "redacted": false,
+          "detector_id": "detector-manifest-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "CONFIRMED",
+          "confidence_rationale": "Package manifest declaration: crypto-js in package.json (JavaScript library of crypto standards) \u2014 declared dependency capability, distinct from confirmed source-level invocation",
+          "state": "DECLARED",
+          "observed_at": "2026-10-03T16:58:45.445133+00:00",
+          "relative_path": "package.json",
+          "start_line": null,
+          "end_line": null,
+          "raw_parameters": {
+            "version": "^4.2.0",
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "manifest-tweetnacl-package.json",
+      "primary_name": "tweetnacl",
+      "observations": [
+        {
+          "canonical_id": "05a25f1b77a8e36ea4cbc58f3f2f579a7ba50f5ec31885cbb88bdb28223b1d69",
+          "asset_id": "manifest-tweetnacl-package.json",
+          "claim_type": "DEPENDENCY_REFERENCE",
+          "source_kind": "MANIFEST",
+          "algorithm": "tweetnacl",
+          "protocol": null,
+          "purpose": "CRYPTOGRAPHIC_LIBRARY",
+          "key_size_bits": null,
+          "curve_name": null,
+          "evidence_digest": "801cbc7555cd55bcd29ea6239242c98d6051995fc4e0c19bcb589798641ea0b9",
+          "sanitized_excerpt": "\"tweetnacl\": \"^1.0.3\"",
+          "redacted": false,
+          "detector_id": "detector-manifest-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "CONFIRMED",
+          "confidence_rationale": "Package manifest declaration: tweetnacl in package.json (Port of TweetNaCl cryptographic library) \u2014 declared dependency capability, distinct from confirmed source-level invocation",
+          "state": "DECLARED",
+          "observed_at": "2026-10-03T16:58:45.445133+00:00",
+          "relative_path": "package.json",
+          "start_line": null,
+          "end_line": null,
+          "raw_parameters": {
+            "version": "^1.0.3",
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "manifest-crypto-js-package.json-6",
+      "primary_name": "crypto-js",
+      "observations": [
+        {
+          "canonical_id": "c02a47320818193232cbd5eb00529737ee38f268f8c0da7786d63726dfed6ba3",
+          "asset_id": "manifest-crypto-js-package.json-6",
+          "claim_type": "DEPENDENCY_REFERENCE",
+          "source_kind": "MANIFEST",
+          "algorithm": "crypto-js",
+          "protocol": null,
+          "purpose": "CRYPTOGRAPHIC_LIBRARY",
+          "key_size_bits": null,
+          "curve_name": null,
+          "evidence_digest": "0160c2af701180455cb76fbfa740a24c2d2873f0124338883d877b129d9800a8",
+          "sanitized_excerpt": "\"crypto-js\": \"^4.2.0\",",
+          "redacted": false,
+          "detector_id": "detector-manifest-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "HIGH",
+          "confidence_rationale": "Declared dependency manifest reference: crypto-js in package.json (JavaScript library of crypto standards) \u2014 potential capability, distinct from confirmed source invocation",
+          "state": "DECLARED",
+          "observed_at": "2026-10-03T16:58:45.446141+00:00",
+          "relative_path": "package.json",
+          "start_line": 6,
+          "end_line": 6,
+          "raw_parameters": {
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "manifest-tweetnacl-package.json-7",
+      "primary_name": "tweetnacl",
+      "observations": [
+        {
+          "canonical_id": "dd6fccce6ecbcb095c0f14eb6b4807945ca50263184fec00e90d58938ae1401e",
+          "asset_id": "manifest-tweetnacl-package.json-7",
+          "claim_type": "DEPENDENCY_REFERENCE",
+          "source_kind": "MANIFEST",
+          "algorithm": "tweetnacl",
+          "protocol": null,
+          "purpose": "CRYPTOGRAPHIC_LIBRARY",
+          "key_size_bits": null,
+          "curve_name": null,
+          "evidence_digest": "801cbc7555cd55bcd29ea6239242c98d6051995fc4e0c19bcb589798641ea0b9",
+          "sanitized_excerpt": "\"tweetnacl\": \"^1.0.3\"",
+          "redacted": false,
+          "detector_id": "detector-manifest-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "HIGH",
+          "confidence_rationale": "Declared dependency manifest reference: tweetnacl in package.json (Port of TweetNaCl cryptographic library) \u2014 potential capability, distinct from confirmed source invocation",
+          "state": "DECLARED",
+          "observed_at": "2026-10-03T16:58:45.446141+00:00",
+          "relative_path": "package.json",
+          "start_line": 7,
+          "end_line": 7,
+          "raw_parameters": {
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    },
+    {
+      "asset_id": "cert-rsa-2048-sample_certificate.pem",
+      "primary_name": "RSA-2048",
+      "observations": [
+        {
+          "canonical_id": "84119ef8b523972782959d9d0b7812cd05dc73d8ee22299ef418fa87e123be8c",
+          "asset_id": "cert-rsa-2048-sample_certificate.pem",
+          "claim_type": "CERTIFICATE_METADATA",
+          "source_kind": "CERTIFICATE",
+          "algorithm": "RSA-2048",
+          "protocol": null,
+          "purpose": "IDENTITY_AND_AUTHENTICATION",
+          "key_size_bits": 2048,
+          "curve_name": null,
+          "evidence_digest": "7a710d34757aae3fd346c98c7bcc304451170811fff87c79a533c57d515a16f1",
+          "sanitized_excerpt": "Subject: O=HEXARK ASTRA Prototype,CN=api.hexark.internal | Issuer: O=HEXARK ASTRA Prototype,CN=api.hexark.internal | PublicKey: RSA-2048 (2048 bits) | SigAlgo: sha256WithRSAEncryption | Valid: 2026-10-03T12:29:02+00:00 to 2027-10-03T12:29:02+00:00",
+          "redacted": false,
+          "detector_id": "detector-certificate-v1",
+          "ruleset_version": "2026.10-nist-pqc",
+          "confidence": "CONFIRMED",
+          "confidence_rationale": "Parsed standard X.509 certificate public key and signature algorithm",
+          "state": "VERIFIED",
+          "observed_at": "2026-10-03T16:58:45.447143+00:00",
+          "relative_path": "sample_certificate.pem",
+          "start_line": 1,
+          "end_line": 1,
+          "raw_parameters": {
+            "signature_algorithm": "[REDACTED]",
+            "subject": "[REDACTED]",
+            "issuer": "[REDACTED]",
+            "valid_from": "[REDACTED]",
+            "valid_to": "[REDACTED]",
+            "quantum_status": "[REDACTED]"
+          }
+        }
+      ],
+      "is_uncertain": false
+    }
+  ],
+  "summary": {
+    "total_files": 6,
+    "assessed_files": 4,
+    "coverage_percentage": 57.14,
+    "clean_state_label": "COMPLETE_WITH_COVERAGE_ACCOUNTING",
+    "critical_urgency_count": 1,
+    "high_urgency_count": 1,
+    "medium_urgency_count": 11,
+    "low_urgency_count": 3
+  }
+}

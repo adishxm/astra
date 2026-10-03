@@ -1,0 +1,213 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:scan-cf529d73",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-03T16:58:45.449871+00:00",
+    "tools": [
+      {
+        "name": "ASTRA",
+        "version": "1.0.0"
+      }
+    ],
+    "component": {
+      "type": "application",
+      "name": "synthetic_sample.zip"
+    }
+  },
+  "components": [
+    {
+      "type": "cryptographic-asset",
+      "name": "RSA-2048-rsa-2048",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "RSA-2048",
+          "parameterSetIdentifier": "2048",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "RSA-rsa-cryp",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "RSA",
+          "parameterSetIdentifier": "standard",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "AES-256-aes-256-",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "AES-256",
+          "parameterSetIdentifier": "256",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "AES-aes-cryp",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "AES",
+          "parameterSetIdentifier": "standard",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "ML-KEM-ml-kem-c",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "ML-KEM",
+          "parameterSetIdentifier": "standard",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "MD5-md5-cryp",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "MD5",
+          "parameterSetIdentifier": "standard",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "TLSv1.3-config-t",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "TLSv1.3",
+          "parameterSetIdentifier": "standard",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "TLSv1.2-config-t",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "TLSv1.2",
+          "parameterSetIdentifier": "standard",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "TLSv1.0-config-t",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "TLSv1.0",
+          "parameterSetIdentifier": "standard",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "ECDHE-AES256-GCM-config-e",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "ECDHE-AES256-GCM",
+          "parameterSetIdentifier": "standard",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "ECDHE-AES128-GCM-config-e",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "ECDHE-AES128-GCM",
+          "parameterSetIdentifier": "standard",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "crypto-js-manifest",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "crypto-js",
+          "parameterSetIdentifier": "standard",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "tweetnacl-manifest",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "tweetnacl",
+          "parameterSetIdentifier": "standard",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "crypto-js-manifest",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "crypto-js",
+          "parameterSetIdentifier": "standard",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "tweetnacl-manifest",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "tweetnacl",
+          "parameterSetIdentifier": "standard",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    },
+    {
+      "type": "cryptographic-asset",
+      "name": "RSA-2048-cert-rsa",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "name": "RSA-2048",
+          "parameterSetIdentifier": "2048",
+          "executionEnvironment": "software-plain-ram"
+        }
+      }
+    }
+  ]
+}

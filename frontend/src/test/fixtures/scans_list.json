@@ -1,0 +1,26 @@
+[
+  {
+    "scan_id": "scan-7fae0e1b",
+    "target_name": "clean_state.zip",
+    "created_at": "2026-10-03T16:58:45.523322+00:00",
+    "asset_count": 0,
+    "coverage_percentage": 33.33,
+    "dna_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "scan_id": "scan-0ed9335d",
+    "target_name": "partial_coverage.zip",
+    "created_at": "2026-10-03T16:58:45.488409+00:00",
+    "asset_count": 1,
+    "coverage_percentage": 25.0,
+    "dna_hash": "a72a8e802d9e4131386f55d369671a57e289a445e48a19d34193f766ab3f8921"
+  },
+  {
+    "scan_id": "scan-cf529d73",
+    "target_name": "synthetic_sample.zip",
+    "created_at": "2026-10-03T16:58:45.449871+00:00",
+    "asset_count": 16,
+    "coverage_percentage": 57.14,
+    "dna_hash": "edcb54e8c8b2e04a1380807d36d5b7a43ca3c25f4cff275073214177e8a67875"
+  }
+]

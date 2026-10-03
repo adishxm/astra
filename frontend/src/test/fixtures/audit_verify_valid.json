@@ -1,0 +1,7 @@
+{
+  "valid": true,
+  "event_count": 3,
+  "genesis_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "tip_hash": "9cad09ba348de727d6d26deda2ebc81217da525382016570b793a736960ff59e",
+  "message": "Audit chain fully verified; zero tampering detected"
+}
