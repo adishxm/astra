@@ -33,8 +33,9 @@ ASTRA_ALLOW_DIRECTORY_SCAN = os.getenv(
 app = FastAPI(
     title="ASTRA - Enterprise Cryptographic Discovery & Analysis Tool",
     description=(
-        "Provenance-aware, coverage-accounted cryptographic discovery, "
-        "Mosca-horizon risk evaluation, and post-quantum migration engine (SIH26164 ECDAT)."
+        "ASTRA by Team HEXARK is an open-source cryptographic discovery and CBOM prototype "
+        "aligned with SIH26164 (ECDAT). Scan source, manifests, configs and certificates, "
+        "evaluate Mosca PQC migration risk, and export CycloneDX 1.6 CBOM."
     ),
     version="1.0.0",
     docs_url="/docs",
