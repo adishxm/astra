@@ -1,0 +1,80 @@
+/* Sidebar Component Styles */
+.app-sidebar {
+  width: 240px;
+  background-color: var(--bg-surface);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  padding: var(--space-lg) var(--space-md);
+}
+
+.app-sidebar__nav {
+  width: 100%;
+}
+
+.app-sidebar__list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: 0;
+  margin: 0;
+}
+
+.app-sidebar__item {
+  width: 100%;
+}
+
+.app-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  color: var(--text-muted);
+  text-decoration: none;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color var(--transition-fast), background-color var(--transition-fast), border-color var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.app-sidebar__link:hover {
+  color: var(--text-main);
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.app-sidebar__link--active {
+  color: var(--primary);
+  background-color: var(--primary-glow);
+  border-color: var(--border-focus);
+  font-weight: 600;
+}
+
+.app-sidebar__link-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-sidebar__link-text {
+  flex: 1;
+}
+
+/* Responsive adjustment */
+@media (max-width: 768px) {
+  .app-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    padding: var(--space-sm);
+  }
+
+  .app-sidebar__list {
+    flex-direction: row;
+    justify-content: center;
+    gap: var(--space-sm);
+  }
+}

@@ -8,3 +8,4 @@ export { default as TabBar, TabPanel } from './TabBar';
 export { default as Modal } from './Modal';
 export { default as Tooltip, computeTooltipPosition } from './Tooltip';
 export { default as ProgressRing, getProgressTone } from './ProgressRing';
+export { default as ErrorBoundary } from './ErrorBoundary';

@@ -1,5 +1,8 @@
 import React, { lazy, Suspense } from 'react';
 import { Routes, Route } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
+import AppLayout from './components/layout/AppLayout';
+import ErrorBoundary from './components/common/ErrorBoundary';
 import DashboardPage from './pages/DashboardPage';
 import ScanPage from './pages/ScanPage';
 import ScanDetailPage from './pages/ScanDetailPage';
@@ -12,24 +15,40 @@ const DevStyleGuide = import.meta.env.DEV
 
 export default function App() {
   return (
-    <div className="app-root">
+    <ErrorBoundary>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: {
+            background: 'var(--bg-surface)',
+            color: 'var(--text-main)',
+            border: '1px solid var(--border-subtle)',
+            borderRadius: 'var(--radius-md)',
+            fontFamily: 'var(--font-sans)',
+            boxShadow: 'var(--shadow-elevated)',
+          },
+        }}
+      />
       <Routes>
-        <Route path="/" element={<DashboardPage />} />
-        <Route path="/scan" element={<ScanPage />} />
-        <Route path="/scans/:scanId" element={<ScanDetailPage />} />
-        <Route path="/findings" element={<FindingsPage />} />
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/scan" element={<ScanPage />} />
+          <Route path="/scans/:scanId" element={<ScanDetailPage />} />
+          <Route path="/findings" element={<FindingsPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+
         {import.meta.env.DEV && DevStyleGuide && (
           <Route
             path="/__styleguide"
             element={
-              <Suspense fallback={<div>Loading Style Guide...</div>}>
+              <Suspense fallback={<div style={{ padding: '2rem' }}>Loading Style Guide...</div>}>
                 <DevStyleGuide />
               </Suspense>
             }
           />
         )}
-        <Route path="*" element={<NotFoundPage />} />
       </Routes>
-    </div>
+    </ErrorBoundary>
   );
 }
