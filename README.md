@@ -182,53 +182,90 @@ astra validate scan-<id>
 
 ASTRA is built upon an asynchronous, decoupled multi-worker architecture designed for modularity, defensibility, and zero secret retention:
 
-```
-                        ┌────────────────────────────────────────┐
-                        │          Authorized Archive            │
-                        │    (.zip, .tar, .tar.gz, .tar.bz2)     │
-                        └───────────────────┬────────────────────┘
-                                            │
-                                            ▼
-                        ┌────────────────────────────────────────┐
-                        │   Worker 01: Safe Upload Intake        │
-                        │   - Magic Byte Format Inspection       │
-                        │   - Zip Bomb & Streaming Limit Defense │
-                        │   - Path Traversal & Symlink Lockdown  │
-                        │   - Ephemeral Read-Only Sandbox Tree   │
-                        └───────────────────┬────────────────────┘
-                                            │ ScanManifest + Sandbox
-                                            ▼
-                        ┌────────────────────────────────────────┐
-                        │   Worker 01: Deterministic Discovery   │
-                        │   - Multi-Language AST & Regex Scanner │
-                        │   - Package Manifest Parsers           │
-                        │   - TLS & SSH Config Inspectors        │
-                        │   - X.509 Certificate Metadata Parser  │
-                        │   - Static Binary & Container Scanners │
-                        │   - Authorized Endpoint Detectors      │
-                        │   - Strict Secret / Key Redaction      │
-                        └───────────────────┬────────────────────┘
-                                            │ Canonical Observations
-                                            ▼
-                        ┌────────────────────────────────────────┐
-                        │   Worker 01: Truthful Coverage         │
-                        │   - Honest Denominator (N_assessed)    │
-                        │   - Blind-Spot & Partial Scan Flags    │
-                        │   - Seeded Benchmark Runner (>=80%)    │
-                        └───────────────────┬────────────────────┘
-                                            │
-          ┌─────────────────────────────────┼─────────────────────────────────┐
-          ▼                                 ▼                                 ▼
- ┌──────────────────┐             ┌──────────────────┐             ┌──────────────────┐
- │    Worker 02     │             │    Worker 03     │             │    Worker 04     │
- │ Canonical Evidence│             │ Contextual Risk  │             │ Workflow, Web UI │
- │ & CBOM Projection│             │ & Migration Queue│             │  & Review Portal │
- │ - Temporal Time  │             │ - Mosca Theorem  │             │ - Drilldown API  │
- │   Machine & DNA  │             │ - Sensitivity    │             │ - Tamper-Evident │
- │ - Reconciliation │             │ - Dated PQC      │             │   Audit Chaining │
- │ - CycloneDX 1.6  │             │ - Phased Roadmap │             │ - Air-Gapped     │
- │                  │             │ - Invariant Check│             │   Bundle Verify  │
- └──────────────────┘             └──────────────────┘             └──────────────────┘
+```mermaid
+flowchart TD
+    %% Input Layer
+    subgraph IntakeSources["1. Target Intake Surfaces"]
+        direction LR
+        Archive["Authorized Archive<br/>(.zip, .tar, .tar.gz, .tar.bz2)"]
+        DirScan["Local Codebase / Directory<br/>(Bare-Metal CLI / CI Runner)"]
+    end
+
+    %% Worker 01
+    subgraph W01["Worker 01: Safe Intake, Discovery & Coverage Engine"]
+        direction TB
+        subgraph W01_Intake["Safe Intake & Sandbox Containment (app.intake)"]
+            MagicCheck["Magic Byte Format Verification"]
+            ZipBombDef["Zip Bomb & Streaming Quotas (100:1 Ratio, 500MB Cap)"]
+            Sandbox["Ephemeral Read-Only Sandbox Workspace"]
+            MagicCheck --> ZipBombDef --> Sandbox
+        end
+
+        subgraph W01_Discovery["Multi-Surface Cryptographic Discovery (app.discovery)"]
+            ASTScan["Source Code Scanner (Python AST + Multi-Lang Regex)<br/>Comment & Docstring Stripping"]
+            ManifestScan["Dependency Manifests<br/>(package.json, pom.xml, requirements.txt, go.mod, Cargo.toml)"]
+            ConfigScan["TLS & SSH Configs (.yaml, .conf, .ini)"]
+            CertScan["X.509 Certificates & Public Key Metadata"]
+            BinaryScan["Static Binary Headers (ELF, PE, Mach-O Symbols & OIDs)"]
+            ContainerScan["Dockerfiles & Container Posture"]
+            Redactor["Automated Private Key Redaction [REDACTED_PRIVATE_KEY_MATERIAL]"]
+        end
+
+        subgraph W01_Coverage["Truthful Coverage Accounting (app.coverage)"]
+            CoverageCalc["Honest Denominator: N_assessed / N_total"]
+            CleanState["Clean State Guard: NO_FINDINGS_IN_SUPPORTED_SCOPE"]
+        end
+
+        Sandbox --> W01_Discovery
+        W01_Discovery --> Redactor
+        Redactor --> W01_Coverage
+    end
+
+    Archive --> MagicCheck
+    DirScan --> W01_Discovery
+
+    %% Worker 02
+    subgraph W02["Worker 02: Canonical Evidence & CBOM Engine (app.inventory)"]
+        Norm["Canonical Evidence Normalization & Deduplication"]
+        DNA["Temporal Cryptographic DNA Hashing (SHA-256)"]
+        Drift["Cryptographic Drift & Downgrade Regression Detection"]
+        CBOMGen["CycloneDX 1.6 CBOM Projection & Schema Validator"]
+        Recon["Multi-Scanner Reconciliation (Discrepancy Index D)"]
+
+        Norm --> DNA --> Drift
+        Norm --> CBOMGen --> Recon
+    end
+
+    %% Worker 03
+    subgraph W03["Worker 03: Mosca Risk & Migration Roadmap (app.risk)"]
+        MoscaCalc["Mosca Inequality Evaluator: X + Y > Z<br/>(Shelf-Life + Migration vs. Threat Horizon)"]
+        SNDLAlert["Store-Now-Decrypt-Later (SNDL) Deadline & Slack Calculation"]
+        MultiFactor["Multi-Factor Scoring (Vulnerability 40%, Mosca 25%, Exposure 20%, Criticality 15%)"]
+        PQCMapping["Candidate NIST PQC Backlog (FIPS 203 ML-KEM, 204 ML-DSA, 205 SLH-DSA)"]
+        KahnRoadmap["Kahn Topological Sorting Migration Waves (Foundation -> Platform -> Edge)"]
+
+        MoscaCalc --> SNDLAlert --> MultiFactor
+        MultiFactor --> PQCMapping --> KahnRoadmap
+    end
+
+    %% Worker 04
+    subgraph W04["Worker 04: Delivery, Web UI & Air-Gapped Governance (app.web_workflow)"]
+        FastAPI["FastAPI Master Application & REST API (/api/v1/scans)"]
+        Dashboard["Interactive Web Dashboard (Real-Time Mosca Slider & DNA Viewer)"]
+        CLI["Zero-Dependency CLI Tool (astra scan / risk / export / validate)"]
+        AuditChain["Tamper-Evident SHA-256 Merkle Audit Chain"]
+        AirGap["Air-Gapped Sovereign Profile & Signed Bundle Verification"]
+
+        FastAPI --> Dashboard
+        FastAPI --> AuditChain
+        FastAPI --> AirGap
+    end
+
+    %% Inter-worker data flows
+    W01_Coverage -->|"Canonical Observations"| W02
+    W01_Coverage -->|"Cryptographic Assets"| W03
+    W02 -->|"Validated CycloneDX 1.6 CBOM"| W04
+    W03 -->|"PQC Migration Roadmap & Risk Scores"| W04
 ```
 
 ### Worker Roles & Responsibilities
