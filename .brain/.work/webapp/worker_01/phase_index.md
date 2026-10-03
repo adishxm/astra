@@ -13,4 +13,12 @@ This worker has **3 MVP phases and 2 conditional production phases**, sized for 
 | PROD-01 | Static binary and container discovery extension | `prod_phases/prod_01.md` | Post-MVP production gate |
 | PROD-02 | Separately authorized endpoint/network evidence | `prod_phases/prod_02.md` | Post-MVP production gate |
 
+## Frontend React App Phases
+Production-grade Single Page Application (SPA) replacing static web dashboard with responsive, interactive PQC discovery, Mosca risk visualization, and CycloneDX 1.6 CBOM explorer.
+
+| ID | Phase | File | Gate |
+|---|---|---|---|
+| Phase-Aa | React Frontend Foundation & Core Scan Workflow | `mvp_phases/phase_Aa.md` | Frontend Gate 1 (Foundation & Scan) |
+| Phase-Ab | Risk Dashboard, CBOM Export & Advanced Visualizations | `mvp_phases/phase_Ab.md` | Frontend Gate 2 (Complete Web UI) |
+
 Production is optional enhancement planning and begins only after the MVP gate.
