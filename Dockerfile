@@ -22,7 +22,6 @@ COPY pytest.ini pyproject.toml ./
 ENV PYTHONPATH=/app/backend
 ENV PYTHONUNBUFFERED=1
 
-# Non-root user for security sandbox containment
 RUN useradd -m -u 1000 astra && \
     mkdir -p /app/temp_scans /app/sandbox_tmp && \
     chown -R astra:astra /app
@@ -31,4 +30,4 @@ USER astra
 
 EXPOSE 8000
 
-CMD ["python", "-m", "pytest", "backend/tests", "-v"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

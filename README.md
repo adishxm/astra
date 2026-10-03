@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Test Suite](https://img.shields.io/badge/tests-74%20passed%20%7C%20100%25-brightgreen.svg)]()
+[![Test Suite](https://img.shields.io/badge/tests-84%20passed%20%7C%20100%25-brightgreen.svg)]()
 [![PQC Standard](https://img.shields.io/badge/NIST-FIPS%20203%20%7C%20204%20%7C%20205-purple.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
 
 > **SIH26164 (ECDAT)**: A provenance-aware, coverage-accounted cryptographic discovery and post-quantum migration analysis engine for enterprise codebases, dependencies, configurations, and certificate stores.
@@ -179,22 +179,35 @@ astra/
 │   │   │   └── cbom_reconciliation.py # CycloneDX 1.6 & Multi-Scanner Reconciler (PROD-02)
 │   │   ├── risk/                      # Worker 03: Mosca Horizon, Constrained Roadmap & Assurance
 │   │   │   ├── models.py              # ContextFactors, UrgencyLevel, RiskScenario
-│   │   │   ├── scorer.py              # ContextualRiskEngine (Mosca X+Y>Z evaluation)
-│   │   │   ├── backlog.py             # MigrationBacklogBuilder (dated NIST PQC mappings)
+│   │   │   ├── scorer.py              # RiskScorer (Mosca X+Y>Z evaluation)
+│   │   │   ├── backlog.py             # BacklogBuilder (dated NIST PQC mappings)
 │   │   │   ├── scenarios.py           # ScenarioSensitivityEngine (CRQC horizon sliders)
 │   │   │   ├── roadmap.py             # DependencyRoadmapEngine & Kahn Topological Waves (PROD-01)
 │   │   │   └── assurance.py           # SecurityInvariantAssuranceEngine & Rollback Safety (PROD-02)
-│   │   └── web_workflow/              # Worker 04: Workflow API, Hardening & Air-Gapped Operations
-│   │       ├── router.py              # Evidence, review audit, export, and production API
-│   │       └── hardening.py           # AirGappedBundleManager & TamperEvidentAuditChainer (PROD-01)
+│   │   ├── services/                  # Production Central Services & Persistence
+│   │   │   ├── scan_service.py        # ScanService (unified pipeline) & ScanStore (thread-safe persistence)
+│   │   │   └── __init__.py
+│   │   ├── static/                    # Embedded Interactive Web Dashboard
+│   │   │   └── index.html             # Glassmorphism UI with live Mosca sliders, inventory & CBOM exporter
+│   │   ├── web_workflow/              # Worker 04: Workflow API, Hardening & Air-Gapped Operations
+│   │   │   ├── router.py              # Evidence drilldown, review audit, and export routes
+│   │   │   └── hardening.py           # AirGappedBundleManager & TamperEvidentAuditChainer (PROD-01)
+│   │   ├── cli.py                     # ASTRA Zero-Dependency Enterprise CLI Tool
+│   │   └── main.py                    # Master FastAPI Application Factory & Entrypoint
 │   └── tests/
+│       ├── test_e2e_product.py        # 10 End-to-End Product tests (ScanService, FastAPI, CLI)
 │       ├── test_intake/               # 13 intake security & boundary tests
 │       ├── test_discovery/            # 12 discovery tests (source, config, cert + binary, container, network)
 │       ├── test_coverage/             # 4 coverage accounting & benchmark tests
 │       ├── test_inventory/            # 7 canonical inventory, temporal & CBOM tests (3 MVP + 4 prod)
 │       ├── test_risk/                 # 13 risk, Mosca, roadmap & assurance tests (9 MVP + 4 prod)
 │       ├── test_web_workflow/         # 7 workflow API, audit chain & air-gapped tests (4 MVP + 3 prod)
-│       └── test_integration_security/ # 9 dual-tester assurance tests (59 MVP + 15 prod = 74 tests total)
+│       ├── test_functional_assurance/ # 9 functional assurance E2E journey tests
+│       └── test_integration_security/ # 9 contract security & regression readiness tests (84 tests total)
+├── frontend/                          # Standalone Dashboard Package
+│   ├── package.json                   # Vite dev server configuration
+│   ├── index.html                     # Full responsive UI
+│   └── README.md
 └── .brain/
     ├── .ORG_research/                 # NIST PQC papers, ECDAT dossiers & research PDFs
     ├── .report/                       # Worker signoff reports (MVP-01..03, PROD-01..02)
@@ -209,35 +222,83 @@ astra/
 - Python 3.10+
 - Git
 
-### Setup
+### Installation
 ```bash
 # Clone the repository
 git clone https://github.com/adishxm/astra.git
 cd astra
 
-# Install required dependencies
-pip install pydantic fastapi uvicorn cryptography pyasn1 PyYAML pytest
+# Install dependencies (or pip install -e . to register the 'astra' CLI globally)
+pip install -r requirements.txt
+pip install -e .
 ```
 
-### Running the Test Suite
+---
+
+## Running ASTRA
+
+### 1. Command-Line Interface (CLI)
+ASTRA includes a zero-dependency, air-gapped compatible CLI tool:
+
 ```bash
-# Execute the full automated test suite (50 tests passing 100%)
-pytest -v
+# Display system version and supported NIST PQC standards
+astra version
+
+# Run full cryptographic scan on a directory with tabular terminal output
+astra scan ./my_target_project --format table
+
+# Scan an archive (.zip, .tar.gz) and write report to JSON
+astra scan ./codebase_bundle.zip --format json --output scan_report.json
+
+# Display previously saved scan summary
+astra show scan-d6f0cb73
+
+# Evaluate Mosca inequality horizon (X + Y > Z) and candidate PQC backlog
+astra risk scan-d6f0cb73 --horizon 10.0 --shelf-life 5.0 --migration 3.0
+
+# Export CycloneDX 1.6 Cryptographic Bill of Materials (CBOM)
+astra export scan-d6f0cb73 --output cbom_cyclonedx.json
+
+# Validate CBOM against CycloneDX 1.6 schema
+astra validate scan-d6f0cb73
+
+# Launch the local HTTP server & interactive dashboard
+astra serve --host 127.0.0.1 --port 8000
 ```
 
-Expected output:
+### 2. FastAPI Web Server & Interactive Dashboard
+Start the production server:
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+Open **`http://localhost:8000`** in your browser to access the ASTRA Web Dashboard:
+- **Drag-and-Drop Archive Intake**: Upload `.zip` and `.tar.gz` files directly.
+- **Interactive Mosca Slider**: Dynamically adjust quantum threat timelines ($Z$) and data lifetimes ($X$) with real-time recalculation of vulnerability deadlines.
+- **Cryptographic Inventory**: Filter and search detected algorithms, key sizes, confidence ratings, and code line locations.
+- **One-Click CBOM Export**: Copy or download standard CycloneDX 1.6 JSON.
+- **Cryptographic DNA Viewer**: Track posture drift across scans using deterministic SHA-256 fingerprinting.
+
+### 3. Docker & Container Deployment
+```bash
+# Build and run the ASTRA engine container
+docker compose up --build
+
+# Run test suite inside isolated Docker container
+docker compose --profile test run astra-tests
+```
+
+---
+
+## Running the Automated Test Suite
+
+```bash
+# Run all 84 test suites with detailed output
+python -m pytest backend/tests -v
+```
+
+All 84 automated unit, integration, security, and end-to-end product tests pass with 100% success rate:
 ```text
-backend/tests/test_coverage/test_coverage_benchmark.py::test_coverage_accountant_surface_breakdown PASSED
-backend/tests/test_coverage/test_coverage_benchmark.py::test_no_finding_is_never_labeled_safe PASSED
-backend/tests/test_discovery/test_crypto_discovery.py::test_source_detector_classical_and_pqc PASSED
-backend/tests/test_functional_assurance/test_v01_functional_assurance.py::TestTester01V01FunctionalAssurance::test_end_to_end_intake_to_discovery_and_canonical_mapping PASSED
-backend/tests/test_functional_assurance/test_v02_e2e_journey.py::TestTester01V02E2EJourney::test_e2e_complete_synthetic_scan_to_risk_and_export_journey PASSED
-backend/tests/test_intake/test_safe_extractor.py::test_valid_zip_extraction PASSED
-backend/tests/test_inventory/test_inventory_models.py::test_map_observation PASSED
-backend/tests/test_risk/test_risk_migration.py::test_mosca_deadline_violation_triggers_critical_urgency PASSED
-backend/tests/test_web_workflow/test_workflow_api.py::test_create_audit_record PASSED
-...
-======================== 50 passed in 3.56s ========================
+============================= 84 passed in 3.57s ==============================
 ```
 
 ---
@@ -246,15 +307,14 @@ backend/tests/test_web_workflow/test_workflow_api.py::test_create_audit_record P
 
 | Workstream | Role | Scope | Status |
 |---|---|---|---|
-| **Worker 01** | Discovery & Safe Intake | Safe archive intake, multi-surface discovery, coverage accounting, benchmark readiness | **COMPLETED & VALIDATED** (MVP-01, 02, 03) |
-| **Worker 02** | Evidence & Inventory | Canonical observation deduplication, asset identity graph, CBOM-style projection export | **COMPLETED & VALIDATED** (MVP-01, 02) |
-| **Worker 03** | Risk & Migration | Mosca-model quantum horizon analysis, factor sensitivity, migration priority queue | **COMPLETED & VALIDATED** (MVP-01, 02, 03) |
-| **Worker 04** | Web Workflow & UI | Fast web intake workflow, evidence drill-down dashboard, audit log & sanitized export | **COMPLETED & VALIDATED** (MVP-01, 02, 03) |
-| **Tester 01** | Functional Assurance | Multi-surface discovery, ground truth, canonical evidence, Mosca risk, E2E journey signoff | **COMPLETED & SIGNED OFF** (V01, V02) |
-| **Tester 02** | Integration & Security | Release packaging, threat model, CBOM conformance, production gate signoff | Planned |
+| **Worker 01** | Discovery & Safe Intake | Safe archive intake, multi-surface discovery, coverage accounting, benchmark readiness | **COMPLETED & VALIDATED** (MVP-01..03, PROD-01..02) |
+| **Worker 02** | Evidence & Inventory | Canonical deduplication, temporal DNA time-machine, CycloneDX 1.6 CBOM | **COMPLETED & VALIDATED** (MVP-01..03, PROD-01..02) |
+| **Worker 03** | Risk & Migration | Mosca-model quantum horizon, Kahn topological wave roadmaps, rollback assurance | **COMPLETED & VALIDATED** (MVP-01..03, PROD-01..02) |
+| **Worker 04** | Web Workflow & UI | Product CLI, master FastAPI factory, embedded dashboard, tamper-evident audit chaining | **COMPLETED & VALIDATED** (MVP-01..03, PROD-01..02) |
+| **Product Suite** | End-to-End System | Zero-dependency CLI, REST API endpoints, full pipeline integration test suite | **COMPLETED & VERIFIED (84/84 PASS)** |
 
 ---
 
 ## License
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the Apache 2.0 License — see the [LICENSE](LICENSE) file for details.

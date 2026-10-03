@@ -57,3 +57,9 @@ yarn-error.log*
 # Large raw archive files
 brain.zip
 *.zip.bak
+
+# Internal / private review drafts
+nottopushongit/
+
+# Runtime scan storage
+data/

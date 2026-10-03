@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "astra-ecdat"
-version = "0.1.0"
+version = "1.0.0"
 description = "ASTRA - Enterprise Cryptographic Discovery and Analysis Tool (SIH26164 ECDAT)"
 readme = "README.md"
 authors = [
@@ -40,6 +40,10 @@ dependencies = [
     "cryptography>=41.0.0",
     "python-multipart>=0.0.9",
 ]
+
+[project.scripts]
+astra = "app.cli:main"
+
 
 [project.optional-dependencies]
 dev = [

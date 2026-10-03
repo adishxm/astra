@@ -11,4 +11,18 @@ services:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./temp_scans:/app/temp_scans
+      - ./data:/app/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     restart: unless-stopped
+
+  astra-tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: astra-tests
+    command: ["python", "-m", "pytest", "backend/tests", "-v"]
+    profiles: ["test"]
