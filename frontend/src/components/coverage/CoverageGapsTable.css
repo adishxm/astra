@@ -1,0 +1,96 @@
+/* CoverageGapsTable.css */
+
+.coverage-gaps-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.coverage-gaps-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.coverage-gaps-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.unsupported-extensions-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+}
+
+.unsupported-ext-pill {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+}
+
+.coverage-gaps-table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-sm);
+}
+
+.coverage-gaps-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: var(--font-size-sm);
+}
+
+.coverage-gaps-table th {
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-surface-raised, rgba(255, 255, 255, 0.03));
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-dim);
+  font-weight: 600;
+  font-size: var(--font-size-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.coverage-gaps-table td {
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  vertical-align: middle;
+}
+
+.gap-path-code {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-xs);
+  color: var(--text-main);
+}
+
+.gap-hash-code {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
+}

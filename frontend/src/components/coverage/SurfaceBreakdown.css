@@ -1,0 +1,105 @@
+/* SurfaceBreakdown.css */
+
+.surface-breakdown-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.surface-breakdown-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.surface-breakdown-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.surface-breakdown-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-md);
+}
+
+.surface-detail-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.surface-detail-card.clickable {
+  cursor: pointer;
+}
+
+.surface-detail-card.clickable:hover {
+  border-color: var(--accent-primary);
+  transform: translateY(-2px);
+}
+
+.surface-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.surface-badge-title {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.surface-pct {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--font-size-sm);
+  color: var(--text-main);
+}
+
+.surface-bar-bg {
+  height: 6px;
+  width: 100%;
+  background: var(--bg-base);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.surface-bar-fill {
+  height: 100%;
+  background: var(--accent-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--transition-normal);
+}
+
+.surface-stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--space-xs);
+}
+
+.surface-stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.surface-stat-row strong {
+  font-family: var(--font-mono);
+  color: var(--text-main);
+}

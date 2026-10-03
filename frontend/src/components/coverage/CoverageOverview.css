@@ -1,0 +1,82 @@
+/* CoverageOverview.css */
+
+.coverage-overview-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.coverage-overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-md);
+}
+
+.coverage-metric-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.coverage-metric-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.coverage-metric-title {
+  font-size: var(--font-size-xs);
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.coverage-metric-value {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  font-family: var(--font-mono);
+  color: var(--text-main);
+  line-height: 1.1;
+}
+
+.coverage-metric-subtext {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.coverage-truth-banner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--bg-surface-raised, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-xs);
+  color: var(--text-dim);
+}
+
+.coverage-truth-icon {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+.coverage-files-breakdown {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  margin-top: var(--space-xs);
+}
+
+.file-stat-pill {
+  font-size: var(--font-size-xs);
+  font-family: var(--font-mono);
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+}
