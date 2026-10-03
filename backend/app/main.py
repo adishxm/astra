@@ -309,6 +309,8 @@ def get_evidence_drilldown(asset_id: str):
     # Search in-memory cache and persisted records
     for s_meta in GLOBAL_SCAN_STORE.list_all():
         rec = GLOBAL_SCAN_STORE.get(s_meta["scan_id"])
+        if not rec:
+            continue
         data = rec if isinstance(rec, dict) else rec.to_dict()
         for asset in data.get("canonical_assets", []):
             if asset.get("asset_id") == asset_id:
@@ -326,6 +328,8 @@ def get_latest_export():
 
     latest_id = all_scans[0]["scan_id"]
     rec = GLOBAL_SCAN_STORE.get(latest_id)
+    if not rec:
+        return InventoryExport(assets=[], relationships=[], audit_trail=[])
     data = rec if isinstance(rec, dict) else rec.to_dict()
 
     assets = []
