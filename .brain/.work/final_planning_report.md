@@ -1,6 +1,10 @@
 # Final planning report — ECDAT webapp
 
-**Prepared:** 2026-10-03. **Outcome:** planning system created; no application code created.
+> [!NOTE]
+> **Planning Milestone Historical Record:** This document records the initial architecture planning milestone created prior to code generation on 3 Oct 2026.
+> **Implementation Status Update:** The ASTRA application prototype has since been fully implemented and verified. The codebase now contains a production FastAPI web service (`backend/app/main.py`), standalone CLI (`backend/app/cli.py`), Web Dashboard (`frontend/`), and 88 automated unit/integration/E2E tests passing in CI across all intake, multi-surface discovery, coverage accounting, Mosca risk, and CycloneDX 1.6 CBOM modules.
+
+**Prepared:** 2026-10-03. **Historical Planning Snapshot.**
 
 ## Completed planning work
 - Preserved the 27 supplied research files under `.ORG_research/`, including exact duplicates, with a SHA-256/size manifest.

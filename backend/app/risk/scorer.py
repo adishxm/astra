@@ -131,6 +131,8 @@ class RiskScorer:
                 "quantum_threat_horizon_years": z,
                 "data_shelf_life_years": x,
                 "migration_duration_years": y,
+                "context_source": "OWNER_SUPPLIED" if ctx.is_user_enriched else "DEFAULT_ASSUMPTION",
                 "ruleset_version": RULESET_VERSION,
+                "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner.",
             },
         )

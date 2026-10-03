@@ -86,6 +86,31 @@ def sanitize_snippet(snippet: str) -> Tuple[str, bool]:
     return sanitized, redacted
 
 
+def strip_line_comments(line: str) -> str:
+    """Filter out comments so comment-only mentions don't trigger false positives."""
+    clean = line.strip()
+    if not clean:
+        return ""
+    # Full-line comments across Python, JS, C, Java, Go, Rust, SQL, config
+    if clean.startswith(("//", "#", "/*", "*", "*/", ";", "--", "rem ")):
+        return ""
+
+    # Strip trailing inline comments if not inside quotes
+    in_single = False
+    in_double = False
+    for i, ch in enumerate(line):
+        if ch == "'" and not in_double:
+            in_single = not in_single
+        elif ch == '"' and not in_single:
+            in_double = not in_double
+        elif not in_single and not in_double:
+            if ch == "#":
+                return line[:i].strip()
+            if ch == "/" and i + 1 < len(line) and line[i + 1] == "/":
+                return line[:i].strip()
+    return clean
+
+
 class SourceCryptoDetector:
     """Discovers cryptographic usage in source code files."""
 
@@ -138,14 +163,59 @@ class SourceCryptoDetector:
 
         # 2. Universal Pattern & Token Scanner across all lines
         seen_keys = set()
+        in_block_comment = False
+        in_triple_quote = None
+
         for idx, line in enumerate(lines, start=1):
             line_clean = line.strip()
-            if not line_clean or line_clean.startswith(("//", "#", "/*", "*")):
-                # Check comments but skip pure boilerplate
-                pass
+            if not line_clean:
+                continue
+
+            # Skip block comments (/* ... */)
+            if in_block_comment:
+                if "*/" in line_clean:
+                    in_block_comment = False
+                    line = line[line.find("*/") + 2:]
+                    line_clean = line.strip()
+                    if not line_clean:
+                        continue
+                else:
+                    continue
+
+            # Skip Python / docstring blocks (""" or ''')
+            if in_triple_quote:
+                if in_triple_quote in line_clean:
+                    quote_marker = in_triple_quote
+                    in_triple_quote = None
+                    line = line[line.find(quote_marker) + 3:]
+                    line_clean = line.strip()
+                    if not line_clean:
+                        continue
+                else:
+                    continue
+            else:
+                # Check for single-line complete docstrings
+                if (line_clean.startswith('"""') and line_clean.endswith('"""') and len(line_clean) >= 6) or \
+                   (line_clean.startswith("'''") and line_clean.endswith("'''") and len(line_clean) >= 6):
+                    continue
+                # Check if multi-line docstring begins
+                if line_clean.startswith('"""') and line_clean.count('"""') % 2 == 1:
+                    in_triple_quote = '"""'
+                    continue
+                elif line_clean.startswith("'''") and line_clean.count("'''") % 2 == 1:
+                    in_triple_quote = "'''"
+                    continue
+                elif line_clean.startswith("/*") and "*/" not in line_clean:
+                    in_block_comment = True
+                    continue
+
+            code_only = strip_line_comments(line)
+            if not code_only:
+                # Skip pure comments and empty lines to prevent false positive findings
+                continue
 
             for regex, algo_name, purpose, q_status, conf in CRYPTO_SIGNATURES:
-                if re.search(regex, line, re.IGNORECASE):
+                if re.search(regex, code_only, re.IGNORECASE):
                     dedup_key = (algo_name, idx)
                     if dedup_key in seen_keys:
                         continue

@@ -43,6 +43,14 @@ class MigrationTask(BaseModel):
 
     review_owner: str = Field(default="Security Architecture & Crypto Team")
     status: str = Field(default="OPEN", description="OPEN, IN_REVIEW, ACCEPTED, OVERRIDDEN")
+    recommendation_type: str = Field(
+        default="CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+        description="Advisory candidate mapping requiring environmental benchmarking (latency, cost, key size)",
+    )
+    operational_benchmarking_caveat: str = Field(
+        default="Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+        description="Explicit notice regarding environmental fit",
+    )
     reason_codes: List[str] = Field(default_factory=list)
 
 

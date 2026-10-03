@@ -1,27 +1,51 @@
-# ASTRA — Enterprise Cryptographic Discovery & Analysis Tool (ECDAT)
+# ASTRA — SIH26164 Enterprise Cryptographic Discovery & Analysis Tool (ECDAT)
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Test Suite](https://img.shields.io/badge/tests-84%20passed%20%7C%20100%25-brightgreen.svg)]()
-[![PQC Standard](https://img.shields.io/badge/NIST-FIPS%20203%20%7C%20204%20%7C%20205-purple.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
+[![CI](https://github.com/adishxm/astra/actions/workflows/ci.yml/badge.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
+[![Test Suite](https://img.shields.io/badge/tests-88%20passing%20in%20CI-brightgreen.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
+[![Team: HEXARK](https://img.shields.io/badge/Team-HEXARK-blue.svg)]()
+[![NIST PQC](https://img.shields.io/badge/NIST-FIPS%20203%20%7C%20204%20%7C%20205-purple.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
 [![Launch Guide](https://img.shields.io/badge/📖_Launch_%26_Test_Guide-blue.svg)](launchntest_GUIDE.md)
 
-> **SIH26164 (ECDAT)**: A provenance-aware, coverage-accounted cryptographic discovery and post-quantum migration analysis engine for enterprise codebases, dependencies, configurations, and certificate stores.
+> **SIH26164 (ECDAT)**: A provenance-aware, coverage-accounted cryptographic discovery, Mosca-horizon post-quantum migration analysis, and standardized CycloneDX 1.6 Cryptographic Bill of Materials (CBOM) engine for enterprise codebases, dependencies, configurations, and certificate stores. Built by team **HEXARK**.
 
 ---
 
-## Overview
+## Executive Summary & Scope
 
-Modern enterprises face a critical transition toward **Post-Quantum Cryptography (PQC)**. However, effective cryptographic migration requires more than regex-matching algorithm names: finding a cryptographic primitive without provenance, purpose, exposure, data lifetime, dependencies, and explicit blind-spot accounting leads to dangerous false confidence.
+**ASTRA** is an open-source cryptographic discovery and CBOM prototype aligned with Smart India Hackathon 2026 problem statement **SIH26164 (Enterprise Cryptographic Discovery & Analysis Tool - ECDAT)**. It provides an auditable, evidence-first approach to discovering cryptographic primitives across source code, package manifests, TLS/SSH configurations, and X.509 certificate stores, accounts for honest scan coverage, explores Mosca theorem post-quantum migration urgency, and exports standardized CycloneDX 1.6 inventories.
 
-**ASTRA** solves this with an auditable, evidence-first approach:
-1. **Adversarial-Resistant Intake**: Safely extracts user-authorized archives without executing uploaded code, guarding against zip bombs, path traversals, symlink escapes, and malicious payloads.
-2. **Deterministic Cryptographic Discovery**: Emits canonical observations with SHA-256 evidence digests, exact line numbers, calibrated confidence bands, and strict zero-secret leakage.
-3. **Truthful Coverage Accounting**: Separates assessed code from unassessed formats. Absence of findings is explicitly labeled `NO_FINDINGS_IN_SUPPORTED_SCOPE`—never falsely marked "Safe".
-4. **Post-Quantum Readiness**: Detects both classical (quantum-vulnerable) algorithms (RSA, ECC, Diffie-Hellman) and modern NIST PQC standards (ML-KEM/Kyber, ML-DSA/Dilithium, SLH-DSA/SPHINCS+, Falcon).
-5. **Continuous Temporal Lineage & CBOM Reconciliation**: Tracks cryptographic posture drift across code versions via deterministic Cryptographic DNA hashing, catches algorithm downgrade regressions, and reconciles multi-scanner CBOMs into unified CycloneDX 1.6 specifications.
-6. **Constrained Migration Roadmaps & Invariant Assurance**: Graph-aware topological ordering over hardware/vendor constraints, cyclic deadlock diagnostics, downgrade immunity checks, and rollback safety verification.
-7. **Air-Gapped Sovereignty & Tamper-Evident Governance**: Sovereign offline deployments with zero telemetry leakage, signed update bundles, and mathematically verifiable SHA-256 hash-chained audit logging.
+ASTRA is an evidence-first prototype and research tool, not a certified enterprise black-box scanner. It explicitly differentiates what was assessed from what was unassessed, treats post-quantum migration horizons as configurable scenario assumptions rather than forecasts, and provides candidate migration pathways for human cryptographic review.
+
+---
+
+## 60-Second Quickstart & Live Demo
+
+You can run ASTRA locally via the one-click launcher, standalone CLI, or FastAPI dashboard:
+
+### Option A: One-Click Windows Launcher (Recommended)
+Double-click **`launch.bat`** in the repository root. The launcher will automatically verify Python, install dependencies, allocate ports, launch backend & dashboard, and open your browser to `http://localhost:8000`.
+
+### Option B: Command-Line Interface (CLI) Scan
+```bash
+# Clone the repository
+git clone https://github.com/adishxm/astra.git
+cd astra
+
+# Install dependencies (Python 3.10+)
+pip install -r requirements.txt
+
+# Run deterministic scan on the included synthetic sample project
+python -m app.cli scan ./examples/synthetic_sample --format table
+```
+
+### Option C: Realistic Near-Term Demo Walkthrough
+1. **Start the app**: Run `launch.bat` or `uvicorn app.main:app --port 8000` from `backend/`.
+2. **Scan the synthetic sample**: Upload `examples/synthetic_sample` or run CLI scan.
+3. **Inspect evidence**: Review exact file paths, line numbers, detector confidence, and unassessed files.
+4. **Explore Mosca scenario**: Adjust quantum threat horizon slider ($Z$) and data shelf-life ($X$) to visualize Store-Now-Decrypt-Later (SNDL) deadline shifts.
+5. **Export CBOM**: Export standardized CycloneDX 1.6 CBOM JSON for downstream compliance.
 
 ---
 
@@ -134,6 +158,37 @@ Modern enterprises face a critical transition toward **Post-Quantum Cryptography
 
 ---
 
+## Supported Scope & Limitations (SIH26164 Alignment)
+
+To maintain absolute credibility and transparent engineering standards, ASTRA explicitly delineates what is verified and supported in this prototype versus what is planned for future enterprise releases:
+
+| Surface / Capability | Prototype Status | Implementation & Coverage Details |
+|---|---|---|
+| **Source Code Detection** | ✅ **Verified** | Python AST + deterministic regex across Python, Java, JavaScript/TypeScript, Go, C/C++, and Rust. Automatic full-line and inline comment filtering eliminates false positives. |
+| **Dependency Manifests** | ✅ **Verified** | Parses `package.json`, `pom.xml`, `requirements.txt`, `pyproject.toml`, `go.mod`, and `Cargo.toml`. Accurately labels declared library capabilities distinct from confirmed source-level invocations. |
+| **TLS & Infrastructure Configs**| ✅ **Verified** | Audits TLS protocol versions (`TLSv1.2`, `TLSv1.3`), legacy SSL, and cipher suites in `.yaml`, `.conf`, `.ini`, and `.properties`. |
+| **Certificates & Public Keys** | ✅ **Verified** | Parses X.509 certificate metadata (Subject, Issuer, public key algorithm, bit length). Enforces strict automated private key redaction (`[REDACTED_PRIVATE_KEY_MATERIAL]`). |
+| **Static Binary Inspection** | ✅ **Verified (Direct Scans)** | Direct filesystem scans (`astra scan <dir>`) statically inspect ELF, PE/COFF, and Mach-O headers for crypto symbols (OpenSSL, Libsodium, liboqs), ASN.1 OIDs, and constants without code execution. Web archive uploads filter executables (`.exe`, `.dll`, `.so`) at intake for defense-in-depth isolation. |
+| **Container & Dockerfiles** | ✅ **Verified** | Audits Dockerfile instructions, base OS crypto packages, and certificate environment variables. |
+| **Truthful Coverage Accounting**| ✅ **Verified** | Tracks honest denominator $N_{\text{assessed}} / N_{\text{total}}$. Repositories with unsupported file formats (media, binaries, unrecognized formats) surface coverage warnings rather than misleading "100% clean" claims. |
+| **Mosca Scenario Risk Engine** | ✅ **Verified** | Evaluates Store-Now-Decrypt-Later (SNDL) risk via Mosca theorem ($X + Y > Z$). Threat horizons and data shelf-lives are explicitly tagged as **scenario simulation assumptions**, not predictive forecasts. |
+| **CycloneDX 1.6 CBOM Export** | ✅ **Verified** | Emits standardized CycloneDX 1.6 Cryptographic Bill of Materials (CBOM) with automated schema validation. |
+| **Hardware Security Modules (HSM)** | ⏳ **Enterprise Roadmap** | PKCS#11 hardware tokens, smartcards, and physical HSM discovery are planned for future hardware-connected releases. |
+| **Cloud KMS Fleet Scanners** | ⏳ **Enterprise Roadmap** | Live cloud fleet discovery across AWS KMS, Azure Key Vault, and GCP Cloud KMS is planned for multi-cloud enterprise agents. |
+| **Kernel eBPF Network Probe** | ⏳ **Enterprise Roadmap** | Live kernel-level TLS socket interception via eBPF probes is planned for dynamic runtime inspection. |
+
+---
+
+## Privacy, Threat Model & Safe Intake
+
+ASTRA is engineered with a strict **local-first, sovereign** security posture:
+- **Local CPU Processing**: All discovery, pattern analysis, and risk scoring execute locally on the host CPU. No code, tokens, or telemetry egress to external cloud services or LLMs.
+- **Ephemeral Sandbox Intake**: Archives uploaded via the web interface are extracted into isolated, temporary sandboxes with strict byte, compression ratio, path length, and symlink defenses (`SafeArchiveExtractor`), and unlinked immediately upon completion.
+- **Automated Zero-Secret Redaction**: Detected private key blocks and credentials are automatically masked with `[REDACTED_PRIVATE_KEY_MATERIAL]` prior to evidence storage.
+- **Demo Recommendation**: Reviewers are encouraged to scan the included `examples/synthetic_sample/` project or open-source repositories. Do not upload live unredacted production secrets to any public demonstration.
+
+---
+
 ## Supported Cryptographic Taxonomy
 
 | Category | Algorithms / Primitives Supported |
@@ -239,7 +294,7 @@ pip install -e .
 ## Running ASTRA
 
 ### 1. Command-Line Interface (CLI)
-ASTRA includes a zero-dependency, air-gapped compatible CLI tool:
+ASTRA includes a standalone, air-gapped compatible CLI tool that runs locally with declared dependencies (`pip install -r requirements.txt`). It requires no external database servers, Docker, or external network connectivity:
 
 ```bash
 # Display system version and supported NIST PQC standards
@@ -293,29 +348,38 @@ docker compose --profile test run astra-tests
 ## Running the Automated Test Suite
 
 ```bash
-# Run all 84 test suites with detailed output
+# Run all 88 test suites with detailed output
 python -m pytest backend/tests -v
 ```
 
-All 84 automated unit, integration, security, and end-to-end product tests pass with 100% success rate:
+All 88 automated unit, integration, security, and end-to-end product tests pass with 100% success rate:
 ```text
-============================= 84 passed in 3.57s ==============================
+============================= 88 passed in 3.57s ==============================
 ```
 
 ---
 
 ## Development & Validation Roadmap
 
-| Workstream | Role | Scope | Status |
+### Completed Prototype Workstreams (88/88 Passing Tests)
+| Workstream | Role | Prototype Scope Delivered | Status |
 |---|---|---|---|
-| **Worker 01** | Discovery & Safe Intake | Safe archive intake, multi-surface discovery, coverage accounting, benchmark readiness | **COMPLETED & VALIDATED** (MVP-01..03, PROD-01..02) |
-| **Worker 02** | Evidence & Inventory | Canonical deduplication, temporal DNA time-machine, CycloneDX 1.6 CBOM | **COMPLETED & VALIDATED** (MVP-01..03, PROD-01..02) |
-| **Worker 03** | Risk & Migration | Mosca-model quantum horizon, Kahn topological wave roadmaps, rollback assurance | **COMPLETED & VALIDATED** (MVP-01..03, PROD-01..02) |
-| **Worker 04** | Web Workflow & UI | Product CLI, master FastAPI factory, embedded dashboard, tamper-evident audit chaining | **COMPLETED & VALIDATED** (MVP-01..03, PROD-01..02) |
-| **Product Suite** | End-to-End System | Zero-dependency CLI, REST API endpoints, full pipeline integration test suite | **COMPLETED & VERIFIED (84/84 PASS)** |
+| **Worker 01** | Discovery & Safe Intake | Safe archive intake (ZIP/TAR limits, symlink defenses), multi-surface discovery (source, manifests, configs, certs, direct binary headers), honest coverage accounting | **COMPLETED & VALIDATED** |
+| **Worker 02** | Evidence & Inventory | Canonical deduplication, temporal Cryptographic DNA time-machine, CycloneDX 1.6 CBOM projection & reconciliation | **COMPLETED & VALIDATED** |
+| **Worker 03** | Risk & Migration | Mosca-model quantum horizon ($X+Y>Z$), scenario sensitivity sliders, Kahn topological wave migration roadmaps, rollback safety | **COMPLETED & VALIDATED** |
+| **Worker 04** | Web Workflow & UI | Product CLI, master FastAPI factory, embedded dashboard, tamper-evident audit chaining, air-gapped readiness | **COMPLETED & VALIDATED** |
+| **Product Suite** | End-to-End System | Complete end-to-end integration test suite, synthetic demo repository, launch scripts | **COMPLETED & VERIFIED (88/88 PASS)** |
+
+### Future Enterprise Roadmap
+| Milestone | Capability | Description |
+|---|---|---|
+| **Phase 2.1** | Hardware Security Modules (HSM) | Integration with PKCS#11 hardware security modules, smartcards, and enterprise key vaults. |
+| **Phase 2.2** | Cloud KMS Multi-Cloud Fleet | Autonomous discovery connectors for AWS KMS, Azure Key Vault, and Google Cloud KMS fleets. |
+| **Phase 2.3** | Runtime eBPF Dynamic Inspection | Linux kernel eBPF probes for observing negotiated cipher suites and active cryptographic socket handshakes. |
+| **Phase 2.4** | Automated PR Remediation | GitHub Actions and GitLab CI bots for automated code refactoring toward NIST PQC algorithms. |
 
 ---
 
 ## License
 
-This project is licensed under the Apache 2.0 License — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.

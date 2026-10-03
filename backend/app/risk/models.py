@@ -67,6 +67,10 @@ class ContextFactors(BaseModel):
         default=False,
         description="True if context was verified by security owner rather than default",
     )
+    context_source: str = Field(
+        default="DEFAULT_ASSUMPTION",
+        description="Origin of context values: 'DEFAULT_ASSUMPTION' or 'OWNER_SUPPLIED'",
+    )
 
 
 class RiskScenario(BaseModel):
@@ -76,7 +80,11 @@ class RiskScenario(BaseModel):
     name: str = Field(default="Standard 2034 Cryptanalytically Relevant Quantum Computer (CRQC) Horizon")
     quantum_threat_horizon_years: float = Field(
         default=8.0, ge=1.0,
-        description="Z: Estimated time until CRQC emerges (Mosca factor Z)",
+        description="Z: Estimated time until prospective CRQC emerges (Mosca factor Z scenario assumption)",
+    )
+    horizon_rationale: str = Field(
+        default="Planning scenario assumption aligned with NIST IR 8547 / BSI recommendations for migration readiness",
+        description="Scenario rationale explaining selected horizon duration",
     )
     # Weights for risk factors (must sum to 1.0)
     weight_quantum_vulnerability: float = Field(default=0.40, ge=0.0, le=1.0)
@@ -103,6 +111,10 @@ class RiskEvaluation(BaseModel):
         ..., description="Z - (X + Y): Negative indicates data exposure before migration completes"
     )
 
+    is_scenario_assumption: bool = Field(
+        default=True,
+        description="Indicates that score reflects scenario simulation assumptions rather than deterministic facts",
+    )
     factor_contributions: Dict[str, float] = Field(
         default_factory=dict, description="Percentage contribution of each factor to composite score"
     )

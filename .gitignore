@@ -63,3 +63,4 @@ nottopushongit/
 
 # Runtime scan storage
 data/
+observations.json

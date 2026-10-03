@@ -35,7 +35,10 @@ class IntakeLimits:
         {".zip", ".tar", ".tar.gz", ".tgz", ".tar.bz2", ".tbz2"}
     )
 
-    # Disallowed executable / dangerous file extensions inside archive by policy
+    # Disallowed executable / dangerous file extensions inside archive by policy.
+    # Note: Archive upload intake blocks executable binaries by default for defense-in-depth
+    # isolation. Direct filesystem directory scans (`astra scan <dir>`) support static header
+    # analysis of binaries via BinaryCryptoDetector without execution.
     blocked_dangerous_extensions: Set[str] = frozenset(
         {".exe", ".dll", ".so", ".dylib", ".bin", ".elf", ".bat", ".cmd", ".vbs", ".ps1"}
     )

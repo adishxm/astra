@@ -7,6 +7,7 @@ Serves:
 """
 
 import os
+import re
 import shutil
 import tempfile
 from datetime import datetime, timezone
@@ -23,6 +24,12 @@ from app.web_workflow.router import router as workflow_router
 from app.inventory.models import CanonicalEvidence, InventoryExport
 from app.inventory.cbom_reconciliation import CBOMReconciliationEngine
 
+# Security & environment policies
+ASTRA_HOSTED_MODE = os.getenv("ASTRA_HOSTED_MODE", "false").lower() in ("1", "true", "yes")
+ASTRA_ALLOW_DIRECTORY_SCAN = os.getenv(
+    "ASTRA_ALLOW_DIRECTORY_SCAN", "false" if ASTRA_HOSTED_MODE else "true"
+).lower() in ("1", "true", "yes")
+
 app = FastAPI(
     title="ASTRA - Enterprise Cryptographic Discovery & Analysis Tool",
     description=(
@@ -34,11 +41,20 @@ app = FastAPI(
     redoc_url="/redoc",
 )
 
-# CORS configuration
+# CORS configuration: default allow local origins or configured env var; disable credentials for wildcard
+allowed_origins_env = os.getenv("ASTRA_CORS_ORIGINS", "")
+if allowed_origins_env:
+    allowed_origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
+    allow_credentials = True
+else:
+    # Safe default: wildcard without credentials to satisfy W3C/browser security restrictions
+    allowed_origins = ["*"]
+    allow_credentials = False
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=allowed_origins,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -55,7 +71,16 @@ def get_health():
         "status": "pass",
         "service": "ASTRA Cryptographic Engine",
         "version": "1.0.0",
+        "team": "HEXARK",
         "profile": "AIR_GAPPED_SOVEREIGN_ENTERPRISE",
+        "hosted_mode": ASTRA_HOSTED_MODE,
+        "directory_scan_permitted": ASTRA_ALLOW_DIRECTORY_SCAN,
+        "privacy_notice": {
+            "processing": "LOCAL_CPU_ONLY",
+            "telemetry_egress": "DISABLED",
+            "retention": "EPHEMERAL_DELETED_ON_COMPLETION",
+            "secrets_handling": "AUTOMATIC_PRIVATE_KEY_REDACTION",
+        },
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "pqc_standards": ["FIPS 203 (ML-KEM)", "FIPS 204 (ML-DSA)", "FIPS 205 (SLH-DSA)"],
     }
@@ -65,27 +90,39 @@ def get_health():
 async def upload_and_scan(file: UploadFile = File(...)):
     """Upload an authorized repository archive (.zip, .tar.gz) and execute complete scan pipeline."""
     valid_suffixes = {".zip", ".tar", ".gz", ".tgz", ".bz2"}
-    filename = file.filename or "uploaded_archive.zip"
-    suffix = Path(filename).suffix.lower()
+    raw_filename = file.filename or "uploaded_archive.zip"
 
-    if not any(filename.lower().endswith(ext) for ext in [".zip", ".tar", ".tar.gz", ".tgz", ".tar.bz2"]):
+    # Safely normalize client-provided filename: strip directory traversal / paths
+    safe_filename = Path(raw_filename).name
+    safe_filename = re.sub(r"[^a-zA-Z0-9_.-]", "_", safe_filename) or "uploaded_archive.zip"
+
+    if not any(safe_filename.lower().endswith(ext) for ext in [".zip", ".tar", ".tar.gz", ".tgz", ".tar.bz2"]):
         raise HTTPException(
             status_code=400,
             detail=f"Unsupported archive format. Expected one of: .zip, .tar, .tar.gz, .tar.bz2",
         )
 
-    # Save uploaded bytes to a secure temporary file
+    # Save uploaded bytes to a secure temporary file with active byte streaming limit (100 MB max)
+    max_upload_size = 100 * 1024 * 1024
     temp_dir = tempfile.mkdtemp(prefix="astra_upload_")
-    temp_archive = os.path.join(temp_dir, filename)
+    temp_archive = os.path.join(temp_dir, safe_filename)
 
     try:
+        bytes_written = 0
         with open(temp_archive, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+            while chunk := await file.read(65536):
+                bytes_written += len(chunk)
+                if bytes_written > max_upload_size:
+                    raise HTTPException(
+                        status_code=413,
+                        detail=f"Uploaded archive exceeds maximum limit of {max_upload_size // (1024 * 1024)} MB",
+                    )
+                buffer.write(chunk)
 
         # Run unified scan pipeline
         record = GLOBAL_SCAN_SERVICE.run_scan_on_archive(
             archive_path=temp_archive,
-            target_name=filename,
+            target_name=safe_filename,
         )
         return {
             "status": "completed",
@@ -99,6 +136,8 @@ async def upload_and_scan(file: UploadFile = File(...)):
             "canonical_assets": [a.model_dump() for a in record.canonical_assets],
             "summary": record.to_dict()["summary"],
         }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Scan execution failed: {str(e)}")
     finally:
@@ -108,6 +147,12 @@ async def upload_and_scan(file: UploadFile = File(...)):
 @app.post("/api/v1/scans/directory")
 def scan_directory(payload: Dict[str, Any] = Body(...)):
     """Trigger a cryptographic discovery scan on a local directory."""
+    if not ASTRA_ALLOW_DIRECTORY_SCAN:
+        raise HTTPException(
+            status_code=403,
+            detail="Direct filesystem directory scanning is disabled in hosted demo mode. Please upload an authorized archive (.zip, .tar.gz) instead.",
+        )
+
     path_str = payload.get("path")
     if not path_str:
         raise HTTPException(status_code=400, detail="Path parameter is required")

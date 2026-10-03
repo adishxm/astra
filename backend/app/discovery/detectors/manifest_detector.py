@@ -118,7 +118,7 @@ class ManifestCryptoDetector:
                                     detector_id=self.DETECTOR_ID,
                                     ruleset_version=RULESET_VERSION,
                                     confidence=ConfidenceBand.CONFIRMED,
-                                    confidence_rationale=f"Direct dependency declaration in package.json ({desc})",
+                                    confidence_rationale=f"Package manifest declaration: {dep_name} in package.json ({desc}) — declared dependency capability, distinct from confirmed source-level invocation",
                                     state=EvidenceState.DECLARED,
                                     raw_parameters={"version": version, "quantum_status": q_status},
                                 )
@@ -162,7 +162,7 @@ class ManifestCryptoDetector:
                                     detector_id=self.DETECTOR_ID,
                                     ruleset_version=RULESET_VERSION,
                                     confidence=ConfidenceBand.CONFIRMED,
-                                    confidence_rationale=f"Maven pom.xml dependency: {desc}",
+                                    confidence_rationale=f"Maven pom.xml dependency: {desc} — declared dependency capability, distinct from confirmed source-level invocation",
                                     state=EvidenceState.DECLARED,
                                     raw_parameters={"group_id": group_id, "version": version, "quantum_status": q_status},
                                 )
@@ -201,7 +201,7 @@ class ManifestCryptoDetector:
                             detector_id=self.DETECTOR_ID,
                             ruleset_version=RULESET_VERSION,
                             confidence=ConfidenceBand.HIGH,
-                            confidence_rationale=f"Found {match_name} reference in {name} ({desc})",
+                            confidence_rationale=f"Declared dependency manifest reference: {match_name} in {name} ({desc}) — potential capability, distinct from confirmed source invocation",
                             state=EvidenceState.DECLARED,
                             raw_parameters={"quantum_status": q_status},
                         )

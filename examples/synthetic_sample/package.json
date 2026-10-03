@@ -1,0 +1,9 @@
+{
+  "name": "astra-synthetic-sample",
+  "version": "1.0.0",
+  "description": "Synthetic multi-surface project demonstrating ASTRA cryptographic discovery and coverage accounting",
+  "dependencies": {
+    "crypto-js": "^4.2.0",
+    "tweetnacl": "^1.0.3"
+  }
+}
