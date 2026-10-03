@@ -7,6 +7,7 @@ import DashboardPage from './pages/DashboardPage';
 import ScanPage from './pages/ScanPage';
 import ScanDetailPage from './pages/ScanDetailPage';
 import FindingsPage from './pages/FindingsPage';
+import RiskPage from './pages/RiskPage';
 import NotFoundPage from './pages/NotFoundPage';
 
 const DevStyleGuide = import.meta.env.DEV
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/scan" element={<ScanPage />} />
           <Route path="/scans/:scanId" element={<ScanDetailPage />} />
           <Route path="/findings" element={<FindingsPage />} />
+          <Route path="/risk" element={<RiskPage />} />
           <Route path="*" element={<NotFoundPage />} />
         </Route>
 

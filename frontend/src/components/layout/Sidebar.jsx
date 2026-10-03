@@ -1,12 +1,13 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, ScanLine, ShieldAlert } from 'lucide-react';
+import { LayoutDashboard, ScanLine, ShieldAlert, Flame } from 'lucide-react';
 import './Sidebar.css';
 
 const NAV_ITEMS = [
   { to: '/', label: 'Dashboard', icon: <LayoutDashboard size={18} aria-hidden="true" />, end: true },
   { to: '/scan', label: 'New Scan', icon: <ScanLine size={18} aria-hidden="true" />, end: false },
   { to: '/findings', label: 'Findings', icon: <ShieldAlert size={18} aria-hidden="true" />, end: false },
+  { to: '/risk', label: 'Risk Assessment', icon: <Flame size={18} aria-hidden="true" />, end: false },
 ];
 
 export default function Sidebar() {

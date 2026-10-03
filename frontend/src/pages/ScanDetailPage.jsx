@@ -17,6 +17,12 @@ import {
   CoverageGapsTable,
   CollectorHealth,
 } from '../components/coverage';
+import {
+  RiskSummary,
+  RiskFactorBreakdown,
+  RiskTable,
+  RiskDetailModal,
+} from '../components/risk';
 import './ScanDetailPage.css';
 
 /**
@@ -29,6 +35,7 @@ export default function ScanDetailPage() {
   const { data: scan, loading, error, refetch } = useApi(scanId ? `/api/v1/scans/${scanId}` : null);
   const [activeTab, setActiveTab] = useState('findings');
   const [selectedFinding, setSelectedFinding] = useState(null);
+  const [selectedRiskItem, setSelectedRiskItem] = useState(null);
 
   if (loading) {
     return (
@@ -78,6 +85,7 @@ export default function ScanDetailPage() {
   const dnaHash = scan.cryptographic_dna_hash || scan.dna_hash || null;
   const canonicalAssets = scan.canonical_assets || [];
   const riskEvaluations = scan.risk_evaluations || [];
+  const backlogItems = scan.backlog_items || [];
   const summary = scan.summary || {};
   const coverage = scan.coverage || {};
   const manifest = scan.manifest || {};
@@ -85,6 +93,8 @@ export default function ScanDetailPage() {
   const unsupportedExtensions = coverage.unsupported_extensions || [];
   const manifestFiles = manifest.files || [];
   const collectorHealth = coverage.collector_health || {};
+  const scenario = scan.scenario || null;
+  const context = scan.context || null;
 
   // Urgency counts
   const critCount = summary.critical_urgency_count ?? 0;
@@ -97,6 +107,7 @@ export default function ScanDetailPage() {
 
   const tabs = [
     { id: 'findings', label: 'Findings & Primitives', badge: String(assetCount) },
+    { id: 'risk', label: 'Risk Assessment', badge: riskEvaluations.length > 0 ? String(riskEvaluations.length) : undefined },
     { id: 'coverage', label: 'Coverage & Accounting' },
     { id: 'surfaces', label: 'Discovery Surfaces' },
     { id: 'gaps', label: 'Coverage Gaps', badge: gapCount > 0 ? String(gapCount) : undefined },
@@ -254,7 +265,54 @@ export default function ScanDetailPage() {
           </div>
         </TabPanel>
 
-        {/* Tab 2: Coverage & Accounting */}
+        {/* Tab 2: Risk Assessment */}
+        <TabPanel id="risk" active={activeTab === 'risk'}>
+          <div className="scan-risk-section" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+            <RiskSummary
+              riskEvaluations={riskEvaluations}
+              scenario={scenario}
+              context={context}
+              summary={summary}
+            />
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 'var(--space-lg)' }}>
+              <RiskFactorBreakdown
+                riskEvaluations={riskEvaluations}
+                title="Scan Multi-Factor Risk Breakdown"
+                subtitle="Composite weights across assessed algorithms"
+              />
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
+                <Card style={{ padding: 'var(--space-lg)', background: 'var(--bg-card)' }}>
+                  <h3 style={{ fontSize: 'var(--font-size-md)', fontWeight: 600, marginBottom: 'var(--space-xs)' }}>
+                    Dedicated Risk Prioritization
+                  </h3>
+                  <p style={{ fontSize: 'var(--font-size-xs)', color: 'var(--text-muted)', marginBottom: 'var(--space-md)', lineHeight: 1.5 }}>
+                    Adjust quantum threat horizons, shelf-life assumptions, and simulate SNDL migration timelines on the full Risk Analysis view.
+                  </p>
+                  <Link to={`/risk?scanId=${scanId}`}>
+                    <Button variant="outline" size="sm">
+                      Open in Risk Prioritization Center →
+                    </Button>
+                  </Link>
+                </Card>
+              </div>
+            </div>
+
+            <div style={{ marginTop: 'var(--space-md)' }}>
+              <div className="section-header-row" style={{ marginBottom: 'var(--space-sm)' }}>
+                <h3 className="section-heading">Evaluated Primitive Risk Records</h3>
+              </div>
+              <RiskTable
+                riskEvaluations={riskEvaluations}
+                backlogItems={backlogItems}
+                onSelectRisk={(item) => setSelectedRiskItem(item)}
+              />
+            </div>
+          </div>
+        </TabPanel>
+
+        {/* Tab 3: Coverage & Accounting */}
         <TabPanel id="coverage" active={activeTab === 'coverage'}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
             <CoverageOverview coverage={coverage} summary={summary} />
@@ -265,7 +323,7 @@ export default function ScanDetailPage() {
           </div>
         </TabPanel>
 
-        {/* Tab 3: Discovery Surfaces */}
+        {/* Tab 4: Discovery Surfaces */}
         <TabPanel id="surfaces" active={activeTab === 'surfaces'}>
           <SurfaceBreakdown
             surfaceBreakdown={surfaceBreakdown}
@@ -273,7 +331,7 @@ export default function ScanDetailPage() {
           />
         </TabPanel>
 
-        {/* Tab 4: Coverage Gaps & Unsupported Files */}
+        {/* Tab 5: Coverage Gaps & Unsupported Files */}
         <TabPanel id="gaps" active={activeTab === 'gaps'}>
           <CoverageGapsTable
             manifestFiles={manifestFiles}
@@ -281,7 +339,7 @@ export default function ScanDetailPage() {
           />
         </TabPanel>
 
-        {/* Tab 5: Collector Engine Diagnostic */}
+        {/* Tab 6: Collector Engine Diagnostic */}
         <TabPanel id="health" active={activeTab === 'health'}>
           <CollectorHealth
             health={collectorHealth}
@@ -296,6 +354,14 @@ export default function ScanDetailPage() {
         open={Boolean(selectedFinding)}
         onClose={() => setSelectedFinding(null)}
       />
+
+      {/* Risk Detail Modal */}
+      <RiskDetailModal
+        evaluation={selectedRiskItem}
+        open={Boolean(selectedRiskItem)}
+        onClose={() => setSelectedRiskItem(null)}
+      />
     </div>
   );
 }
+

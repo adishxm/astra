@@ -178,6 +178,13 @@ describe('ScanDetailPage', () => {
     // Default tab: Findings
     expect(screen.getByText('RSA-2048')).toBeInTheDocument();
 
+    // Switch to Risk Assessment tab
+    const riskTab = screen.getByRole('tab', { name: /risk assessment/i });
+    fireEvent.click(riskTab);
+    expect(screen.getByTestId('risk-summary')).toBeInTheDocument();
+    expect(screen.getByTestId('risk-factor-breakdown')).toBeInTheDocument();
+    expect(screen.getByTestId('risk-table-container')).toBeInTheDocument();
+
     // Switch to Coverage & Accounting tab
     const coverageTab = screen.getByRole('tab', { name: /coverage & accounting/i });
     fireEvent.click(coverageTab);
