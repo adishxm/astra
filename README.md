@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Test Suite](https://img.shields.io/badge/tests-50%20passed%20%7C%20100%25-brightgreen.svg)]()
+[![Test Suite](https://img.shields.io/badge/tests-59%20passed%20%7C%20100%25-brightgreen.svg)]()
 [![PQC Standard](https://img.shields.io/badge/NIST-FIPS%20203%20%7C%20204%20%7C%20205-purple.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
 
 > **SIH26164 (ECDAT)**: A provenance-aware, coverage-accounted cryptographic discovery and post-quantum migration analysis engine for enterprise codebases, dependencies, configurations, and certificate stores.
@@ -105,6 +105,11 @@ Modern enterprises face a critical transition toward **Post-Quantum Cryptography
 - **Evidence Drilldown Endpoint**: Granular access to canonical evidence records for specific asset identities (`/api/v1/workflow/evidence/{asset_id}`).
 - **Review & Audit Trail**: Auditable governance endpoint recording verification decisions, previous/new states, and review justifications (`/api/v1/workflow/audit`).
 - **Sanitized Inventory Export**: Standardized export endpoint emitting CycloneDX-aligned inventory objects with full provenance (`/api/v1/workflow/export`).
+
+### 7. Dual-Tester Quality & Security Assurance (Tester 01 & Tester 02)
+- **Functional Assurance (Tester 01)**: Seeded benchmark testing achieving $\ge 80\%$ precision and recall (`AC-06`), honest denominator validation, and full end-to-end user journeys (Cycles V01 & V02 — 50 tests).
+- **Integration & Security Assurance (Tester 02)**: Strict zero private-key retention validation across all formats, hostile archive adversarial attacks (zip bombs, path traversals), schema round-trip integrity, and alert fatigue reduction verification ($>50\%$) (Cycles V01 & V02 — 9 tests).
+- **Official Signoff**: Both Tester 01 and Tester 02 have officially reviewed, approved, and signed off on the complete MVP product merge.
 
 ---
 
