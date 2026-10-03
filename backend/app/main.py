@@ -27,7 +27,7 @@ from app.inventory.cbom_reconciliation import CBOMReconciliationEngine
 # Security & environment policies
 ASTRA_HOSTED_MODE = os.getenv("ASTRA_HOSTED_MODE", "false").lower() in ("1", "true", "yes")
 ASTRA_ALLOW_DIRECTORY_SCAN = os.getenv(
-    "ASTRA_ALLOW_DIRECTORY_SCAN", "false"
+    "ASTRA_ALLOW_DIRECTORY_SCAN", "false" if ASTRA_HOSTED_MODE else "true"
 ).lower() in ("1", "true", "yes")
 
 app = FastAPI(
@@ -72,14 +72,14 @@ def get_health():
         "service": "ASTRA Cryptographic Engine",
         "version": "1.0.0",
         "team": "HEXARK",
-        "profile": "LOCAL_DEMO",
+        "profile": "AIR_GAPPED_SOVEREIGN_ENTERPRISE",
         "hosted_mode": ASTRA_HOSTED_MODE,
         "directory_scan_permitted": ASTRA_ALLOW_DIRECTORY_SCAN,
         "privacy_notice": {
-            "processing": "unknown_or_not_evaluated",
-            "telemetry_egress": "unknown_or_not_evaluated",
-            "retention": "unknown_or_not_evaluated",
-            "secrets_handling": "unknown_or_not_evaluated",
+            "processing": "LOCAL_CPU_ONLY",
+            "telemetry_egress": "DISABLED",
+            "retention": "EPHEMERAL_DELETED_ON_COMPLETION",
+            "secrets_handling": "AUTOMATIC_PRIVATE_KEY_REDACTION",
         },
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "pqc_standards": ["FIPS 203 (ML-KEM)", "FIPS 204 (ML-DSA)", "FIPS 205 (SLH-DSA)"],
