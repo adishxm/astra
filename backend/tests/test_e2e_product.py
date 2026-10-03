@@ -210,6 +210,15 @@ class TestMasterFastAPIEndpoints:
         assert risk_resp.status_code == 200
         assert "risk_evaluations" in risk_resp.json()
 
+        # Test dynamic scenario risk re-evaluation query parameters
+        dyn_risk_resp = self.client.get(f"/api/v1/scans/{scan_id}/risk?horizon=3.0&shelf_life=5.0&migration=2.0")
+        assert dyn_risk_resp.status_code == 200
+        dyn_data = dyn_risk_resp.json()
+        assert "scenario" in dyn_data
+        assert dyn_data["scenario"]["quantum_threat_horizon_years"] == 3.0
+        assert dyn_data["context"]["data_shelf_life_years"] == 5.0
+        assert len(dyn_data["risk_evaluations"]) > 0
+
         # Test CBOM export
         export_resp = self.client.get(f"/api/v1/scans/{scan_id}/export")
         assert export_resp.status_code == 200

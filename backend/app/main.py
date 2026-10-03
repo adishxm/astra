@@ -230,12 +230,58 @@ def get_scan_coverage(scan_id: str):
 
 
 @app.get("/api/v1/scans/{scan_id}/risk")
-def get_scan_risk(scan_id: str):
-    """Retrieve Mosca risk calculations and candidate PQC backlog for a scan."""
+def get_scan_risk(
+    scan_id: str,
+    horizon: Optional[float] = Query(None, description="Quantum threat horizon Z in years (scenario assumption)"),
+    shelf_life: Optional[float] = Query(None, description="Data secrecy shelf-life X in years"),
+    migration: Optional[float] = Query(None, description="Migration duration Y in years"),
+):
+    """Retrieve Mosca risk calculations or dynamically re-evaluate under custom scenario assumptions."""
     record = GLOBAL_SCAN_STORE.get(scan_id)
     if not record:
         raise HTTPException(status_code=404, detail=f"Scan ID not found: {scan_id}")
     data = record if isinstance(record, dict) else record.to_dict()
+
+    if horizon is not None or shelf_life is not None or migration is not None:
+        from app.risk.models import RiskScenario, ContextFactors
+        from app.risk.scorer import RiskScorer
+        from app.risk.backlog import BacklogBuilder
+        from app.discovery.models import Observation
+
+        scenario = RiskScenario(
+            quantum_threat_horizon_years=horizon if horizon is not None else 8.0
+        )
+        context = ContextFactors(
+            data_shelf_life_years=shelf_life if shelf_life is not None else 5.0,
+            migration_duration_years=migration if migration is not None else 2.0,
+            is_user_enriched=True,
+            context_source="OWNER_SUPPLIED",
+        )
+        scorer = RiskScorer(scenario=scenario)
+        observations = []
+        if isinstance(record, dict):
+            for a in record.get("canonical_assets", []):
+                for obs_dict in a.get("observations", []):
+                    try:
+                        observations.append(Observation(**obs_dict))
+                    except Exception:
+                        pass
+        elif hasattr(record, "observations"):
+            observations = record.observations
+
+        evals = [scorer.evaluate_observation(obs, context).model_dump() for obs in observations]
+        backlog_builder = BacklogBuilder(scenario=scenario)
+        backlog_obj = backlog_builder.generate_backlog(observations, scan_id)
+        backlog_items = [task.model_dump() for task in backlog_obj.tasks]
+
+        return {
+            "scan_id": scan_id,
+            "scenario": scenario.model_dump(),
+            "context": context.model_dump(),
+            "risk_evaluations": evals,
+            "backlog_items": backlog_items,
+        }
+
     return {
         "scan_id": scan_id,
         "risk_evaluations": data.get("risk_evaluations", []),

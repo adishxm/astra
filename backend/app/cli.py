@@ -148,21 +148,56 @@ def cmd_risk(args) -> int:
         return 1
 
     rec = data if isinstance(data, dict) else data.to_dict()
-    evals = rec.get("risk_evaluations", [])
+
+    from app.risk.models import RiskScenario, ContextFactors
+    from app.risk.scorer import RiskScorer
+    from app.discovery.models import Observation
+
+    scenario = RiskScenario(quantum_threat_horizon_years=args.horizon)
+    context = ContextFactors(
+        data_shelf_life_years=args.shelf_life,
+        migration_duration_years=args.migration,
+        is_user_enriched=True,
+        context_source="OWNER_SUPPLIED",
+    )
+    scorer = RiskScorer(scenario=scenario)
+
+    observations = []
+    if isinstance(data, dict):
+        for a in data.get("canonical_assets", []):
+            for obs_dict in a.get("observations", []):
+                try:
+                    observations.append(Observation(**obs_dict))
+                except Exception:
+                    pass
+    elif hasattr(data, "observations"):
+        observations = data.observations
+
+    if observations:
+        evals = [scorer.evaluate_observation(obs, context).model_dump() for obs in observations]
+    else:
+        evals = rec.get("risk_evaluations", [])
 
     print(f"[*] Risk & Mosca Horizon Analysis for Scan: {args.scan_id}")
-    print(f"Active Scenario: Quantum Horizon Z = {args.horizon} yrs | Shelf-Life X = {args.shelf_life} yrs | Migration Y = {args.migration} yrs\n")
+    print(f"Active Scenario: Quantum Horizon Z = {args.horizon} yrs (Assumption) | Shelf-Life X = {args.shelf_life} yrs | Migration Y = {args.migration} yrs")
+    exposure_sum = args.shelf_life + args.migration
+    mosca_flag = "VIOLATED (X + Y > Z)" if exposure_sum > args.horizon else "SATISFIED (X + Y <= Z)"
+    print(f"Mosca Inequality: X ({args.shelf_life}) + Y ({args.migration}) = {exposure_sum:.1f} yrs vs Z ({args.horizon:.1f} yrs) -> {mosca_flag}\n")
 
     rows = []
     for ev in evals:
         urgency = ev.get("urgency", "UNKNOWN")
         score = ev.get("risk_score", 0.0)
         algo = ev.get("algorithm", "UNKNOWN")
-        viol = "YES (SNDL Risk)" if ev.get("mosca_condition_violated") else "No"
+        slack = ev.get("mosca_slack_years", 0.0)
+        if ev.get("mosca_condition_violated"):
+            viol = f"YES (Overdue by {-slack:.1f}y)"
+        else:
+            viol = f"No (Slack: +{slack:.1f}y)"
         rows.append([algo, str(score), urgency, viol])
 
     if rows:
-        print(format_table(["Algorithm", "Risk Score", "Urgency Tier", "Mosca Violated"], rows))
+        print(format_table(["Algorithm", "Risk Score", "Urgency Tier", "Mosca Urgency Status"], rows))
     else:
         print("No cryptographic observations to evaluate.")
     return 0
