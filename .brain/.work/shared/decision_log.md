@@ -1,0 +1,14 @@
+# Decision log
+
+| ID | Decision | Research basis | Rationale / consequence | Status |
+|---|---|---|---|---|
+| D-01 | Plan an upload-first, local/self-hostable modular webapp prototype; defer active network scanning. | SIH report §§10, 12, 15; master multi-modal discovery. | Highest demo feasibility with controlled authorization; report omitted surfaces explicitly. | Chosen for planning |
+| D-02 | MVP discovery covers a declared subset of source, dependency manifests, configs and certificate files from authorized archives. | SIH report data audit, 72-hour plan and fallback. | Produces multi-artifact evidence without claiming full enterprise coverage. Supported languages remain a blocker. | Chosen; format list pending |
+| D-03 | Core classification/risk is deterministic and inspectable; no LLM is required. | SIH report §§5, 10, 15; master privacy/hostile-input principles. | Avoids hallucination, source exfiltration and unvalidated model dependence. | Chosen |
+| D-04 | Internal evidence/provenance model precedes CBOM export; CBOM is a validated projection, not the full model. | CycloneDX, BF-CBOM, master data model. | Supports conflicts, confidence, relationships and future interoperability. | Chosen; schema profile pending |
+| D-05 | Unknown, not assessed, unsupported, failed and no finding are separate. | SIH report coverage-confidence bottleneck and discovery SoK. | Makes blind spots visible; prohibits false assurance. | Chosen |
+| D-06 | Risk uses configurable scenarios and transparent factors; no quantum timeline prediction or universal score. | SIH report Mosca model; risk papers/QARS caveat; master multi-dimensional risk. | Makes assumptions inspectable and sensitive to data lifetime/migration effort. Weights need owner approval. | Chosen; defaults pending |
+| D-07 | No private-key content is intentionally ingested or retained; evidence is redacted and source remains local/authorized. | SIH report data risks; master security and privacy sections. | Limits severe impact of scan artifacts; requires tests and retention decisions. | Chosen |
+| D-08 | Production extensions are planned only after MVP planning merge, with one explicit scope/safety/accuracy gate per surface. | User prompt's two-stage merge model and research breadth. | Avoids mixing aspirational features into MVP and constrains risk. | Chosen |
+| D-09 | No implementation stack is frozen because no repository/codebase was provided. | Preflight inspection found upload folder only. | Avoids inventing compatibility constraints; a team can pick after repo/skill review. | Chosen |
+| D-10 | All 27 archive entries are retained; exact duplicates remain, and unrelated papers are indexed as context or excluded. | Archive integrity and mixed research corpus. | Preserves raw source-of-truth while preventing irrelevant papers from expanding scope. | Chosen |

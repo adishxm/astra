@@ -1,0 +1,14 @@
+# Assumptions register
+
+| ID | Assumption | Why reasonable now | Risk if wrong | Verify / owner |
+|---|---|---|---|---|
+| A-01 | Project target is ECDAT/ECDAT-X webapp for SIH26164, NTRO, based on files supplied. | Both project-specific report and dossiers identify this. | Product scope could be another project or official title/requirements differ. | Project owner; confirm official problem statement before implementation. |
+| A-02 | Prototype input is a user-authorized repository/archive rather than arbitrary live enterprise systems. | Feasibility report proposes upload/seeded benchmark and safe fallback. | Requirements may demand endpoint/network surfaces at MVP. | Official PS verification; owner decision. |
+| A-03 | Local-first or self-hosted operation is preferred for source privacy. | Competitive/feasibility sources emphasize sensitive enterprise code and offline value. | Hosting model and deployment effort may differ. | Owner/security review. |
+| A-04 | A bounded source-language set will be selected later based on team capacity and benchmark. | No existing repo or skills inventory was supplied. | Too narrow for user acceptance or low measured coverage. | W01 + Tester 01 select before build. |
+| A-05 | MVP risk score is decision support only, not compliance certification or objective quantum-risk truth. | Risk dossier warns against opaque and overconfident scoring. | Users may misinterpret ranking. | UI copy and owner approval gate. |
+| A-06 | User-provided data sensitivity/lifetime, criticality and exposure can enrich inventory; unknown is permitted. | These values rarely appear in source; SIH report calls out human enrichment. | Enrichment burden could limit demo. | Validate synthetic workflow and minimal required fields. |
+| A-07 | No production enterprise corpus or SIH ministry data is available. | Report says use sanitized/synthetic evidence; no user data supplied. | Benchmark may not represent field reality. | Label results and obtain authorized dataset only later. |
+| A-08 | The archive's 2026 dates/titles are accepted as source metadata for this planning freeze, not independently verified. | User-provided documents are source of truth for planning. | Future date/version errors can contaminate implementation citations. | Recheck authoritative source metadata before public submission. |
+| A-09 | MVP can issue advisory standardized/hybrid candidate mappings using a dated curated ruleset. | SIH report recommends candidate mappings with caveats. | Mapping could be stale or incompatible. | Cryptography owner review and current standards check. |
+| A-10 | UI can be designed without freezing React/FastAPI or database because no codebase exists. | Repo inspection returned only attachments. | Later stack may constrain screens/contracts. | Revisit at repo onboarding. |
