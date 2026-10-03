@@ -46,5 +46,6 @@ if (!navigator.clipboard) {
       readText: vi.fn().mockResolvedValue(''),
     },
     writable: true,
+    configurable: true,
   });
 }

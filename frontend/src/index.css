@@ -1,21 +1,205 @@
-/* ASTRA Frontend — Minimal Reset & Scaffold Styling */
-* {
+/* ASTRA Design System — Global Tokens, Animations & Utility Classes */
+
+:root {
+  /* Base Colors (from ASTRA Dark Theme) */
+  --bg-base: #090d16;
+  --bg-surface: #0f172a;
+  --bg-card: rgba(30, 41, 59, 0.7);
+  --bg-card-hover: rgba(51, 65, 85, 0.8);
+
+  /* Borders */
+  --border-subtle: rgba(148, 163, 184, 0.12);
+  --border-focus: rgba(99, 102, 241, 0.6);
+
+  /* Accent Palette */
+  --primary: #6366f1;
+  --primary-hover: #4f46e5;
+  --primary-glow: rgba(99, 102, 241, 0.25);
+  --cyan: #06b6d4;
+  --emerald: #10b981;
+  --amber: #f59e0b;
+  --rose: #f43f5e;
+  --purple: #a855f7;
+
+  /* Typography & Text */
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --font-sans: 'Outfit', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Spacing Scale (4px to 48px) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+
+  /* Corner Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /* Elevation & Shadows */
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -2px rgba(0, 0, 0, 0.2);
+  --shadow-elevated: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  --shadow-glow: 0 0 20px var(--primary-glow);
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 400ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Semantic Aliases (Mappable Theme Tokens) */
+  --color-safe: var(--emerald);
+  --color-vulnerable: var(--rose);
+  --color-unknown: var(--text-muted);
+  --color-critical: var(--rose);
+  --color-high: var(--amber);
+  --color-medium: var(--primary);
+  --color-low: var(--emerald);
+  --color-info: var(--cyan);
+  --color-pass: var(--emerald);
+  --color-fail: var(--rose);
+
+  /* Badge Semantic Color Tokens */
+  --badge-safe-bg: rgba(6, 78, 59, 0.5);
+  --badge-safe-text: #34d399;
+  --badge-safe-border: rgba(16, 185, 129, 0.3);
+
+  --badge-vulnerable-bg: rgba(76, 5, 25, 0.5);
+  --badge-vulnerable-text: #fda4af;
+  --badge-vulnerable-border: rgba(244, 63, 94, 0.3);
+
+  --badge-unknown-bg: rgba(30, 41, 59, 0.7);
+  --badge-unknown-text: #cbd5e1;
+  --badge-unknown-border: rgba(148, 163, 184, 0.3);
+
+  --badge-critical-bg: rgba(76, 5, 25, 0.5);
+  --badge-critical-text: #fecdd3;
+  --badge-critical-border: rgba(244, 63, 94, 0.4);
+
+  --badge-high-bg: rgba(69, 26, 3, 0.5);
+  --badge-high-text: #fde68a;
+  --badge-high-border: rgba(245, 158, 11, 0.3);
+
+  --badge-medium-bg: rgba(30, 27, 75, 0.5);
+  --badge-medium-text: #c7d2fe;
+  --badge-medium-border: rgba(99, 102, 241, 0.3);
+
+  --badge-low-bg: rgba(6, 78, 59, 0.5);
+  --badge-low-text: #6ee7b7;
+  --badge-low-border: rgba(16, 185, 129, 0.3);
+
+  --badge-info-bg: rgba(8, 51, 68, 0.5);
+  --badge-info-text: #67e8f9;
+  --badge-info-border: rgba(6, 182, 212, 0.3);
+}
+
+/* Reset & Box Sizing */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  background-color: #090d16;
-  color: #f8fafc;
-  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-base);
+  background-image:
+    radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(6, 182, 212, 0.08) 0px, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(15, 23, 42, 0.5) 0px, transparent 100%);
+  color: var(--text-main);
+  font-family: var(--font-sans);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code, pre {
-  font-family: 'JetBrains Mono', monospace;
+code,
+pre,
+kbd {
+  font-family: var(--font-mono);
+}
+
+/* Global Keyboard Focus Accessibility */
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* Glassmorphism Utilities */
+.glass-panel {
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.glass-header {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+/* Global Keyframe Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.6));
+  }
+  50% {
+    opacity: 0.6;
+    filter: drop-shadow(0 0 2px rgba(244, 63, 94, 0.2));
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Accessibility: Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
