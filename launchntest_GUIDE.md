@@ -1,11 +1,12 @@
-# ASTRA — Launch, Test & Usage Guide
+# ASTRA — Algorithm Security Tracking and Risk Assessment
+### Launch, Test & Usage Guide
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Test Suite](https://img.shields.io/badge/tests-84%20passed%20%7C%20100%25-brightgreen.svg)]()
+[![Test Suite](https://img.shields.io/badge/tests-88%20passing%20in%20CI-brightgreen.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
 [![PQC Standard](https://img.shields.io/badge/NIST-FIPS%20203%20%7C%20204%20%7C%20205-purple.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
 
-> This document is the **single authoritative source** for launching, testing, and operating the ASTRA Enterprise Cryptographic Discovery & Analysis Tool (SIH26164 ECDAT). It covers local development, Docker deployment, CLI usage, REST API workflows, the interactive Web Dashboard, and the complete automated test suite.
+> This document is the **authoritative operational guide** for launching, testing, and operating **ASTRA** (**A**lgorithm **S**ecurity **T**racking and **R**isk **A**ssessment — SIH26164 ECDAT). Built by Team **HEXARK**, it covers local development, one-click Windows launch, Docker deployment, CLI usage, REST API workflows, the interactive Web Dashboard, and the automated test suite.
 
 ---
 

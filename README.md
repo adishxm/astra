@@ -1,4 +1,5 @@
-# ASTRA — SIH26164 Enterprise Cryptographic Discovery & Analysis Tool (ECDAT)
+# ASTRA — Algorithm Security Tracking and Risk Assessment
+### SIH26164 Enterprise Cryptographic Discovery & Analysis Tool (ECDAT)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
@@ -9,7 +10,7 @@
 [![CycloneDX CBOM](https://img.shields.io/badge/CycloneDX-1.6%20CBOM-orange.svg)](https://cyclonedx.org/)
 [![Profile: Sovereign](https://img.shields.io/badge/Profile-Air--Gapped%20Sovereign-red.svg)]()
 
-> **SIH26164 (ECDAT)**: A provenance-aware, coverage-accounted cryptographic discovery, Mosca-horizon post-quantum migration analysis, and standardized CycloneDX 1.6 Cryptographic Bill of Materials (CBOM) engine for enterprise codebases, dependencies, configurations, and certificate stores. Built by team **HEXARK**.
+> **ASTRA (Algorithm Security Tracking and Risk Assessment)**: A provenance-aware, coverage-accounted cryptographic discovery, Mosca-horizon post-quantum migration analysis, and standardized CycloneDX 1.6 Cryptographic Bill of Materials (CBOM) engine for enterprise codebases, dependencies, configurations, and certificate stores. Aligned with **SIH26164 (ECDAT)** and engineered by Team **HEXARK**.
 
 ---
 
@@ -56,7 +57,7 @@
 
 ## Executive Summary & Problem Alignment
 
-**ASTRA** is an open-source cryptographic discovery and CBOM prototype engineered by **Team HEXARK** for Smart India Hackathon 2026 problem statement **SIH26164 (Enterprise Cryptographic Discovery & Analysis Tool - ECDAT)**.
+**ASTRA** (**A**lgorithm **S**ecurity **T**racking and **R**isk **A**ssessment) is an open-source cryptographic discovery and CBOM prototype engineered by **Team HEXARK** for Smart India Hackathon 2026 problem statement **SIH26164 (Enterprise Cryptographic Discovery & Analysis Tool - ECDAT)**.
 
 Modern enterprise systems are exposed to the **Store-Now-Decrypt-Later (SNDL)** threat: adversarial actors intercept and record encrypted network traffic and proprietary data today, preparing to decrypt it once Cryptographically Relevant Quantum Computers (CRQCs) emerge. Transitioning to Post-Quantum Cryptography (PQC) requires knowing **where**, **how**, and **what** cryptographic algorithms are employed across codebases, manifests, configs, and certificates.
 
@@ -674,6 +675,7 @@ ASTRA operates under strict enterprise security principles:
 
 ## License & Credits
 
+- **Project**: **ASTRA** (**A**lgorithm **S**ecurity **T**racking and **R**isk **A**ssessment).
 - **License**: Licensed under the [MIT License](LICENSE).
 - **Team**: Engineered by Team **HEXARK** for Smart India Hackathon 2026 (Problem Statement **SIH26164**).
 - **Standards Conformance**:
