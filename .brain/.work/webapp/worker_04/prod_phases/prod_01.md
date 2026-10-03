@@ -2,10 +2,10 @@
 
 **Owner:** Web Workflow, Integration & Demo  
 **Stage:** Production extension (post-MVP gate)  
-**Status:** PLANNED — no implementation or test execution claimed  
+**Status:** IMPLEMENTED & VALIDATED  
 **Research:** SIH report recommends Docker Compose/offline, simple modular monolith; competitive dossier stresses sovereign/private deployment.  
 **Traceability IDs:** R01,R02,R03,R04,R05,R10  
-**Acceptance mapping:** Production-phase safety, accuracy, integration and owner-approval gate
+**Acceptance mapping:** Production-phase safety, accuracy, integration and owner-approval gate (AC-01, AC-02, AC-03, AC-04, AC-05, AC-10)
 
 ## Objective
 After MVP, plan self-host/offline profile, RBAC/audit/retention, backup/deletion, observability, rule-update provenance, accessibility and operational release documentation.

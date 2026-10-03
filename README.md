@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Test Suite](https://img.shields.io/badge/tests-67%20passed%20%7C%20100%25-brightgreen.svg)]()
+[![Test Suite](https://img.shields.io/badge/tests-74%20passed%20%7C%20100%25-brightgreen.svg)]()
 [![PQC Standard](https://img.shields.io/badge/NIST-FIPS%20203%20%7C%20204%20%7C%20205-purple.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
 
 > **SIH26164 (ECDAT)**: A provenance-aware, coverage-accounted cryptographic discovery and post-quantum migration analysis engine for enterprise codebases, dependencies, configurations, and certificate stores.
@@ -19,6 +19,8 @@ Modern enterprises face a critical transition toward **Post-Quantum Cryptography
 3. **Truthful Coverage Accounting**: Separates assessed code from unassessed formats. Absence of findings is explicitly labeled `NO_FINDINGS_IN_SUPPORTED_SCOPE`—never falsely marked "Safe".
 4. **Post-Quantum Readiness**: Detects both classical (quantum-vulnerable) algorithms (RSA, ECC, Diffie-Hellman) and modern NIST PQC standards (ML-KEM/Kyber, ML-DSA/Dilithium, SLH-DSA/SPHINCS+, Falcon).
 5. **Continuous Temporal Lineage & CBOM Reconciliation**: Tracks cryptographic posture drift across code versions via deterministic Cryptographic DNA hashing, catches algorithm downgrade regressions, and reconciles multi-scanner CBOMs into unified CycloneDX 1.6 specifications.
+6. **Constrained Migration Roadmaps & Invariant Assurance**: Graph-aware topological ordering over hardware/vendor constraints, cyclic deadlock diagnostics, downgrade immunity checks, and rollback safety verification.
+7. **Air-Gapped Sovereignty & Tamper-Evident Governance**: Sovereign offline deployments with zero telemetry leakage, signed update bundles, and mathematically verifiable SHA-256 hash-chained audit logging.
 
 ---
 
@@ -66,8 +68,10 @@ Modern enterprises face a critical transition toward **Post-Quantum Cryptography
 │ Canonical Evidence│             │ Contextual Risk  │             │ Workflow, Web UI │
 │ & CBOM Projection│             │ & Migration Queue│             │  & Review Portal │
 │ - Temporal Time  │             │ - Mosca Theorem  │             │ - Drilldown API  │
-│   Machine & DNA  │             │ - Sensitivity    │             │ - Audit Log      │
-│ - Reconciliation │             │ - Dated PQC      │             │ - CI/CD Export   │
+│   Machine & DNA  │             │ - Sensitivity    │             │ - Tamper-Evident │
+│ - Reconciliation │             │ - Dated PQC      │             │   Audit Chaining │
+│ - CycloneDX 1.6  │             │ - Phased Roadmap │             │ - Air-Gapped     │
+│                  │             │ - Invariant Check│             │   Bundle Verify  │
 └──────────────────┘             └──────────────────┘             └──────────────────┘
 ```
 
@@ -106,16 +110,21 @@ Modern enterprises face a critical transition toward **Post-Quantum Cryptography
 - **Temporal Cryptographic Time Machine (PROD-01)**: Implements point-in-time `InventorySnapshot` models and deterministic SHA-256 Cryptographic DNA hashing. Computes temporal drift deltas (`added`, `removed`, `modified`) and triggers high-urgency alerts on cryptographic strength downgrade regressions (e.g. `AES-256` $\to$ `DES`).
 - **CycloneDX 1.6 Conformance & Multi-Scanner Reconciliation (PROD-02)**: Schema validator for CycloneDX 1.6 cryptographic asset profiles. Multi-generator reconciliation engine computes the **Discrepancy Index** ($D$) across disparate scanners (ASTRA, IBM CBOM, CycloneDX CLI), preserves minority scanner claims, and generates unified, non-lossy CBOMs.
 
-### 5. Contextual Risk & Mosca Horizon Engine (`app.risk` — Worker 03)
+### 5. Contextual Risk, Mosca Horizon & Migration Roadmap (`app.risk` — Worker 03)
 - **Mosca Theorem Formulation**: Formally evaluates $X$ (data shelf-life) $+ Y$ (migration duration) $> Z$ (quantum threat horizon). Assets violating this inequality represent immediate Store-Now-Decrypt-Later (SNDL) risks and are automatically escalated to `CRITICAL`.
 - **Explainable Multi-Factor Scoring**: Transparently weights algorithm vulnerability ($40\%$), Mosca urgency ($25\%$), operational exposure ($20\%$), and business criticality ($15\%$) with machine-readable reason codes (`AC-07`).
 - **Dated Standards & Candidate Migration Backlog**: Links identified algorithms to dated NIST publications (FIPS 203, 204, 205, Aug 2024), candidate standardized/hybrid alternatives, and explicit compatibility/operational caveats (`AC-08`).
 - **Scenario Sensitivity & Baseline Comparison**: Dynamic CRQC slider controls show exactly why asset priorities shift; contextual prioritization eliminates alert fatigue ($>50\%$ alert reduction over flat regex/CVSS baselines) (`AC-12`).
+- **Dependency-Aware Constrained Roadmap (PROD-01)**: Employs Kahn topological sorting across prerequisite dependencies to generate executable multi-phase roadmaps (Foundation $\to$ Platform $\to$ Edge), preventing deployment failure and identifying critical bottleneck components.
+- **Security Invariant & Rollback Assurance (PROD-02)**: Formally audits candidate PQC transitions for security property preservation (Confidentiality, Authenticity, Forward Secrecy, Non-Repudiation), validates MITM downgrade immunity, and enforces fail-closed rollback policies.
 
-### 6. Web Workflow & API Orchestration (`app.web_workflow` — Worker 04)
+### 6. Web Workflow, Hardening & Air-Gapped Operations (`app.web_workflow` — Worker 04)
 - **Evidence Drilldown Endpoint**: Granular access to canonical evidence records for specific asset identities (`/api/v1/workflow/evidence/{asset_id}`).
 - **Review & Audit Trail**: Auditable governance endpoint recording verification decisions, previous/new states, and review justifications (`/api/v1/workflow/audit`).
 - **Sanitized Inventory Export**: Standardized export endpoint emitting CycloneDX-aligned inventory objects with full provenance (`/api/v1/workflow/export`).
+- **Tamper-Evident Audit Chaining (PROD-01)**: Chains all governance decisions and review audits into an immutable SHA-256 Merkle-style hash chain (`/api/v1/workflow/audit/chain/verify`), detecting any unauthorized modification or deletion.
+- **Air-Gapped Sovereign Readiness & Signed Update Verification (PROD-01)**: Sovereign offline profile with zero outbound telemetry, and local verification of signed offline threat intelligence bundles (`/api/v1/workflow/offline/bundle/verify`).
+- **Production Health & Isolation Checks (PROD-01)**: Evaluates sandbox read-only container status, air-gapped isolation, local ruleset cache status, and memory quotas (`/api/v1/workflow/health/production`).
 
 ### 7. Dual-Tester Quality & Security Assurance (Tester 01 & Tester 02)
 - **Functional Assurance (Tester 01)**: Seeded benchmark testing achieving $\ge 80\%$ precision and recall (`AC-06`), honest denominator validation, and full end-to-end user journeys (Cycles V01 & V02 — 50 tests).
@@ -168,16 +177,24 @@ astra/
 │   │   │   ├── models.py              # CanonicalEvidence, AssetIdentity, redaction
 │   │   │   ├── temporal.py            # TemporalLineageEngine & DNA Drift Tracking (PROD-01)
 │   │   │   └── cbom_reconciliation.py # CycloneDX 1.6 & Multi-Scanner Reconciler (PROD-02)
-│   │   ├── risk/                      # Worker 03: Mosca Horizon & Contextual Risk
-│   │   └── web_workflow/              # Worker 04: Workflow API & Review Portal
+│   │   ├── risk/                      # Worker 03: Mosca Horizon, Constrained Roadmap & Assurance
+│   │   │   ├── models.py              # ContextFactors, UrgencyLevel, RiskScenario
+│   │   │   ├── scorer.py              # ContextualRiskEngine (Mosca X+Y>Z evaluation)
+│   │   │   ├── backlog.py             # MigrationBacklogBuilder (dated NIST PQC mappings)
+│   │   │   ├── scenarios.py           # ScenarioSensitivityEngine (CRQC horizon sliders)
+│   │   │   ├── roadmap.py             # DependencyRoadmapEngine & Kahn Topological Waves (PROD-01)
+│   │   │   └── assurance.py           # SecurityInvariantAssuranceEngine & Rollback Safety (PROD-02)
+│   │   └── web_workflow/              # Worker 04: Workflow API, Hardening & Air-Gapped Operations
+│   │       ├── router.py              # Evidence, review audit, export, and production API
+│   │       └── hardening.py           # AirGappedBundleManager & TamperEvidentAuditChainer (PROD-01)
 │   └── tests/
 │       ├── test_intake/               # 13 intake security & boundary tests
 │       ├── test_discovery/            # 12 discovery tests (source, config, cert + binary, container, network)
 │       ├── test_coverage/             # 4 coverage accounting & benchmark tests
 │       ├── test_inventory/            # 7 canonical inventory, temporal & CBOM tests (3 MVP + 4 prod)
-│       ├── test_risk/                 # 9 risk & Mosca theorem tests
-│       ├── test_web_workflow/         # 4 workflow API & audit tests
-│       └── test_integration_security/ # 9 dual-tester assurance tests (59 MVP + 8 prod = 67 tests total)
+│       ├── test_risk/                 # 13 risk, Mosca, roadmap & assurance tests (9 MVP + 4 prod)
+│       ├── test_web_workflow/         # 7 workflow API, audit chain & air-gapped tests (4 MVP + 3 prod)
+│       └── test_integration_security/ # 9 dual-tester assurance tests (59 MVP + 15 prod = 74 tests total)
 └── .brain/
     ├── .ORG_research/                 # NIST PQC papers, ECDAT dossiers & research PDFs
     ├── .report/                       # Worker signoff reports (MVP-01..03, PROD-01..02)

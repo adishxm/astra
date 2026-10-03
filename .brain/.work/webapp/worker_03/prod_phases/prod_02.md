@@ -2,10 +2,10 @@
 
 **Owner:** Risk, Context & Migration Decision Support  
 **Stage:** Production extension (post-MVP gate)  
-**Status:** PLANNED — no implementation or test execution claimed  
+**Status:** IMPLEMENTED & VALIDATED  
 **Research:** Master property compiler, authentication verification, trust graph and rollback safety.  
 **Traceability IDs:** R02,R03,R04,R08,R09  
-**Acceptance mapping:** Production-phase safety, accuracy, integration and owner-approval gate
+**Acceptance mapping:** Production-phase safety, accuracy, integration and owner-approval gate (AC-01, AC-02, AC-03, AC-07, AC-08, AC-11)
 
 ## Objective
 Design verification plans for authentication, confidentiality, downgrade, trust-chain and policy invariants across candidate transitions, including negative/failure and cryptographic rollback cases.

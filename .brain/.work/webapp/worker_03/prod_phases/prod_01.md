@@ -2,10 +2,10 @@
 
 **Owner:** Risk, Context & Migration Decision Support  
 **Stage:** Production extension (post-MVP gate)  
-**Status:** PLANNED — no implementation or test execution claimed  
+**Status:** IMPLEMENTED & VALIDATED  
 **Research:** Master migration graph/constraint optimizer; migration dependency research.  
 **Traceability IDs:** R02,R03,R04,R06,R08  
-**Acceptance mapping:** Production-phase safety, accuracy, integration and owner-approval gate
+**Acceptance mapping:** Production-phase safety, accuracy, integration and owner-approval gate (AC-01, AC-02, AC-03, AC-04, AC-07, AC-08)
 
 ## Objective
 Plan graph-aware ordering over centrality, hardware/vendor, latency/cost, operations windows, data priority and dependencies; compare against flat rankings and expose objective/trade-offs.
