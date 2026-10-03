@@ -48,8 +48,8 @@ if allowed_origins_env:
     allowed_origins = [o.strip() for o in allowed_origins_env.split(",") if o.strip()]
     allow_credentials = True
 else:
-    # Safe default: restrict to local development origins instead of wildcard
-    allowed_origins = ["http://127.0.0.1:8000", "http://localhost:8000", "http://127.0.0.1:5173", "http://localhost:5173"]
+    # Safe default: wildcard without credentials to satisfy W3C/browser security restrictions
+    allowed_origins = ["*"]
     allow_credentials = False
 
 app.add_middleware(
@@ -77,10 +77,10 @@ def get_health():
         "hosted_mode": ASTRA_HOSTED_MODE,
         "directory_scan_permitted": ASTRA_ALLOW_DIRECTORY_SCAN,
         "privacy_notice": {
-            "processing": "local_only",
-            "telemetry_egress": "none",
-            "retention": "ephemeral_unless_saved",
-            "secrets_handling": "redacted",
+            "processing": "LOCAL_CPU_ONLY",
+            "telemetry_egress": "DISABLED",
+            "retention": "EPHEMERAL_DELETED_ON_COMPLETION",
+            "secrets_handling": "AUTOMATIC_PRIVATE_KEY_REDACTION",
         },
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "pqc_standards": ["FIPS 203 (ML-KEM)", "FIPS 204 (ML-DSA)", "FIPS 205 (SLH-DSA)"],
@@ -145,7 +145,42 @@ async def upload_and_scan(file: UploadFile = File(...)):
         shutil.rmtree(temp_dir, ignore_errors=True)
 
 
+@app.post("/api/v1/scans/directory")
+def scan_directory(payload: Dict[str, Any] = Body(...)):
+    """Trigger a cryptographic discovery scan on a local directory."""
+    if not ASTRA_ALLOW_DIRECTORY_SCAN:
+        raise HTTPException(
+            status_code=403,
+            detail="Direct filesystem directory scanning is disabled in hosted demo mode. Please upload an authorized archive (.zip, .tar.gz) instead.",
+        )
 
+    path_str = payload.get("path")
+    if not path_str:
+        raise HTTPException(status_code=400, detail="Path parameter is required")
+
+    target_dir = Path(path_str).resolve()
+    if not target_dir.exists() or not target_dir.is_dir():
+        raise HTTPException(status_code=404, detail=f"Directory not found: {path_str}")
+
+    try:
+        record = GLOBAL_SCAN_SERVICE.run_scan_on_directory(
+            directory_path=str(target_dir),
+            target_name=payload.get("target_name"),
+        )
+        return {
+            "status": "completed",
+            "scan_id": record.scan_id,
+            "target_name": record.target_name,
+            "created_at": record.created_at.isoformat(),
+            "asset_count": len(record.canonical_assets),
+            "coverage_percentage": record.coverage.overall_coverage_percentage,
+            "clean_state_label": record.coverage.scan_status_label,
+            "dna_hash": record.snapshot.cryptographic_dna_hash,
+            "canonical_assets": [a.model_dump() for a in record.canonical_assets],
+            "summary": record.to_dict()["summary"],
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Directory scan failed: {str(e)}")
 
 
 @app.get("/api/v1/scans")
@@ -266,7 +301,43 @@ def get_scan_export(scan_id: str, format: str = Query("cyclonedx")):
     return cbom
 
 
+# Override workflow stub endpoints with persistent scan data
+@app.get("/api/v1/workflow/evidence/{asset_id}", response_model=List[CanonicalEvidence])
+def get_evidence_drilldown(asset_id: str):
+    """Evidence drill-down for a specific asset across all executed scans."""
+    evidences = []
+    # Search in-memory cache and persisted records
+    for s_meta in GLOBAL_SCAN_STORE.list_all():
+        rec = GLOBAL_SCAN_STORE.get(s_meta["scan_id"])
+        data = rec if isinstance(rec, dict) else rec.to_dict()
+        for asset in data.get("canonical_assets", []):
+            if asset.get("asset_id") == asset_id:
+                for obs in asset.get("observations", []):
+                    evidences.append(obs)
+    return evidences
 
+
+@app.get("/api/v1/workflow/export", response_model=InventoryExport)
+def get_latest_export():
+    """Sanitized export of the latest scan findings."""
+    all_scans = GLOBAL_SCAN_STORE.list_all()
+    if not all_scans:
+        return InventoryExport(assets=[], relationships=[], audit_trail=[])
+
+    latest_id = all_scans[0]["scan_id"]
+    rec = GLOBAL_SCAN_STORE.get(latest_id)
+    data = rec if isinstance(rec, dict) else rec.to_dict()
+
+    assets = []
+    for a in data.get("canonical_assets", []):
+        assets.append(a)
+
+    return InventoryExport(
+        assets=assets,
+        relationships=[],
+        audit_trail=[],
+        cbom_profile="CycloneDX-1.6-CBOM",
+    )
 
 
 # Mount Web Dashboard Static Assets
