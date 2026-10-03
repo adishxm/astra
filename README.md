@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Test Suite](https://img.shields.io/badge/tests-37%20passed%20%7C%20100%25-brightgreen.svg)]()
+[![Test Suite](https://img.shields.io/badge/tests-41%20passed%20%7C%20100%25-brightgreen.svg)]()
 [![PQC Standard](https://img.shields.io/badge/NIST-FIPS%20203%20%7C%20204%20%7C%20205-purple.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
 
 > **SIH26164 (ECDAT)**: A provenance-aware, coverage-accounted cryptographic discovery and post-quantum migration analysis engine for enterprise codebases, dependencies, configurations, and certificate stores.
@@ -100,6 +100,11 @@ Modern enterprises face a critical transition toward **Post-Quantum Cryptography
 - **Explainable Multi-Factor Scoring**: Transparently weights algorithm vulnerability ($40\%$), Mosca urgency ($25\%$), operational exposure ($20\%$), and business criticality ($15\%$) with machine-readable reason codes (`AC-07`).
 - **Dated Standards & Candidate Migration Backlog**: Links identified algorithms to dated NIST publications (FIPS 203, 204, 205, Aug 2024), candidate standardized/hybrid alternatives, and explicit compatibility/operational caveats (`AC-08`).
 - **Scenario Sensitivity & Baseline Comparison**: Dynamic CRQC slider controls show exactly why asset priorities shift; contextual prioritization eliminates alert fatigue ($>50\%$ alert reduction over flat regex/CVSS baselines) (`AC-12`).
+
+### 6. Web Workflow & API Orchestration (`app.web_workflow` — Worker 04)
+- **Evidence Drilldown Endpoint**: Granular access to canonical evidence records for specific asset identities (`/api/v1/workflow/evidence/{asset_id}`).
+- **Review & Audit Trail**: Auditable governance endpoint recording verification decisions, previous/new states, and review justifications (`/api/v1/workflow/audit`).
+- **Sanitized Inventory Export**: Standardized export endpoint emitting CycloneDX-aligned inventory objects with full provenance (`/api/v1/workflow/export`).
 
 ---
 
