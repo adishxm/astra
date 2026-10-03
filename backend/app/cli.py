@@ -109,9 +109,10 @@ def cmd_scan(args) -> int:
                     obs.confidence.value if hasattr(obs.confidence, 'value') else str(obs.confidence),
                 ])
         print("\nIdentified Cryptographic Inventory:")
-        print(format_table(["Algorithm", "Key Bits", "Source Kind", "Location", "Confidence"], rows[:15]))
-        if len(rows) > 15:
-            print(f"... and {len(rows) - 15} more findings.")
+        display_limit = 50
+        print(format_table(["Algorithm", "Key Bits", "Source Kind", "Location", "Confidence"], rows[:display_limit]))
+        if len(rows) > display_limit:
+            print(f"... and {len(rows) - display_limit} more findings.")
 
     if args.output:
         with open(args.output, "w", encoding="utf-8") as f:

@@ -310,16 +310,24 @@ class TestZeroDependencyCLI:
         sample_path = Path(__file__).resolve().parent.parent.parent / "examples" / "synthetic_sample"
         assert sample_path.exists(), f"Synthetic sample not found at: {sample_path}"
 
-        code = cli_main(["scan", str(sample_path), "--format", "table"])
-        assert code == 0
-        captured = capsys.readouterr()
+        try:
+            code = cli_main(["scan", str(sample_path), "--format", "table"])
+            assert code == 0
+            captured = capsys.readouterr()
 
-        # Must report coverage with denominator accounting for unsupported wav file
-        assert "Coverage Assessment:" in captured.out
-        assert "RSA-2048" in captured.out
-        assert "AES-256" in captured.out
-        assert "ML-KEM" in captured.out
-        assert "MD5" in captured.out
-        # Comment lines mentioning DES/3DES must not be reported as active findings
-        assert "DES-" not in captured.out
-        assert "3DES" not in captured.out
+            # Must report coverage with denominator accounting for unsupported wav file
+            assert "Coverage Assessment:" in captured.out
+            assert "RSA-2048" in captured.out
+            assert "AES-256" in captured.out
+            assert "ML-KEM" in captured.out
+            assert "MD5" in captured.out
+            # Comment lines mentioning DES/3DES must not be reported as active findings
+            assert "DES-" not in captured.out
+            assert "3DES" not in captured.out
+        finally:
+            obs_file = sample_path / "observations.json"
+            if obs_file.exists():
+                try:
+                    obs_file.unlink()
+                except OSError:
+                    pass
