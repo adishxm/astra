@@ -1044,7 +1044,7 @@
       })
       .catch(err => {
         progress.style.display = 'none';
-        alert(`Uploaded archive for analysis. Status: completed.`);
+        alert(`Upload failed: ${err.message}`);
       });
     }
 
@@ -1053,9 +1053,9 @@
       alert("Loaded Enterprise Financial Core Synthetic Corpus!");
     }
 
-    // Initialize Dashboard
+    // Initialize Dashboard (Empty State by default)
     window.addEventListener('DOMContentLoaded', () => {
-      renderDashboard();
+      // Do not render demo data automatically. Wait for user upload or explicit demo load.
     });
   </script>
 </body>
