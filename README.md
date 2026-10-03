@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Test Suite](https://img.shields.io/badge/tests-34%20passed%20%7C%20100%25-brightgreen.svg)]()
+[![Test Suite](https://img.shields.io/badge/tests-37%20passed%20%7C%20100%25-brightgreen.svg)]()
 [![PQC Standard](https://img.shields.io/badge/NIST-FIPS%20203%20%7C%20204%20%7C%20205-purple.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
 
 > **SIH26164 (ECDAT)**: A provenance-aware, coverage-accounted cryptographic discovery and post-quantum migration analysis engine for enterprise codebases, dependencies, configurations, and certificate stores.
@@ -89,7 +89,13 @@ Modern enterprises face a critical transition toward **Post-Quantum Cryptography
 - **Partial-Scan Resilience**: Surfaces collector errors or degradation without discarding surviving results.
 - **Benchmark Runner**: Pre-registered synthetic corpus evaluation measuring Precision, Recall, and F1 to ensure $\ge 80\%$ benchmark compliance (`AC-06`).
 
-### 4. Contextual Risk & Mosca Horizon Engine (`app.risk` — Worker 03)
+### 4. Canonical Evidence & Inventory Modeling (`app.inventory` — Worker 02)
+- **Canonical Evidence Normalization**: Standardizes diverse collector claims into deterministic, content-addressed observations (`CanonicalEvidence`).
+- **Asset Identity & Disambiguation**: Aggregates multi-source evidence into unified component identities (`AssetIdentity`) with uncertainty tracking.
+- **Parametric Sanitization**: Allowlist-based filtering ensures secrets and internal values are redacted (`[REDACTED]`) prior to ingestion.
+- **Relational Context Graph & CBOM Export**: Structures parent-child component relationships, audit trail logging, and privacy-safe CycloneDX-aligned inventory exports (`AC-03`, `AC-05`, `AC-09`).
+
+### 5. Contextual Risk & Mosca Horizon Engine (`app.risk` — Worker 03)
 - **Mosca Theorem Formulation**: Formally evaluates $X$ (data shelf-life) $+ Y$ (migration duration) $> Z$ (quantum threat horizon). Assets violating this inequality represent immediate Store-Now-Decrypt-Later (SNDL) risks and are automatically escalated to `CRITICAL`.
 - **Explainable Multi-Factor Scoring**: Transparently weights algorithm vulnerability ($40\%$), Mosca urgency ($25\%$), operational exposure ($20\%$), and business criticality ($15\%$) with machine-readable reason codes (`AC-07`).
 - **Dated Standards & Candidate Migration Backlog**: Links identified algorithms to dated NIST publications (FIPS 203, 204, 205, Aug 2024), candidate standardized/hybrid alternatives, and explicit compatibility/operational caveats (`AC-08`).
