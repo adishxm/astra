@@ -6,168 +6,79 @@
 [![Test Suite](https://img.shields.io/badge/tests-88%20passing%20in%20CI-brightgreen.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
 [![Team: HEXARK](https://img.shields.io/badge/Team-HEXARK-blue.svg)]()
 [![NIST PQC](https://img.shields.io/badge/NIST-FIPS%20203%20%7C%20204%20%7C%20205-purple.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
-[![Launch Guide](https://img.shields.io/badge/📖_Launch_%26_Test_Guide-blue.svg)](launchntest_GUIDE.md)
+[![CycloneDX CBOM](https://img.shields.io/badge/CycloneDX-1.6%20CBOM-orange.svg)](https://cyclonedx.org/)
+[![Profile: Sovereign](https://img.shields.io/badge/Profile-Air--Gapped%20Sovereign-red.svg)]()
 
 > **SIH26164 (ECDAT)**: A provenance-aware, coverage-accounted cryptographic discovery, Mosca-horizon post-quantum migration analysis, and standardized CycloneDX 1.6 Cryptographic Bill of Materials (CBOM) engine for enterprise codebases, dependencies, configurations, and certificate stores. Built by team **HEXARK**.
 
 ---
 
-## Executive Summary & Scope
+## Table of Contents
 
-**ASTRA** is an open-source cryptographic discovery and CBOM prototype aligned with Smart India Hackathon 2026 problem statement **SIH26164 (Enterprise Cryptographic Discovery & Analysis Tool - ECDAT)**. It provides an auditable, evidence-first approach to discovering cryptographic primitives across source code, package manifests, TLS/SSH configurations, and X.509 certificate stores, accounts for honest scan coverage, explores Mosca theorem post-quantum migration urgency, and exports standardized CycloneDX 1.6 inventories.
-
-ASTRA is an evidence-first prototype and research tool, not a certified enterprise black-box scanner. It explicitly differentiates what was assessed from what was unassessed, treats post-quantum migration horizons as configurable scenario assumptions rather than forecasts, and provides candidate migration pathways for human cryptographic review.
-
----
-
-## 60-Second Quickstart & Live Demo
-
-You can run ASTRA locally via the one-click launcher, standalone CLI, or FastAPI dashboard:
-
-### Option A: One-Click Windows Launcher (Recommended)
-Double-click **`launch.bat`** in the repository root. The launcher will automatically verify Python, install dependencies, allocate ports, launch backend & dashboard, and open your browser to `http://localhost:8000`.
-
-### Option B: Command-Line Interface (CLI) Scan
-```bash
-# Clone the repository
-git clone https://github.com/adishxm/astra.git
-cd astra
-
-# Install dependencies (Python 3.10+)
-pip install -r requirements.txt
-
-# Run deterministic scan on the included synthetic sample project
-python -m app.cli scan ./examples/synthetic_sample --format table
-```
-
-### Option C: Realistic Near-Term Demo Walkthrough
-1. **Start the app**: Run `launch.bat` or `uvicorn app.main:app --port 8000` from `backend/`.
-2. **Scan the synthetic sample**: Upload `examples/synthetic_sample` or run CLI scan.
-3. **Inspect evidence**: Review exact file paths, line numbers, detector confidence, and unassessed files.
-4. **Explore Mosca scenario**: Adjust quantum threat horizon slider ($Z$) and data shelf-life ($X$) to visualize Store-Now-Decrypt-Later (SNDL) deadline shifts.
-5. **Export CBOM**: Export standardized CycloneDX 1.6 CBOM JSON for downstream compliance.
-
----
-
-## System Architecture
-
-```
-                       ┌────────────────────────────────────────┐
-                       │          Authorized Archive            │
-                       │    (.zip, .tar, .tar.gz, .tar.bz2)     │
-                       └───────────────────┬────────────────────┘
-                                           │
-                                           ▼
-                       ┌────────────────────────────────────────┐
-                       │   Worker 01: Safe Upload Intake        │
-                       │   - Magic Byte Format Inspection       │
-                       │   - Zip Bomb & Streaming Limit Defense │
-                       │   - Path Traversal & Symlink Lockdown  │
-                       │   - Ephemeral Read-Only Sandbox Tree   │
-                       └───────────────────┬────────────────────┘
-                                           │ ScanManifest + Sandbox
-                                           ▼
-                       ┌────────────────────────────────────────┐
-                       │   Worker 01: Deterministic Discovery   │
-                       │   - Multi-Language AST & Regex Scanner │
-                       │   - Package Manifest Parsers           │
-                       │   - TLS & SSH Config Inspectors        │
-                       │   - X.509 Certificate Metadata Parser  │
-                       │   - Static Binary & Container Scanners │
-                       │   - Authorized Endpoint Detectors      │
-                       │   - Strict Secret / Key Redaction      │
-                       └───────────────────┬────────────────────┘
-                                           │ Canonical Observations
-                                           ▼
-                       ┌────────────────────────────────────────┐
-                       │   Worker 01: Truthful Coverage         │
-                       │   - Honest Denominator (N_assessed)    │
-                       │   - Blind-Spot & Partial Scan Flags    │
-                       │   - Seeded Benchmark Runner (>=80%)    │
-                       └───────────────────┬────────────────────┘
-                                           │
-         ┌─────────────────────────────────┼─────────────────────────────────┐
-         ▼                                 ▼                                 ▼
-┌──────────────────┐             ┌──────────────────┐             ┌──────────────────┐
-│    Worker 02     │             │    Worker 03     │             │    Worker 04     │
-│ Canonical Evidence│             │ Contextual Risk  │             │ Workflow, Web UI │
-│ & CBOM Projection│             │ & Migration Queue│             │  & Review Portal │
-│ - Temporal Time  │             │ - Mosca Theorem  │             │ - Drilldown API  │
-│   Machine & DNA  │             │ - Sensitivity    │             │ - Tamper-Evident │
-│ - Reconciliation │             │ - Dated PQC      │             │   Audit Chaining │
-│ - CycloneDX 1.6  │             │ - Phased Roadmap │             │ - Air-Gapped     │
-│                  │             │ - Invariant Check│             │   Bundle Verify  │
-└──────────────────┘             └──────────────────┘             └──────────────────┘
-```
+1. [Executive Summary & Problem Alignment](#executive-summary--problem-alignment)
+2. [Supported Scope & Limitations (SIH26164 Matrix)](#supported-scope--limitations-sih26164-matrix)
+3. [60-Second Quickstart & Launch Options](#60-second-quickstart--launch-options)
+   - [Option A: One-Click Windows Launcher (`launch.bat`)](#option-a-one-click-windows-launcher-launchbat-recommended)
+   - [Option B: Zero-Dependency CLI Scan](#option-b-zero-dependency-cli-scan)
+   - [Option C: FastAPI Web Server & Interactive Dashboard](#option-c-fastapi-web-server--interactive-dashboard)
+   - [Option D: Docker Deployment](#option-d-docker-deployment)
+   - [Option E: Synthetic Near-Term Demo Walkthrough](#option-e-synthetic-near-term-demo-walkthrough)
+4. [System Architecture & Multi-Worker Pipeline](#system-architecture--multi-worker-pipeline)
+5. [Complete Audit Workflow — Step-by-Step](#complete-audit-workflow--step-by-step)
+   - [Step 1: Initiate a Scan](#step-1-initiate-a-scan)
+   - [Step 2: Review Results & Clean State Labeling](#step-2-review-results--clean-state-labeling)
+   - [Step 3: Mosca Horizon & Risk Sensitivity Analysis](#step-3-mosca-horizon--risk-sensitivity-analysis)
+   - [Step 4: Export CycloneDX 1.6 CBOM](#step-4-export-cyclonedx-16-cbom)
+   - [Step 5: Validate CBOM Schema Compliance](#step-5-validate-cbom-schema-compliance)
+6. [Interactive Web Dashboard — Real-Time Features](#interactive-web-dashboard--real-time-features)
+   - [Drag-and-Drop Archive Intake](#drag-and-drop-archive-intake)
+   - [Interactive Mosca Slider ($Z$, $X$, $Y$)](#interactive-mosca-slider)
+   - [Cryptographic Inventory Browser](#cryptographic-inventory-browser)
+   - [Cryptographic DNA Viewer & Drift Regression Alerts](#cryptographic-dna-viewer--drift-regression-alerts)
+   - [One-Click CBOM Export & Copy](#one-click-cbom-export--copy)
+7. [Comprehensive REST API Reference](#comprehensive-rest-api-reference)
+   - [Core Scan Endpoints](#core-scan-endpoints)
+   - [Workflow & Governance Endpoints](#workflow--governance-endpoints)
+   - [System & Health Probes](#system--health-probes)
+8. [Production & Air-Gapped Sovereign Operations](#production--air-gapped-sovereign-operations)
+   - [Tamper-Evident SHA-256 Audit Chain](#tamper-evident-sha-256-audit-chain)
+   - [Air-Gapped Signed Update Bundle Verification](#air-gapped-signed-update-bundle-verification)
+   - [Production Readiness Health Evaluation](#production-readiness-health-evaluation)
+9. [Environment Configuration](#environment-configuration)
+10. [Automated Test Suite (88 Passing Tests)](#automated-test-suite-88-passing-tests)
+11. [Troubleshooting & FAQ](#troubleshooting--faq)
+12. [Privacy, Threat Model & Security Considerations](#privacy-threat-model--security-considerations)
+13. [Quick Reference Card](#quick-reference-card)
+14. [Development Roadmap (Phase 2 Enterprise)](#development-roadmap-phase-2-enterprise)
+15. [License & Credits](#license--credits)
 
 ---
 
-## Core Capabilities
+## Executive Summary & Problem Alignment
 
-### 1. Safe Intake & Scan Boundary (`app.intake` — Worker 01)
-- **Container Format Verification**: Inspects file magic bytes (ZIP, GZIP, BZIP2, TAR) to prevent extension spoofing.
-- **Decompression Bomb Protection**: Active streaming byte counters enforce maximum compression ratios ($100:1$), total uncompressed sizes ($500\text{ MB}$), and single-file thresholds ($50\text{ MB}$).
-- **Directory Traversal Prevention**: Strips leading slashes, blocks parent directory backtracking (`../`), null bytes (`\0`), and drive specifiers.
-- **Symlink & Dangerous File Guards**: Rejects symlink/hardlink escapes (`SymlinkEscapeError`) and safely skips dangerous executables (`.exe`, `.dll`, `.so`, `.ps1`).
-- **Reproducible Manifest**: Emits `ScanManifest` containing archive SHA-256, scan ID (UUIDv4), file inventory, and extraction metrics.
+**ASTRA** is an open-source cryptographic discovery and CBOM prototype engineered by **Team HEXARK** for Smart India Hackathon 2026 problem statement **SIH26164 (Enterprise Cryptographic Discovery & Analysis Tool - ECDAT)**.
 
-### 2. Multi-Surface & Multi-Modal Cryptographic Discovery (`app.discovery` — Worker 01)
-- **Source Code**: Python AST + multi-language regex covering Python, Java, JavaScript/TypeScript, Go, C/C++, and Rust.
-- **Package Manifests**: Identifies cryptographic libraries in `package.json`, `pom.xml`, `requirements.txt`, `pyproject.toml`, `go.mod`, and `Cargo.toml`.
-- **Infrastructure & Config**: Audits TLS protocol versions (`TLSv1.3`, `TLSv1.2`, `SSLv3`), cipher suites (`ECDHE-AES256-GCM`), and SSH key exchange mechanisms in `.yaml`, `.conf`, `.ini`, and `.properties`.
-- **Certificates & Keys**: Parses X.509 certificates for Subject, Issuer, Public Key Algorithm, Key Size, and validity periods.
-- **Static Binary Detector (PROD-01)**: Safe, static-only analysis of ELF, PE/COFF, and Mach-O headers without execution; detects cryptographic symbols (OpenSSL, Libsodium, liboqs), ASN.1 OIDs (RSA, ECC, ML-KEM, ML-DSA), cryptographic constants, and symbol stripping.
-- **Container & Layer Detector (PROD-01)**: Audits Dockerfiles and container manifests for base OS crypto posture, cryptographic package dependencies (`openssl`, `liboqs`, `ca-certificates`), and crypto environment variables (`SSL_CERT_DIR`).
-- **Authorized Network Endpoint Detector (PROD-02)**: Ingests TLS session metadata and simulated handshakes under strict destination allowlists; categorizes evidence into the four CADI operational planes (`CAPABILITY`, `CONFIGURATION`, `NEGOTIATION`, `ACTUAL_USE`) and detects PQC hybrid key exchanges (`X25519MLKEM768`).
-- **Zero-Secret Guarantee**: Detects private key blocks (`BEGIN PRIVATE KEY`) and masks all secret material with `[REDACTED_PRIVATE_KEY_MATERIAL]`, setting `redacted = True`. Private key bytes are never stored.
+Modern enterprise systems are exposed to the **Store-Now-Decrypt-Later (SNDL)** threat: adversarial actors intercept and record encrypted network traffic and proprietary data today, preparing to decrypt it once Cryptographically Relevant Quantum Computers (CRQCs) emerge. Transitioning to Post-Quantum Cryptography (PQC) requires knowing **where**, **how**, and **what** cryptographic algorithms are employed across codebases, manifests, configs, and certificates.
 
-### 3. Coverage Accounting & Benchmark Engine (`app.coverage` — Worker 01)
-- **Honest Denominator Accounting**: Accurately computes $N_{\text{assessed}} / N_{\text{total}}$ across source, manifests, configs, and certificate stores.
-- **Non-Misleading Clean State**: Repositories with no detected crypto are labeled `NO_FINDINGS_IN_SUPPORTED_SCOPE` alongside coverage caveats—never falsely reported as "Safe".
-- **Partial-Scan Resilience**: Surfaces collector errors or degradation without discarding surviving results.
-- **Benchmark Runner**: Pre-registered synthetic corpus evaluation measuring Precision, Recall, and F1 to ensure $\ge 80\%$ benchmark compliance (`AC-06`).
-
-### 4. Canonical Evidence & Inventory Modeling (`app.inventory` — Worker 02)
-- **Canonical Evidence Normalization**: Standardizes diverse collector claims into deterministic, content-addressed observations (`CanonicalEvidence`).
-- **Asset Identity & Disambiguation**: Aggregates multi-source evidence into unified component identities (`AssetIdentity`) with uncertainty tracking.
-- **Parametric Sanitization**: Allowlist-based filtering ensures secrets and internal values are redacted (`[REDACTED]`) prior to ingestion.
-- **Relational Context Graph & CBOM Export**: Structures parent-child component relationships, audit trail logging, and privacy-safe CycloneDX-aligned inventory exports (`AC-03`, `AC-05`, `AC-09`).
-- **Temporal Cryptographic Time Machine (PROD-01)**: Implements point-in-time `InventorySnapshot` models and deterministic SHA-256 Cryptographic DNA hashing. Computes temporal drift deltas (`added`, `removed`, `modified`) and triggers high-urgency alerts on cryptographic strength downgrade regressions (e.g. `AES-256` $\to$ `DES`).
-- **CycloneDX 1.6 Conformance & Multi-Scanner Reconciliation (PROD-02)**: Schema validator for CycloneDX 1.6 cryptographic asset profiles. Multi-generator reconciliation engine computes the **Discrepancy Index** ($D$) across disparate scanners (ASTRA, IBM CBOM, CycloneDX CLI), preserves minority scanner claims, and generates unified, non-lossy CBOMs.
-
-### 5. Contextual Risk, Mosca Horizon & Migration Roadmap (`app.risk` — Worker 03)
-- **Mosca Theorem Formulation**: Formally evaluates $X$ (data shelf-life) $+ Y$ (migration duration) $> Z$ (quantum threat horizon). Assets violating this inequality represent immediate Store-Now-Decrypt-Later (SNDL) risks and are automatically escalated to `CRITICAL`.
-- **Explainable Multi-Factor Scoring**: Transparently weights algorithm vulnerability ($40\%$), Mosca urgency ($25\%$), operational exposure ($20\%$), and business criticality ($15\%$) with machine-readable reason codes (`AC-07`).
-- **Dated Standards & Candidate Migration Backlog**: Links identified algorithms to dated NIST publications (FIPS 203, 204, 205, Aug 2024), candidate standardized/hybrid alternatives, and explicit compatibility/operational caveats (`AC-08`).
-- **Scenario Sensitivity & Baseline Comparison**: Dynamic CRQC slider controls show exactly why asset priorities shift; contextual prioritization eliminates alert fatigue ($>50\%$ alert reduction over flat regex/CVSS baselines) (`AC-12`).
-- **Dependency-Aware Constrained Roadmap (PROD-01)**: Employs Kahn topological sorting across prerequisite dependencies to generate executable multi-phase roadmaps (Foundation $\to$ Platform $\to$ Edge), preventing deployment failure and identifying critical bottleneck components.
-- **Security Invariant & Rollback Assurance (PROD-02)**: Formally audits candidate PQC transitions for security property preservation (Confidentiality, Authenticity, Forward Secrecy, Non-Repudiation), validates MITM downgrade immunity, and enforces fail-closed rollback policies.
-
-### 6. Web Workflow, Hardening & Air-Gapped Operations (`app.web_workflow` — Worker 04)
-- **Evidence Drilldown Endpoint**: Granular access to canonical evidence records for specific asset identities (`/api/v1/workflow/evidence/{asset_id}`).
-- **Review & Audit Trail**: Auditable governance endpoint recording verification decisions, previous/new states, and review justifications (`/api/v1/workflow/audit`).
-- **Sanitized Inventory Export**: Standardized export endpoint emitting CycloneDX-aligned inventory objects with full provenance (`/api/v1/workflow/export`).
-- **Tamper-Evident Audit Chaining (PROD-01)**: Chains all governance decisions and review audits into an immutable SHA-256 Merkle-style hash chain (`/api/v1/workflow/audit/chain/verify`), detecting any unauthorized modification or deletion.
-- **Air-Gapped Sovereign Readiness & Signed Update Verification (PROD-01)**: Sovereign offline profile with zero outbound telemetry, and local verification of signed offline threat intelligence bundles (`/api/v1/workflow/offline/bundle/verify`).
-- **Production Health & Isolation Checks (PROD-01)**: Evaluates sandbox read-only container status, air-gapped isolation, local ruleset cache status, and memory quotas (`/api/v1/workflow/health/production`).
-
-### 7. Dual-Tester Quality & Security Assurance (Tester 01 & Tester 02)
-- **Functional Assurance (Tester 01)**: Seeded benchmark testing achieving $\ge 80\%$ precision and recall (`AC-06`), honest denominator validation, and full end-to-end user journeys (Cycles V01 & V02 — 50 tests).
-- **Integration & Security Assurance (Tester 02)**: Strict zero private-key retention validation across all formats, hostile archive adversarial attacks (zip bombs, path traversals), schema round-trip integrity, and alert fatigue reduction verification ($>50\%$) (Cycles V01 & V02 — 9 tests).
-- **Official Signoff**: Both Tester 01 and Tester 02 have officially reviewed, approved, and signed off on the complete MVP product merge.
+ASTRA addresses this challenge with:
+- **Evidence-First Discovery**: Pinpoints exact file paths, line numbers, and code contexts for cryptographic primitives across 6 programming languages, package manifests, TLS/SSH configurations, and X.509 certificates.
+- **Truthful Denominator Coverage**: Tracks assessed versus unassessed files ($N_{\text{assessed}} / N_{\text{total}}$), preventing false senses of security when unsupported file formats are present.
+- **Explainable Mosca Theorem Risk Scorer**: Models the Mosca inequality ($X + Y > Z$) with dynamic scenario sensitivity sliders to calculate exact Store-Now-Decrypt-Later vulnerability deadlines.
+- **Standardized CycloneDX 1.6 CBOM**: Produces validated, compliant Cryptographic Bill of Materials with multi-scanner reconciliation.
+- **Sovereign, Air-Gapped Architecture**: Operates 100% locally on CPU with zero telemetry, streaming zip-bomb defenses, automated private key redaction, and an immutable SHA-256 Merkle-style audit log.
 
 ---
 
-## Supported Scope & Limitations (SIH26164 Alignment)
+## Supported Scope & Limitations (SIH26164 Matrix)
 
 To maintain absolute credibility and transparent engineering standards, ASTRA explicitly delineates what is verified and supported in this prototype versus what is planned for future enterprise releases:
 
 | Surface / Capability | Prototype Status | Implementation & Coverage Details |
 |---|---|---|
-| **Source Code Detection** | ✅ **Verified** | Python AST + deterministic regex across Python, Java, JavaScript/TypeScript, Go, C/C++, and Rust. Automatic full-line and inline comment filtering eliminates false positives. |
+| **Source Code Detection** | ✅ **Verified** | Python AST + multi-language regex across Python, Java, JavaScript/TypeScript, Go, C/C++, and Rust. Automatic full-line and inline comment filtering eliminates false positives. |
 | **Dependency Manifests** | ✅ **Verified** | Parses `package.json`, `pom.xml`, `requirements.txt`, `pyproject.toml`, `go.mod`, and `Cargo.toml`. Accurately labels declared library capabilities distinct from confirmed source-level invocations. |
-| **TLS & Infrastructure Configs**| ✅ **Verified** | Audits TLS protocol versions (`TLSv1.2`, `TLSv1.3`), legacy SSL, and cipher suites in `.yaml`, `.conf`, `.ini`, and `.properties`. |
-| **Certificates & Public Keys** | ✅ **Verified** | Parses X.509 certificate metadata (Subject, Issuer, public key algorithm, bit length). Enforces strict automated private key redaction (`[REDACTED_PRIVATE_KEY_MATERIAL]`). |
+| **TLS & Infrastructure Configs**| ✅ **Verified** | Audits TLS protocol versions (`TLSv1.2`, `TLSv1.3`), legacy SSL (`SSLv3`, `TLSv1.0`), and cipher suites in `.yaml`, `.conf`, `.ini`, and `.properties`. |
+| **Certificates & Public Keys** | ✅ **Verified** | Parses X.509 certificate metadata (Subject, Issuer, public key algorithm, bit length, validity). Enforces strict automated private key redaction (`[REDACTED_PRIVATE_KEY_MATERIAL]`). |
 | **Static Binary Inspection** | ✅ **Verified (Direct Scans)** | Direct filesystem scans (`astra scan <dir>`) statically inspect ELF, PE/COFF, and Mach-O headers for crypto symbols (OpenSSL, Libsodium, liboqs), ASN.1 OIDs, and constants without code execution. Web archive uploads filter executables (`.exe`, `.dll`, `.so`) at intake for defense-in-depth isolation. |
 | **Container & Dockerfiles** | ✅ **Verified** | Audits Dockerfile instructions, base OS crypto packages, and certificate environment variables. |
 | **Truthful Coverage Accounting**| ✅ **Verified** | Tracks honest denominator $N_{\text{assessed}} / N_{\text{total}}$. Repositories with unsupported file formats (media, binaries, unrecognized formats) surface coverage warnings rather than misleading "100% clean" claims. |
@@ -179,207 +90,555 @@ To maintain absolute credibility and transparent engineering standards, ASTRA ex
 
 ---
 
-## Privacy, Threat Model & Safe Intake
+## 60-Second Quickstart & Launch Options
 
-ASTRA is engineered with a strict **local-first, sovereign** security posture:
-- **Local CPU Processing**: All discovery, pattern analysis, and risk scoring execute locally on the host CPU. No code, tokens, or telemetry egress to external cloud services or LLMs.
-- **Ephemeral Sandbox Intake**: Archives uploaded via the web interface are extracted into isolated, temporary sandboxes with strict byte, compression ratio, path length, and symlink defenses (`SafeArchiveExtractor`), and unlinked immediately upon completion.
-- **Automated Zero-Secret Redaction**: Detected private key blocks and credentials are automatically masked with `[REDACTED_PRIVATE_KEY_MATERIAL]` prior to evidence storage.
-- **Demo Recommendation**: Reviewers are encouraged to scan the included `examples/synthetic_sample/` project or open-source repositories. Do not upload live unredacted production secrets to any public demonstration.
+### Option A: One-Click Windows Launcher (`launch.bat`) (Recommended)
 
----
-
-## Supported Cryptographic Taxonomy
-
-| Category | Algorithms / Primitives Supported |
-|---|---|
-| **Classical Symmetric** | AES (128, 192, 256), ChaCha20-Poly1305, 3DES, DES, RC4 |
-| **Classical Hashing** | SHA-256, SHA-384, SHA-512, SHA3-256, SHA3-512, BLAKE2b/s, MD5, SHA-1 |
-| **Classical Asymmetric** | RSA (1024, 2048, 3072, 4096), DSA, ECDSA, ECDH, Ed25519, X25519, ECC Curves (P-256, P-384, secp256k1) |
-| **NIST Post-Quantum (PQC)** | ML-KEM (Kyber-512/768/1024), ML-DSA (Dilithium2/3/5), SLH-DSA (SPHINCS+), Falcon, Classic-McEliece |
-| **Protocols & Suites** | TLSv1.3, TLSv1.2, Legacy TLS/SSL (v1.0, v1.1, SSLv3), ECDHE/DHE Cipher Suites, Hybrid SSH KEX (`sntrup761x25519`) |
-
----
-
-## Repository Structure
-
+Double-click **`launch.bat`** in the repository root (or run it from PowerShell/CMD):
+```cmd
+launch.bat
 ```
-astra/
-├── backend/
-│   ├── app/
-│   │   ├── core/
-│   │   │   ├── config.py              # Security limits, collector & ruleset versions
-│   │   │   └── security.py            # Path sanitization, traversal, symlink & hash guards
-│   │   ├── intake/                    # Worker 01: MVP-01 Safe Archive Intake
-│   │   │   ├── extractor.py           # SafeArchiveExtractor (ZIP, TAR, GZ, BZ2)
-│   │   │   ├── models.py              # ScanManifest, ScanStatus, ExtractedFileEntry
-│   │   │   └── sandbox.py             # SandboxManager (read-only ephemeral workspaces)
-│   │   ├── discovery/                 # Worker 01: MVP-02 Deterministic Discovery
-│   │   │   ├── engine.py              # DiscoveryEngine (coordinates all detectors)
-│   │   │   ├── models.py              # Canonical Observation schema (W01 -> W02 contract)
-│   │   │   └── detectors/
-│   │   │       ├── source_detector.py        # Multi-language AST/regex source scanner
-│   │   │       ├── manifest_detector.py      # Dependency & package manifest parser
-│   │   │       ├── config_detector.py        # TLS protocol & cipher suite auditor
-│   │   │       ├── certificate_detector.py   # X.509 parser & private key redactor
-│   │   │       ├── binary_detector.py        # Static ELF/PE/Mach-O symbol & OID detector (PROD-01)
-│   │   │       ├── container_detector.py     # Dockerfile & container layer inspector (PROD-01)
-│   │   │       └── network_detector.py       # Authorized TLS endpoint & handshake detector (PROD-02)
-│   │   ├── coverage/                  # Worker 01: MVP-03 Coverage & Benchmark Engine
-│   │   │   ├── accounting.py          # CoverageAccountant (honest denominator tracking)
-│   │   │   ├── benchmark.py           # BenchmarkRunner (Precision, Recall, F1 against AC-06)
-│   │   │   └── models.py              # SurfaceCoverage, CoverageReport, BenchmarkEvaluation
-│   │   ├── inventory/                 # Worker 02: Canonical Inventory, Lineage & CBOM
-│   │   │   ├── models.py              # CanonicalEvidence, AssetIdentity, redaction
-│   │   │   ├── temporal.py            # TemporalLineageEngine & DNA Drift Tracking (PROD-01)
-│   │   │   └── cbom_reconciliation.py # CycloneDX 1.6 & Multi-Scanner Reconciler (PROD-02)
-│   │   ├── risk/                      # Worker 03: Mosca Horizon, Constrained Roadmap & Assurance
-│   │   │   ├── models.py              # ContextFactors, UrgencyLevel, RiskScenario
-│   │   │   ├── scorer.py              # RiskScorer (Mosca X+Y>Z evaluation)
-│   │   │   ├── backlog.py             # BacklogBuilder (dated NIST PQC mappings)
-│   │   │   ├── scenarios.py           # ScenarioSensitivityEngine (CRQC horizon sliders)
-│   │   │   ├── roadmap.py             # DependencyRoadmapEngine & Kahn Topological Waves (PROD-01)
-│   │   │   └── assurance.py           # SecurityInvariantAssuranceEngine & Rollback Safety (PROD-02)
-│   │   ├── services/                  # Production Central Services & Persistence
-│   │   │   ├── scan_service.py        # ScanService (unified pipeline) & ScanStore (thread-safe persistence)
-│   │   │   └── __init__.py
-│   │   ├── static/                    # Embedded Interactive Web Dashboard
-│   │   │   └── index.html             # Glassmorphism UI with live Mosca sliders, inventory & CBOM exporter
-│   │   ├── web_workflow/              # Worker 04: Workflow API, Hardening & Air-Gapped Operations
-│   │   │   ├── router.py              # Evidence drilldown, review audit, and export routes
-│   │   │   └── hardening.py           # AirGappedBundleManager & TamperEvidentAuditChainer (PROD-01)
-│   │   ├── cli.py                     # ASTRA Zero-Dependency Enterprise CLI Tool
-│   │   └── main.py                    # Master FastAPI Application Factory & Entrypoint
-│   └── tests/
-│       ├── test_e2e_product.py        # 10 End-to-End Product tests (ScanService, FastAPI, CLI)
-│       ├── test_intake/               # 13 intake security & boundary tests
-│       ├── test_discovery/            # 12 discovery tests (source, config, cert + binary, container, network)
-│       ├── test_coverage/             # 4 coverage accounting & benchmark tests
-│       ├── test_inventory/            # 7 canonical inventory, temporal & CBOM tests (3 MVP + 4 prod)
-│       ├── test_risk/                 # 13 risk, Mosca, roadmap & assurance tests (9 MVP + 4 prod)
-│       ├── test_web_workflow/         # 7 workflow API, audit chain & air-gapped tests (4 MVP + 3 prod)
-│       ├── test_functional_assurance/ # 9 functional assurance E2E journey tests
-│       └── test_integration_security/ # 9 contract security & regression readiness tests (84 tests total)
-├── frontend/                          # Standalone Dashboard Package
-│   ├── package.json                   # Vite dev server configuration
-│   ├── index.html                     # Full responsive UI
-│   └── README.md
-└── .brain/
-    ├── .ORG_research/                 # NIST PQC papers, ECDAT dossiers & research PDFs
-    ├── .report/                       # Worker signoff reports (MVP-01..03, PROD-01..02)
-    └── .work/                         # Shared architecture, contracts, and worker roles
-```
+The launcher will automatically:
+1. Verify Python 3.10+ installation.
+2. Check and allocate local port 8000.
+3. Automatically install all required dependencies from `requirements.txt`.
+4. Launch the FastAPI backend and embedded Web Dashboard.
+5. Poll `/health` until live, then automatically launch your default browser to `http://localhost:8000`.
 
 ---
 
-## Quickstart & Installation
+### Option B: Zero-Dependency CLI Scan
 
-### Prerequisites
-- Python 3.10+
-- Git
+ASTRA includes a standalone, air-gapped compatible CLI tool that runs locally with declared dependencies:
 
-### Installation
 ```bash
-# Clone the repository
+# 1. Clone the repository
 git clone https://github.com/adishxm/astra.git
 cd astra
 
-# Install dependencies (or pip install -e . to register the 'astra' CLI globally)
+# 2. Install dependencies & register CLI globally
 pip install -r requirements.txt
 pip install -e .
-```
 
----
-
-## Running ASTRA
-
-### 1. Command-Line Interface (CLI)
-ASTRA includes a standalone, air-gapped compatible CLI tool that runs locally with declared dependencies (`pip install -r requirements.txt`). It requires no external database servers, Docker, or external network connectivity:
-
-```bash
-# Display system version and supported NIST PQC standards
+# 3. Verify CLI installation
 astra version
 
-# Run full cryptographic scan on a directory with tabular terminal output
-astra scan ./my_target_project --format table
+# 4. Scan a target project directory
+astra scan ./examples/synthetic_sample --format table
+```
 
-# Scan an archive (.zip, .tar.gz) and write report to JSON
-astra scan ./codebase_bundle.zip --format json --output scan_report.json
+---
 
-# Display previously saved scan summary
-astra show scan-d6f0cb73
+### Option C: FastAPI Web Server & Interactive Dashboard
 
-# Evaluate Mosca inequality horizon (X + Y > Z) and candidate PQC backlog
-astra risk scan-d6f0cb73 --horizon 10.0 --shelf-life 5.0 --migration 3.0
+```bash
+# Launch server directly via Uvicorn
+cd backend
+uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
-# Export CycloneDX 1.6 Cryptographic Bill of Materials (CBOM)
-astra export scan-d6f0cb73 --output cbom_cyclonedx.json
-
-# Validate CBOM against CycloneDX 1.6 schema
-astra validate scan-d6f0cb73
-
-# Launch the local HTTP server & interactive dashboard
+# Or launch via the global CLI
 astra serve --host 127.0.0.1 --port 8000
 ```
+Open **`http://localhost:8000`** in your browser. Interactive OpenAPI documentation is available at **`http://localhost:8000/docs`**.
 
-### 2. FastAPI Web Server & Interactive Dashboard
-Start the production server:
-```bash
-uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
-Open **`http://localhost:8000`** in your browser to access the ASTRA Web Dashboard:
-- **Drag-and-Drop Archive Intake**: Upload `.zip` and `.tar.gz` files directly.
-- **Interactive Mosca Slider**: Dynamically adjust quantum threat timelines ($Z$) and data lifetimes ($X$) with real-time recalculation of vulnerability deadlines.
-- **Cryptographic Inventory**: Filter and search detected algorithms, key sizes, confidence ratings, and code line locations.
-- **One-Click CBOM Export**: Copy or download standard CycloneDX 1.6 JSON.
-- **Cryptographic DNA Viewer**: Track posture drift across scans using deterministic SHA-256 fingerprinting.
+---
 
-### 3. Docker & Container Deployment
+### Option D: Docker Deployment
+
 ```bash
-# Build and run the ASTRA engine container
+# Build and run the containerized ASTRA engine
 docker compose up --build
 
-# Run test suite inside isolated Docker container
+# Run in background (detached) mode
+docker compose up -d --build
+
+# Execute test suite inside the container
 docker compose --profile test run astra-tests
 ```
+The Docker container executes as an unprivileged user `astra` (UID 1000) with volume persistence at `./data`.
 
 ---
 
-## Running the Automated Test Suite
+### Option E: Synthetic Near-Term Demo Walkthrough
+
+ASTRA includes a pre-built reference multi-surface test project in [`examples/synthetic_sample/`](examples/synthetic_sample/):
+```bash
+# 1. Scan the synthetic sample
+astra scan ./examples/synthetic_sample --format table
+
+# 2. Re-evaluate Mosca risk with custom scenario parameters
+astra risk scan-<id> --horizon 8.0 --shelf-life 5.0 --migration 2.0
+
+# 3. Export validated CycloneDX 1.6 CBOM
+astra export scan-<id> --output cbom.json
+
+# 4. Validate schema compliance
+astra validate scan-<id>
+```
+
+---
+
+## System Architecture & Multi-Worker Pipeline
+
+ASTRA is built upon an asynchronous, decoupled multi-worker architecture designed for modularity, defensibility, and zero secret retention:
+
+```
+                        ┌────────────────────────────────────────┐
+                        │          Authorized Archive            │
+                        │    (.zip, .tar, .tar.gz, .tar.bz2)     │
+                        └───────────────────┬────────────────────┘
+                                            │
+                                            ▼
+                        ┌────────────────────────────────────────┐
+                        │   Worker 01: Safe Upload Intake        │
+                        │   - Magic Byte Format Inspection       │
+                        │   - Zip Bomb & Streaming Limit Defense │
+                        │   - Path Traversal & Symlink Lockdown  │
+                        │   - Ephemeral Read-Only Sandbox Tree   │
+                        └───────────────────┬────────────────────┘
+                                            │ ScanManifest + Sandbox
+                                            ▼
+                        ┌────────────────────────────────────────┐
+                        │   Worker 01: Deterministic Discovery   │
+                        │   - Multi-Language AST & Regex Scanner │
+                        │   - Package Manifest Parsers           │
+                        │   - TLS & SSH Config Inspectors        │
+                        │   - X.509 Certificate Metadata Parser  │
+                        │   - Static Binary & Container Scanners │
+                        │   - Authorized Endpoint Detectors      │
+                        │   - Strict Secret / Key Redaction      │
+                        └───────────────────┬────────────────────┘
+                                            │ Canonical Observations
+                                            ▼
+                        ┌────────────────────────────────────────┐
+                        │   Worker 01: Truthful Coverage         │
+                        │   - Honest Denominator (N_assessed)    │
+                        │   - Blind-Spot & Partial Scan Flags    │
+                        │   - Seeded Benchmark Runner (>=80%)    │
+                        └───────────────────┬────────────────────┘
+                                            │
+          ┌─────────────────────────────────┼─────────────────────────────────┐
+          ▼                                 ▼                                 ▼
+ ┌──────────────────┐             ┌──────────────────┐             ┌──────────────────┐
+ │    Worker 02     │             │    Worker 03     │             │    Worker 04     │
+ │ Canonical Evidence│             │ Contextual Risk  │             │ Workflow, Web UI │
+ │ & CBOM Projection│             │ & Migration Queue│             │  & Review Portal │
+ │ - Temporal Time  │             │ - Mosca Theorem  │             │ - Drilldown API  │
+ │   Machine & DNA  │             │ - Sensitivity    │             │ - Tamper-Evident │
+ │ - Reconciliation │             │ - Dated PQC      │             │   Audit Chaining │
+ │ - CycloneDX 1.6  │             │ - Phased Roadmap │             │ - Air-Gapped     │
+ │                  │             │ - Invariant Check│             │   Bundle Verify  │
+ └──────────────────┘             └──────────────────┘             └──────────────────┘
+```
+
+### Worker Roles & Responsibilities
+
+- **Worker 01 (`app.intake`, `app.discovery`, `app.coverage`)**: Ingests archives with strict zip-bomb and symlink containment; runs multi-surface static detectors; computes honest coverage denominator ($N_{\text{assessed}} / N_{\text{total}}$).
+- **Worker 02 (`app.inventory`)**: Normalizes observations into content-addressed `CanonicalEvidence`; tracks temporal posture drift with SHA-256 Cryptographic DNA hashes; projects CycloneDX 1.6 CBOM with multi-scanner reconciliation.
+- **Worker 03 (`app.risk`)**: Evaluates Mosca inequality ($X + Y > Z$); calculates Store-Now-Decrypt-Later urgency; maps candidate PQC algorithms (NIST FIPS 203/204/205); computes Kahn topological roadmaps.
+- **Worker 04 (`app.web_workflow`)**: Powers FastAPI endpoints, embedded glassmorphism Web Dashboard, immutable SHA-256 Merkle-style audit chains, and air-gapped signed bundle verification.
+
+---
+
+## Complete Audit Workflow — Step-by-Step
+
+### Step 1: Initiate a Scan
+
+You can initiate scans through multiple entrypoints:
+
+**Option A: CLI — Scan Directory**
+```bash
+astra scan ./my_target_project --format table
+```
+
+**Option B: CLI — Scan Archive with JSON Output**
+```bash
+astra scan ./codebase.zip --format json --output scan_report.json
+```
+
+**Option C: REST API — Upload Archive**
+```bash
+curl -X POST http://localhost:8000/api/v1/scans/upload \
+  -F "file=@./codebase.zip"
+```
+
+**Option D: REST API — Scan Server Directory**
+```bash
+curl -X POST http://localhost:8000/api/v1/scans/directory \
+  -H "Content-Type: application/json" \
+  -d '{"path": "/absolute/path/to/project", "target_name": "my-project"}'
+```
+
+**Option E: Web Dashboard**
+Open `http://localhost:8000` and drag-and-drop your `.zip` or `.tar.gz` file into the upload zone.
+
+---
+
+### Step 2: Review Results & Clean State Labeling
+
+ASTRA enforces a strict **non-misleading clean state invariant**: repositories with no detected cryptography are labeled `NO_FINDINGS_IN_SUPPORTED_SCOPE` alongside coverage caveats—**never** falsely marked as "Safe".
+
+**CLI Inspection:**
+```bash
+astra show scan-d6f0cb73
+```
+Output:
+```text
+Scan ID:             scan-d6f0cb73
+Target:              codebase_bundle.zip
+Created At:          2026-10-03T12:00:00+00:00
+Coverage:            87.5% (7/8 files assessed)
+Clean State Label:   FINDINGS_PRESENT
+Cryptographic DNA:   a1b2c3d4e5f6...
+```
+
+**REST API Inspection:**
+```bash
+# Retrieve full scan record
+curl http://localhost:8000/api/v1/scans/scan-d6f0cb73
+
+# Retrieve honest coverage accounting report
+curl http://localhost:8000/api/v1/scans/scan-d6f0cb73/coverage
+```
+
+---
+
+### Step 3: Mosca Horizon & Risk Sensitivity Analysis
+
+The **Mosca Theorem** formally models post-quantum migration urgency:
+
+$$\text{If } X + Y > Z \implies \text{CRITICAL Store-Now-Decrypt-Later (SNDL) Deadline Violation}$$
+
+Where:
+- $X$ = **Data Secrecy Shelf-Life** (years the data must remain confidential).
+- $Y$ = **Migration Duration** (years required to transition systems to PQC).
+- $Z$ = **Quantum Threat Horizon** (years until Cryptographically Relevant Quantum Computers exist).
+- $\text{Slack} = Z - (X + Y)$. Negative slack indicates an immediate violation.
+
+**CLI Dynamic Re-Evaluation:**
+```bash
+astra risk scan-d6f0cb73 --horizon 8.0 --shelf-life 5.0 --migration 2.0
+```
+Output:
+```text
+[*] Risk & Mosca Horizon Analysis for Scan: scan-d6f0cb73
+Active Scenario: Quantum Horizon Z = 8.0 yrs (Assumption) | Shelf-Life X = 5.0 yrs | Migration Y = 2.0 yrs
+Mosca Inequality: X (5.0) + Y (2.0) = 7.0 yrs vs Z (8.0 yrs) -> SATISFIED (X + Y <= Z)
+
+Algorithm    Risk Score   Urgency Tier   Mosca Urgency Status
+---------------------------------------------------------------
+RSA-2048     58.0         HIGH           No (Slack: +1.0y)
+AES-256      12.0         LOW            No (Slack: +1.0y)
+```
+
+**REST API Dynamic Re-Evaluation:**
+```bash
+curl "http://localhost:8000/api/v1/scans/scan-d6f0cb73/risk?horizon=5.0&shelf_life=4.0&migration=2.0"
+```
+
+---
+
+### Step 4: Export CycloneDX 1.6 CBOM
+
+ASTRA exports standards-compliant Cryptographic Bill of Materials following the official **CycloneDX 1.6 Cryptographic Asset Profile**:
 
 ```bash
-# Run all 88 test suites with detailed output
+astra export scan-d6f0cb73 --output cbom_cyclonedx.json
+```
+
+**Sample CycloneDX 1.6 CBOM Excerpt:**
+```json
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.6",
+  "serialNumber": "urn:uuid:3fa85f64-5717-4562-b3fc-2c963f66afa6",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-03T18:00:00Z",
+    "tools": [
+      {
+        "vendor": "HEXARK",
+        "name": "ASTRA ECDAT",
+        "version": "1.0.0"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "cryptographic-asset",
+      "name": "RSA-2048",
+      "cryptoProperties": {
+        "assetType": "algorithm",
+        "algorithmProperties": {
+          "primitive": "asymmetric",
+          "parameterSetIdentifier": "2048",
+          "classicalSecurityLevel": 112,
+          "nistQuantumSecurityLevel": 0
+        },
+        "oid": "1.2.840.113549.1.1.1"
+      }
+    }
+  ]
+}
+```
+
+---
+
+### Step 5: Validate CBOM Schema Compliance
+
+Verify that the generated CBOM strictly conforms to CycloneDX 1.6 specifications:
+```bash
+astra validate scan-d6f0cb73
+```
+Output:
+```text
+[SUCCESS] CBOM for scan scan-d6f0cb73 is VALID under CycloneDX 1.6.
+Cryptographic Components: 7
+```
+
+---
+
+## Interactive Web Dashboard — Real-Time Features
+
+Access the dashboard at **`http://localhost:8000`** after launching the server.
+
+### Drag-and-Drop Archive Intake
+- Drop `.zip`, `.tar`, `.tar.gz`, or `.tar.bz2` files directly onto the browser upload target.
+- Live progress feedback tracks upload, decompression in isolated sandbox, discovery engine execution, and inventory projection.
+
+### Interactive Mosca Slider
+- **Quantum Threat Horizon ($Z$)**: Adjust slider from 1 to 20 years.
+- **Data Shelf-Life ($X$)**: Adjust secrecy requirement from 1 to 15 years.
+- **Migration Time ($Y$)**: Adjust migration timeline from 1 to 10 years.
+- **Instant Client-Side Recalculation**: Urgency counts (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`) and backlog priority order dynamically recalculate without triggering server re-scans.
+- Items where $X + Y > Z$ instantly flag with glowing red indicators and Store-Now-Decrypt-Later alerts.
+
+### Cryptographic Inventory Browser
+- Instant search and filtering across algorithm names, key sizes, source file locations, and confidence levels.
+- Click any row to expand the full canonical evidence chain, line numbers, and SHA-256 evidence digests.
+
+### Cryptographic DNA Viewer & Drift Regression Alerts
+- Displays the scan's deterministic SHA-256 Cryptographic DNA hash.
+- Across subsequent scans of the same project, the viewer tracks **temporal drift** (`added`, `removed`, `modified`).
+- **Downgrade Alerts**: Automatically flags security regressions if a strong primitive is downgraded (e.g. `AES-256` $\to$ `DES`).
+
+### One-Click CBOM Export & Copy
+- Download validated CycloneDX 1.6 JSON with a single click.
+- "Copy to Clipboard" button enables rapid ingestion into SIEM or compliance workflows.
+
+---
+
+## Comprehensive REST API Reference
+
+All endpoints are fully documented with interactive testing at **`http://localhost:8000/docs`** (Swagger UI) and **`http://localhost:8000/redoc`**.
+
+### Core Scan Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `POST` | `/api/v1/scans/upload` | Upload archive (`.zip`, `.tar.gz`) and execute full scan pipeline |
+| `POST` | `/api/v1/scans/directory` | Scan server-local directory (disabled when `ASTRA_HOSTED_MODE=true`) |
+| `GET` | `/api/v1/scans` | List all historical scans |
+| `GET` | `/api/v1/scans/{scan_id}` | Retrieve complete scan record and metadata |
+| `GET` | `/api/v1/scans/{scan_id}/findings` | Retrieve canonical assets and detected cryptographic observations |
+| `GET` | `/api/v1/scans/{scan_id}/coverage` | Retrieve honest coverage accounting report and blind-spot metrics |
+| `GET` | `/api/v1/scans/{scan_id}/risk` | Retrieve Mosca risk calculations or dynamically re-evaluate via query params (`horizon`, `shelf_life`, `migration`) |
+| `GET` | `/api/v1/scans/{scan_id}/export` | Export standardized CycloneDX 1.6 CBOM JSON |
+
+### Workflow & Governance Endpoints
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/v1/workflow/evidence/{asset_id}` | Evidence drilldown for a specific cryptographic asset identity |
+| `POST` | `/api/v1/workflow/audit` | Record human verification, override, or signoff audit decision |
+| `GET` | `/api/v1/workflow/export` | Export sanitized inventory with parametric secret redaction |
+| `POST` | `/api/v1/workflow/audit/chain/append` | Append governance event to immutable SHA-256 Merkle-style audit chain |
+| `GET` | `/api/v1/workflow/audit/chain/verify` | Verify cryptographic integrity of the entire governance audit chain |
+| `POST` | `/api/v1/workflow/offline/bundle/verify`| Cryptographically verify signed offline threat ruleset bundles |
+| `GET` | `/api/v1/workflow/health/production` | Production readiness probe: sandbox isolation, memory quotas, air-gapped status |
+
+### System & Health Probes
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/health` | Simple system liveness probe |
+| `GET` | `/api/v1/health` | Versioned health probe with sovereign privacy and local processing guarantees |
+| `GET` | `/` | Serves the embedded interactive Web Dashboard |
+| `GET` | `/docs` | OpenAPI / Swagger interactive documentation |
+| `GET` | `/redoc` | ReDoc API documentation |
+
+---
+
+## Production & Air-Gapped Sovereign Operations
+
+ASTRA is engineered for **sovereign, air-gapped enterprise environments** where data cannot leave the boundary:
+
+### Tamper-Evident SHA-256 Audit Chain
+Every governance decision (scan approvals, risk overrides, migration sign-offs) is cryptographically linked into a SHA-256 Merkle-style hash chain:
+```bash
+# Append an audit decision
+curl -X POST http://localhost:8000/api/v1/workflow/audit/chain/append \
+  -H "Content-Type: application/json" \
+  -d '{"action": "APPROVE_MIGRATION", "actor": "crypto_lead", "asset_id": "asset-rsa-01", "details": {"target": "ML-KEM-768"}}'
+
+# Verify chain integrity (detects any tampering or deletion)
+curl http://localhost:8000/api/v1/workflow/audit/chain/verify
+```
+
+### Air-Gapped Signed Update Bundle Verification
+In restricted environments with zero internet access, detection rulesets and NIST PQC mappings are delivered via signed offline update bundles:
+```bash
+curl -X POST http://localhost:8000/api/v1/workflow/offline/bundle/verify \
+  -H "Content-Type: application/json" \
+  -d '{"manifest": {"version": "2026.10", "checksum_sha256": "<digest>"}, "raw_content": "<content>", "signer_key_id": "<key_id>"}'
+```
+
+### Production Readiness Health Evaluation
+```bash
+curl http://localhost:8000/api/v1/workflow/health/production
+```
+Validates:
+- Ephemeral sandbox read-only containment.
+- Zero external socket connections (air-gapped guarantee).
+- Local ruleset cache status and memory limit quotas.
+
+---
+
+## Environment Configuration
+
+Configure ASTRA via `.env` file or environment variables:
+
+| Variable | Default | Description |
+|---|---|---|
+| `ASTRA_ENV` | `development` | Runtime environment (`development`, `production`) |
+| `ASTRA_HOST` | `0.0.0.0` | Host bind address |
+| `ASTRA_PORT` | `8000` | Port bind address |
+| `ASTRA_HOSTED_MODE` | `false` | When `true`, disables arbitrary `/directory` scans for public hosting safety |
+| `ASTRA_CORS_ORIGINS` | `*` | Allowed CORS origins (credentials disabled on wildcard `*`) |
+| `MAX_ARCHIVE_SIZE_BYTES` | `104857600` (100 MB) | Maximum upload archive size before HTTP 413 rejection |
+| `MAX_UNCOMPRESSED_SIZE_BYTES` | `524288000` (500 MB) | Maximum total extracted uncompressed size |
+| `MAX_COMPRESSION_RATIO` | `100` | Zip bomb defense ratio cutoff (100:1) |
+| `MAX_FILE_COUNT` | `10000` | Maximum files extracted per archive |
+| `DEFAULT_CRQC_HORIZON_YEARS` | `8.0` | Default Mosca quantum threat horizon $Z$ (scenario assumption) |
+| `DEFAULT_DATA_SHELF_LIFE_YEARS`| `5.0` | Default data secrecy shelf-life $X$ (scenario assumption) |
+| `DEFAULT_MIGRATION_DURATION_YEARS`| `2.0` | Default migration timeline $Y$ (scenario assumption) |
+| `TEMP_SCANS_DIR` | `temp_scans` | Temporary scan intake directory |
+| `SANDBOX_TMP_DIR` | `sandbox_tmp` | Ephemeral sandbox workspace |
+
+---
+
+## Automated Test Suite (88 Passing Tests)
+
+ASTRA includes an exhaustive automated test suite with **88 tests passing** in CI across unit, integration, adversarial security, and end-to-end user journeys:
+
+```bash
 python -m pytest backend/tests -v
 ```
-
-All 88 automated unit, integration, security, and end-to-end product tests pass with 100% success rate:
+Output:
 ```text
-============================= 88 passed in 3.57s ==============================
+============================= 88 passed in 3.52s ==============================
+```
+
+### Test Module Breakdown
+
+| Test Suite Module | Tests | Verification Scope |
+|---|---|---|
+| `test_intake/` | 13 | Magic byte validation, streaming zip bomb cutoff (100:1), path traversal (`../`, null-byte), symlink/hardlink escape defense |
+| `test_discovery/` | 15 | Multi-language source AST/regex, comment & docstring filtering (`#`, `//`, `/* */`, `"""`), manifests, configs, certs, binaries, containers, network |
+| `test_coverage/` | 4 | Honest denominator accounting ($N_{\text{assessed}} / N_{\text{total}}$), seeded corpus benchmark ($\ge 80\%$ precision/recall), clean state labeling |
+| `test_inventory/` | 7 | Canonical evidence normalization, temporal DNA hash drift, downgrade regression detection, CycloneDX 1.6 validation, multi-scanner reconciliation |
+| `test_risk/` | 13 | Mosca theorem ($X+Y>Z$), multi-factor risk scoring, dated NIST PQC mappings, Kahn topological migration roadmaps, security invariant preservation |
+| `test_web_workflow/` | 7 | Workflow drilldown, tamper-evident SHA-256 Merkle audit chain, air-gapped bundle verification, production readiness probe |
+| `test_functional_assurance/` | 9 | End-to-end user journey cycles (V01 & V02) |
+| `test_integration_security/` | 10 | Zero private-key retention, parameter allowlist redaction, hostile archive attack matrix, alert fatigue reduction target ($>50\%$) |
+| `test_e2e_product.py` | 10 | Master FastAPI application factory, static dashboard serving, dynamic scenario risk API, standalone CLI commands, synthetic demo scan |
+
+---
+
+## Troubleshooting & FAQ
+
+| Issue | Root Cause | Immediate Solution |
+|---|---|---|
+| **Port 8000 already in use** | Another service is listening on port 8000 | Run `astra serve --port 8001` or let `launch.bat` assign an open port |
+| **`ModuleNotFoundError: No module named 'app'`** | Python path not referencing backend | Run `pip install -e .` from repo root or set `PYTHONPATH=backend` |
+| **`astra: command not found`** | CLI entrypoint not installed | Run `pip install -e .` inside your active virtual environment |
+| **`SymlinkEscapeError` during upload** | Archive contains symlinks targeting outside directory | ASTRA rejects symlink escapes for server safety; re-archive without absolute symlinks |
+| **Archive rejected: `Compression ratio exceeds limit`** | Archive exceeds 100:1 compression ratio | Zip bomb protection triggered. Unpack and scan directly via `astra scan <dir>` |
+| **Scan returns 0 findings** | Target codebase contains no supported cryptographic primitives | Look at `clean_state_label`: `NO_FINDINGS_IN_SUPPORTED_SCOPE` indicates honest absence in supported scope, not a scanner error |
+| **Binaries skipped during archive scan** | Executables (`.exe`, `.dll`, `.so`) blocked at web intake | Intended defense-in-depth isolation for uploaded archives. Scan binaries directly via CLI: `astra scan <dir>` |
+
+---
+
+## Privacy, Threat Model & Security Considerations
+
+ASTRA operates under strict enterprise security principles:
+
+1. **Zero Private Key Retention**:
+   Whenever private key material (`BEGIN PRIVATE KEY`, `BEGIN RSA PRIVATE KEY`, etc.) is detected, it is immediately masked with `[REDACTED_PRIVATE_KEY_MATERIAL]` and marked `redacted = True`. Private key bytes are never written to disk or logs.
+2. **Defensive Archive Decompression**:
+   Streaming byte counters enforce 100:1 maximum compression ratio, 500 MB total uncompressed size, and 50 MB single-file limits. Path traversals (`../`), null bytes (`\0`), and symlink escapes are rejected immediately.
+3. **Hosted Mode Guardrails**:
+   When `ASTRA_HOSTED_MODE=true` is set, the `/api/v1/scans/directory` endpoint is disabled to prevent arbitrary server filesystem exploration by unauthenticated users.
+4. **Zero Outbound Telemetry**:
+   No outbound network calls, analytics pings, or third-party API dependencies exist. All analysis runs entirely on local CPU.
+5. **Vulnerability Reporting**:
+   To report a security vulnerability, please email `topasingh903811@gmail.com`. Do not file public GitHub issues for security vulnerabilities.
+
+---
+
+## Quick Reference Card
+
+```text
+┌──────────────────────────────────────────────────────────────────┐
+│                   ASTRA Quick Reference Card                     │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  LAUNCH:   launch.bat                 (Windows One-Click)        │
+│                                                                  │
+│  INSTALL:  git clone https://github.com/adishxm/astra.git        │
+│            cd astra && pip install -r requirements.txt           │
+│            pip install -e .                                      │
+│                                                                  │
+│  SCAN:     astra scan ./project --format table                   │
+│            astra scan ./archive.zip --format json -o out.json    │
+│                                                                  │
+│  REVIEW:   astra show <scan_id>                                  │
+│                                                                  │
+│  RISK:     astra risk <scan_id> --horizon 8.0 --shelf-life 5.0   │
+│                        --migration 2.0                           │
+│                                                                  │
+│  EXPORT:   astra export <scan_id> --output cbom.json             │
+│                                                                  │
+│  VALIDATE: astra validate <scan_id>                              │
+│                                                                  │
+│  SERVE:    astra serve --port 8000                               │
+│            → Web UI:    http://localhost:8000                    │
+│            → API Docs:  http://localhost:8000/docs               │
+│                                                                  │
+│  TEST:     python -m pytest backend/tests -v                     │
+│                                                                  │
+│  DOCKER:   docker compose up --build                             │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Development & Validation Roadmap
+## Development Roadmap (Phase 2 Enterprise)
 
-### Completed Prototype Workstreams (88/88 Passing Tests)
-| Workstream | Role | Prototype Scope Delivered | Status |
-|---|---|---|---|
-| **Worker 01** | Discovery & Safe Intake | Safe archive intake (ZIP/TAR limits, symlink defenses), multi-surface discovery (source, manifests, configs, certs, direct binary headers), honest coverage accounting | **COMPLETED & VALIDATED** |
-| **Worker 02** | Evidence & Inventory | Canonical deduplication, temporal Cryptographic DNA time-machine, CycloneDX 1.6 CBOM projection & reconciliation | **COMPLETED & VALIDATED** |
-| **Worker 03** | Risk & Migration | Mosca-model quantum horizon ($X+Y>Z$), scenario sensitivity sliders, Kahn topological wave migration roadmaps, rollback safety | **COMPLETED & VALIDATED** |
-| **Worker 04** | Web Workflow & UI | Product CLI, master FastAPI factory, embedded dashboard, tamper-evident audit chaining, air-gapped readiness | **COMPLETED & VALIDATED** |
-| **Product Suite** | End-to-End System | Complete end-to-end integration test suite, synthetic demo repository, launch scripts | **COMPLETED & VERIFIED (88/88 PASS)** |
-
-### Future Enterprise Roadmap
-| Milestone | Capability | Description |
+| Milestone | Capability | Architectural Description |
 |---|---|---|
-| **Phase 2.1** | Hardware Security Modules (HSM) | Integration with PKCS#11 hardware security modules, smartcards, and enterprise key vaults. |
-| **Phase 2.2** | Cloud KMS Multi-Cloud Fleet | Autonomous discovery connectors for AWS KMS, Azure Key Vault, and Google Cloud KMS fleets. |
-| **Phase 2.3** | Runtime eBPF Dynamic Inspection | Linux kernel eBPF probes for observing negotiated cipher suites and active cryptographic socket handshakes. |
-| **Phase 2.4** | Automated PR Remediation | GitHub Actions and GitLab CI bots for automated code refactoring toward NIST PQC algorithms. |
+| **Phase 2.1** | Hardware Security Modules (HSM) | Integration with PKCS#11 hardware security modules, smartcards, and physical enterprise appliances. |
+| **Phase 2.2** | Multi-Cloud KMS Discovery | Agentless connectors for AWS KMS, Azure Key Vault, and Google Cloud KMS fleets. |
+| **Phase 2.3** | Runtime eBPF Dynamic Inspection | Linux kernel eBPF probes for capturing active TLS handshakes, socket ciphers, and negotiated extensions. |
+| **Phase 2.4** | Automated PQC PR Remediation | Automated CI bots for generating pull requests migrating deprecated primitives to NIST PQC standards. |
 
 ---
 
-## License
+## License & Credits
 
-This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+- **License**: Licensed under the [MIT License](LICENSE).
+- **Team**: Engineered by Team **HEXARK** for Smart India Hackathon 2026 (Problem Statement **SIH26164**).
+- **Standards Conformance**:
+  - NIST Post-Quantum Cryptography: **FIPS 203 (ML-KEM)**, **FIPS 204 (ML-DSA)**, **FIPS 205 (SLH-DSA)**.
+  - CycloneDX Specification: **v1.6 Cryptographic Asset Profile (CBOM)**.
