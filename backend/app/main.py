@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, File, HTTPException, UploadFile, Query, Body
+from fastapi import FastAPI, File, HTTPException, UploadFile, Query, Body, Request, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
@@ -24,11 +24,46 @@ from app.web_workflow.router import router as workflow_router
 from app.inventory.models import CanonicalEvidence, InventoryExport
 from app.inventory.cbom_reconciliation import CBOMReconciliationEngine
 
-# Security & environment policies
-ASTRA_HOSTED_MODE = os.getenv("ASTRA_HOSTED_MODE", "false").lower() in ("1", "true", "yes")
-ASTRA_ALLOW_DIRECTORY_SCAN = os.getenv(
-    "ASTRA_ALLOW_DIRECTORY_SCAN", "false" if ASTRA_HOSTED_MODE else "true"
-).lower() in ("1", "true", "yes")
+
+def is_hosted_mode() -> bool:
+    """Check if ASTRA is running in hosted demo mode."""
+    return os.getenv("ASTRA_HOSTED_MODE", "false").lower() in ("1", "true", "yes")
+
+
+def is_directory_scan_allowed() -> bool:
+    """Determine whether arbitrary filesystem directory scans are permitted."""
+    if is_hosted_mode():
+        return os.getenv("ASTRA_ALLOW_DIRECTORY_SCAN", "false").lower() in ("1", "true", "yes")
+    return os.getenv("ASTRA_ALLOW_DIRECTORY_SCAN", "true").lower() in ("1", "true", "yes")
+
+
+def get_max_upload_size() -> int:
+    """Return maximum permitted upload archive size in bytes (default 50 MB)."""
+    return int(os.getenv("ASTRA_MAX_UPLOAD_SIZE_BYTES", str(50 * 1024 * 1024)))
+
+
+def verify_api_key(request: Request):
+    """Enforce API token authentication when ASTRA_API_KEY is configured in the environment."""
+    expected_key = os.getenv("ASTRA_API_KEY")
+    if not expected_key:
+        return
+
+    # Check X-ASTRA-API-KEY header
+    header_key = request.headers.get("X-ASTRA-API-KEY")
+    if header_key and header_key == expected_key:
+        return
+
+    # Check Authorization: Bearer <token>
+    auth_header = request.headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        token = auth_header[7:].strip()
+        if token == expected_key:
+            return
+
+    raise HTTPException(
+        status_code=401,
+        detail="Unauthorized: Missing or invalid API key. Supply X-ASTRA-API-KEY header or Bearer token.",
+    )
 
 app = FastAPI(
     title="ASTRA - Enterprise Cryptographic Discovery & Analysis Tool",
@@ -74,8 +109,8 @@ def get_health():
         "version": "1.0.0",
         "team": "HEXARK",
         "profile": "AIR_GAPPED_SOVEREIGN_ENTERPRISE",
-        "hosted_mode": ASTRA_HOSTED_MODE,
-        "directory_scan_permitted": ASTRA_ALLOW_DIRECTORY_SCAN,
+        "hosted_mode": is_hosted_mode(),
+        "directory_scan_permitted": is_directory_scan_allowed(),
         "privacy_notice": {
             "processing": "LOCAL_CPU_ONLY",
             "telemetry_egress": "DISABLED",
@@ -88,7 +123,10 @@ def get_health():
 
 
 @app.post("/api/v1/scans/upload")
-async def upload_and_scan(file: UploadFile = File(...)):
+async def upload_and_scan(
+    file: UploadFile = File(...),
+    _: None = Depends(verify_api_key),
+):
     """Upload an authorized repository archive (.zip, .tar.gz) and execute complete scan pipeline."""
     valid_suffixes = {".zip", ".tar", ".gz", ".tgz", ".bz2"}
     raw_filename = file.filename or "uploaded_archive.zip"
@@ -103,8 +141,14 @@ async def upload_and_scan(file: UploadFile = File(...)):
             detail=f"Unsupported archive format. Expected one of: .zip, .tar, .tar.gz, .tar.bz2",
         )
 
-    # Save uploaded bytes to a secure temporary file with active byte streaming limit (100 MB max)
-    max_upload_size = 100 * 1024 * 1024
+    # Save uploaded bytes to a secure temporary file with active byte streaming limit
+    max_upload_size = get_max_upload_size()
+    if getattr(file, "size", None) is not None and file.size > max_upload_size:
+        raise HTTPException(
+            status_code=413,
+            detail=f"Uploaded archive exceeds maximum limit of {max_upload_size // (1024 * 1024)} MB",
+        )
+
     temp_dir = tempfile.mkdtemp(prefix="astra_upload_")
     temp_archive = os.path.join(temp_dir, safe_filename)
 
@@ -146,12 +190,15 @@ async def upload_and_scan(file: UploadFile = File(...)):
 
 
 @app.post("/api/v1/scans/directory")
-def scan_directory(payload: Dict[str, Any] = Body(...)):
+def scan_directory(
+    payload: Dict[str, Any] = Body(...),
+    _: None = Depends(verify_api_key),
+):
     """Trigger a cryptographic discovery scan on a local directory."""
-    if not ASTRA_ALLOW_DIRECTORY_SCAN:
+    if not is_directory_scan_allowed():
         raise HTTPException(
             status_code=403,
-            detail="Direct filesystem directory scanning is disabled in hosted demo mode. Please upload an authorized archive (.zip, .tar.gz) instead.",
+            detail="Arbitrary directory scanning is disabled in hosted mode. Please upload an authorized archive (.zip, .tar.gz) instead.",
         )
 
     path_str = payload.get("path")
@@ -294,6 +341,7 @@ def get_scan_risk(
 def update_scan_owner_context(
     scan_id: str,
     payload: Dict[str, Any] = Body(...),
+    _: None = Depends(verify_api_key),
 ):
     """Enrich a scan with verified owner context (data lifetime X, migration Y, exposure, criticality)."""
     record = GLOBAL_SCAN_STORE.get(scan_id)

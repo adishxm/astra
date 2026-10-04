@@ -15,6 +15,11 @@ ASTRA is built with strict boundary security principles:
 2. **Decompression Bomb Protection**: Input archives are monitored during extraction with strict single-file (50 MB) and cumulative (500 MB) expansion limits and a 100:1 compression ratio cutoff (`AC-02`).
 3. **Sandbox Isolation**: Files are extracted to ephemeral, isolated sandbox directories and locked down with read-only permissions before analysis. Symlinks pointing outside extraction targets are strictly rejected.
 4. **Denial-of-Service Defenses**: Path traversal (`../`), null bytes (`\0`), and Windows absolute paths are normalized and blocked prior to filesystem operations.
+5. **Safe Local Loopback Defaults**: CLI and development server bind exclusively to `127.0.0.1` by default. Active security warnings are emitted if binding to `0.0.0.0` without authentication.
+6. **Hosted Mode Protection (`ASTRA_HOSTED_MODE=1`)**: When deployed in public demo mode, arbitrary local filesystem scanning (`POST /api/v1/scans/directory`) is disabled (`HTTP 403 Forbidden`). Only isolated sandboxed archive uploads are accepted.
+7. **API Token Authentication**: Configurable via `ASTRA_API_KEY`, enforcing token validation (`X-ASTRA-API-KEY` or `Authorization: Bearer <key>`) on all mutating endpoints.
+8. **Upload Quota Enforcement**: Maximum archive upload size is strictly capped at 50 MB (configurable via `ASTRA_MAX_UPLOAD_SIZE_BYTES`) with chunked stream monitoring rejecting oversized requests with `HTTP 413`.
+9. **Formal Threat Model**: Full STRIDE analysis and trust boundary architecture is documented in [.brain/.work/threat_model.md](.brain/.work/threat_model.md).
 
 ---
 

@@ -251,6 +251,15 @@ def cmd_validate(args) -> int:
 def cmd_serve(args) -> int:
     """Launch ASTRA FastAPI Web Service and Dashboard."""
     import uvicorn
+    if args.host in ("0.0.0.0", "::") and not (getattr(args, "api_key", None) or os.getenv("ASTRA_API_KEY")):
+        print(
+            "\n[SECURITY WARNING] Binding to 0.0.0.0 exposes the ASTRA API without authentication. "
+            "Use 127.0.0.1 or configure an API key via --api-key or ASTRA_API_KEY.\n",
+            file=sys.stderr,
+        )
+    if getattr(args, "api_key", None):
+        os.environ["ASTRA_API_KEY"] = args.api_key
+
     print(f"[*] Starting ASTRA Server at http://{args.host}:{args.port}")
     uvicorn.run("app.main:app", host=args.host, port=args.port, reload=args.reload)
     return 0
@@ -296,8 +305,9 @@ def main(argv: Optional[List[str]] = None) -> int:
 
     # astra serve
     serve_parser = subparsers.add_parser("serve", help="Start the ASTRA HTTP server & Dashboard")
-    serve_parser.add_argument("--host", default="127.0.0.1", help="Host to bind")
-    serve_parser.add_argument("--port", type=int, default=8000, help="Port to bind")
+    serve_parser.add_argument("--host", default="127.0.0.1", help="Host to bind (default: 127.0.0.1)")
+    serve_parser.add_argument("--port", type=int, default=8000, help="Port to bind (default: 8000)")
+    serve_parser.add_argument("--api-key", default=None, help="API key required for mutating requests")
     serve_parser.add_argument("--reload", action="store_true", help="Auto-reload on code change")
 
     parsed_args = parser.parse_args(argv if argv is not None else sys.argv[1:])
