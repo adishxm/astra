@@ -45,6 +45,7 @@ CRYPTO_PACKAGES = [
     ("node-forge", "Native implementation of TLS and cryptographic tools", "CLASSICAL"),
     ("tweetnacl", "Port of TweetNaCl cryptographic library", "CLASSICAL"),
     ("libsodium-wrappers", "Libsodium cryptographic library for JS", "CLASSICAL"),
+    ("bcrypt", "Password hashing function library", "CLASSICAL"),
 
     # Go
     ("golang.org/x/crypto", "Go supplementary cryptographic libraries", "CLASSICAL"),
@@ -140,9 +141,9 @@ class ManifestCryptoDetector:
                     group_id_elem = dep.find("groupId")
                     version_elem = dep.find("version")
 
-                    artifact_id = artifact_id_elem.text if artifact_id_elem is not None else ""
-                    group_id = group_id_elem.text if group_id_elem is not None else ""
-                    version = version_elem.text if version_elem is not None else "unknown"
+                    artifact_id = (artifact_id_elem.text if artifact_id_elem.text else "") if artifact_id_elem is not None else ""
+                    group_id = (group_id_elem.text if group_id_elem.text else "") if group_id_elem is not None else ""
+                    version = (version_elem.text if version_elem.text else "unknown") if version_elem is not None else "unknown"
 
                     for match_name, desc, q_status in CRYPTO_PACKAGES:
                         if match_name.lower() in artifact_id.lower() or match_name.lower() in group_id.lower():
@@ -171,40 +172,41 @@ class ManifestCryptoDetector:
                 pass
 
         # 3. Line-based manifests: requirements.txt, go.mod, Cargo.toml, pyproject.toml
-        for idx, line in enumerate(lines, start=1):
-            line_str = line.strip()
-            if not line_str or line_str.startswith("#"):
-                continue
+        if name not in ("package.json", "pom.xml"):
+            for idx, line in enumerate(lines, start=1):
+                line_str = line.strip()
+                if not line_str or line_str.startswith("#"):
+                    continue
 
-            for match_name, desc, q_status in CRYPTO_PACKAGES:
-                # Regex boundary for package name in manifest line
-                if re.search(rf"\b{re.escape(match_name)}\b", line_str, re.IGNORECASE):
-                    # Check if already added in pom or json
-                    if any(o.relative_path == relative_path and o.start_line == idx for o in observations):
-                        continue
+                for match_name, desc, q_status in CRYPTO_PACKAGES:
+                    # Regex boundary for package name in manifest line
+                    if re.search(rf"\b{re.escape(match_name)}\b", line_str, re.IGNORECASE):
+                        # Check if already added in pom or json
+                        if any(o.relative_path == relative_path and o.start_line == idx for o in observations):
+                            continue
 
-                    excerpt = line_str[:200]
-                    observations.append(
-                        Observation(
-                            observation_id=str(uuid.uuid4()),
-                            scan_id=scan_id,
-                            candidate_asset_id=f"manifest-{match_name.lower()}-{relative_path}-{idx}",
-                            claim_type=ClaimType.DEPENDENCY_REFERENCE,
-                            source_kind=SourceKind.MANIFEST,
-                            algorithm=match_name,
-                            purpose="CRYPTOGRAPHIC_LIBRARY",
-                            relative_path=relative_path,
-                            start_line=idx,
-                            end_line=idx,
-                            evidence_digest=hashlib.sha256(excerpt.encode()).hexdigest(),
-                            sanitized_excerpt=excerpt,
-                            detector_id=self.DETECTOR_ID,
-                            ruleset_version=RULESET_VERSION,
-                            confidence=ConfidenceBand.HIGH,
-                            confidence_rationale=f"Declared dependency manifest reference: {match_name} in {name} ({desc}) — potential capability, distinct from confirmed source invocation",
-                            state=EvidenceState.DECLARED,
-                            raw_parameters={"quantum_status": q_status},
+                        excerpt = line_str[:200]
+                        observations.append(
+                            Observation(
+                                observation_id=str(uuid.uuid4()),
+                                scan_id=scan_id,
+                                candidate_asset_id=f"manifest-{match_name.lower()}-{relative_path}-{idx}",
+                                claim_type=ClaimType.DEPENDENCY_REFERENCE,
+                                source_kind=SourceKind.MANIFEST,
+                                algorithm=match_name,
+                                purpose="CRYPTOGRAPHIC_LIBRARY",
+                                relative_path=relative_path,
+                                start_line=idx,
+                                end_line=idx,
+                                evidence_digest=hashlib.sha256(excerpt.encode()).hexdigest(),
+                                sanitized_excerpt=excerpt,
+                                detector_id=self.DETECTOR_ID,
+                                ruleset_version=RULESET_VERSION,
+                                confidence=ConfidenceBand.HIGH,
+                                confidence_rationale=f"Declared dependency manifest reference: {match_name} in {name} ({desc}) — potential capability, distinct from confirmed source invocation",
+                                state=EvidenceState.DECLARED,
+                                raw_parameters={"quantum_status": q_status},
+                            )
                         )
-                    )
 
         return observations

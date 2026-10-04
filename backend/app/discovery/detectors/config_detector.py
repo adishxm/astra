@@ -37,6 +37,14 @@ CONFIG_SIGNATURES = [
     # Post-Quantum & Hybrid SSH / TLS Key Exchanges
     (r"(?i)\b(sntrup761x25519-sha512@openssh\.com|mlkem768x25519)\b", "Hybrid-PQC-KEX", "KEY_EXCHANGE", "POST_QUANTUM", ConfidenceBand.CONFIRMED),
     (r"(?i)\b(curve25519-sha256|diffie-hellman-group14-sha256)\b", "Classical-SSH-KEX", "KEY_EXCHANGE", "QUANTUM_VULNERABLE", ConfidenceBand.CONFIRMED),
+    
+    # Generic Cryptographic Configuration Parameters
+    (r"(?i)\b(?:algorithm|cipher|encryption|hash)[_\w]*[\s:=]+['\"]?DES['\"]?\b", "DES", "ALGORITHM_DECLARATION", "VULNERABLE", ConfidenceBand.HIGH),
+    (r"(?i)\b(?:algorithm|cipher|encryption|hash)[_\w]*[\s:=]+['\"]?(?:3DES|DES3)['\"]?\b", "3DES", "ALGORITHM_DECLARATION", "VULNERABLE", ConfidenceBand.HIGH),
+    (r"(?i)\b(?:algorithm|cipher|encryption|hash)[_\w]*[\s:=]+['\"]?AES['\"]?\b", "AES", "ALGORITHM_DECLARATION", "CLASSICAL", ConfidenceBand.HIGH),
+    (r"(?i)\b(?:algorithm|cipher|encryption|hash)[_\w]*[\s:=]+['\"]?RSA['\"]?\b", "RSA", "ALGORITHM_DECLARATION", "QUANTUM_VULNERABLE", ConfidenceBand.HIGH),
+    (r"(?i)\b(?:algorithm|cipher|encryption|hash)[_\w]*[\s:=]+['\"]?MD5['\"]?\b", "MD5", "ALGORITHM_DECLARATION", "VULNERABLE", ConfidenceBand.HIGH),
+    (r"(?i)\b(?:algorithm|cipher|encryption|hash)[_\w]*[\s:=]+['\"]?SHA-?1['\"]?\b", "SHA-1", "ALGORITHM_DECLARATION", "VULNERABLE", ConfidenceBand.HIGH),
 ]
 
 

@@ -7,10 +7,11 @@ Enforces zero secret leakage: private key bytes are detected, flagged, and stric
 import hashlib
 import uuid
 from pathlib import Path
-from typing import List
+from typing import List, Any
 
 from cryptography import x509
 from cryptography.hazmat.primitives.asymmetric import dsa, ec, ed25519, rsa
+from cryptography.hazmat.primitives import serialization
 
 from app.core.config import RULESET_VERSION
 from app.discovery.models import (
@@ -66,8 +67,15 @@ class CertificateCryptoDetector:
             return self._extract_cert_observations(cert, relative_path, scan_id, has_private_key)
         except Exception:
             pass
+            
+        # 3. Try parsing as standalone PEM Public Key
+        try:
+            pub_key = serialization.load_pem_public_key(raw_bytes)
+            return self._extract_raw_pubkey_observations(pub_key, relative_path, scan_id, has_private_key)
+        except Exception:
+            pass
 
-        # 3. If file contains private key markers but isn't an X.509 cert
+        # 4. If file contains private key markers but isn't an X.509 cert or valid public key
         if has_private_key:
             sanitized = "[REDACTED_PRIVATE_KEY_MATERIAL: File contains private key material which is strictly excluded from storage]"
             digest = hashlib.sha256(sanitized.encode()).hexdigest()
@@ -92,6 +100,32 @@ class CertificateCryptoDetector:
                     confidence_rationale="Detected private key material; payload sanitized and redacted according to AC-03 policy",
                     state=EvidenceState.OBSERVED,
                     raw_parameters={"contains_secret": True},
+                )
+            )
+        elif b"PUBLIC KEY" in raw_bytes:
+            excerpt = "[PEM public key block detected]"
+            digest = hashlib.sha256(excerpt.encode()).hexdigest()
+            observations.append(
+                Observation(
+                    observation_id=str(uuid.uuid4()),
+                    scan_id=scan_id,
+                    candidate_asset_id=f"pubkey-generic-{relative_path}",
+                    claim_type=ClaimType.KEY_SPECIFICATION,
+                    source_kind=SourceKind.CERTIFICATE,
+                    algorithm="PUBLIC_KEY",
+                    purpose="IDENTITY_AND_AUTHENTICATION",
+                    relative_path=relative_path,
+                    start_line=1,
+                    end_line=1,
+                    evidence_digest=digest,
+                    sanitized_excerpt=excerpt,
+                    redacted=False,
+                    detector_id=self.DETECTOR_ID,
+                    ruleset_version=RULESET_VERSION,
+                    confidence=ConfidenceBand.HIGH,
+                    confidence_rationale="Detected PEM public key block markers without private key material",
+                    state=EvidenceState.OBSERVED,
+                    raw_parameters={"quantum_status": "QUANTUM_VULNERABLE"},
                 )
             )
 
@@ -178,3 +212,60 @@ class CertificateCryptoDetector:
         )
 
         return obs_list
+
+    def _extract_raw_pubkey_observations(
+        self,
+        public_key: Any,
+        relative_path: str,
+        scan_id: str,
+        has_private_key: bool,
+    ) -> List[Observation]:
+        """Extract standalone public key parameters into structured Observation."""
+        pub_algo = "UNKNOWN"
+        key_size = None
+        curve_name = None
+        q_status = "QUANTUM_VULNERABLE"
+
+        if isinstance(public_key, rsa.RSAPublicKey):
+            pub_algo = f"RSA-{public_key.key_size}"
+            key_size = public_key.key_size
+        elif isinstance(public_key, ec.EllipticCurvePublicKey):
+            curve_name = public_key.curve.name
+            pub_algo = f"ECDSA-{curve_name}"
+            key_size = public_key.key_size
+        elif isinstance(public_key, ed25519.Ed25519PublicKey):
+            pub_algo = "Ed25519"
+            key_size = 256
+        elif isinstance(public_key, dsa.DSAPublicKey):
+            pub_algo = f"DSA-{public_key.key_size}"
+            key_size = public_key.key_size
+            q_status = "VULNERABLE"
+
+        excerpt = f"[PEM public key block detected] PublicKey: {pub_algo} ({key_size} bits)"
+        digest = hashlib.sha256(excerpt.encode()).hexdigest()
+
+        return [
+            Observation(
+                observation_id=str(uuid.uuid4()),
+                scan_id=scan_id,
+                candidate_asset_id=f"pubkey-{pub_algo.lower()}-{relative_path}",
+                claim_type=ClaimType.KEY_SPECIFICATION,
+                source_kind=SourceKind.CERTIFICATE,
+                algorithm=pub_algo,
+                purpose="IDENTITY_AND_AUTHENTICATION",
+                key_size_bits=key_size,
+                curve_name=curve_name,
+                relative_path=relative_path,
+                start_line=1,
+                end_line=1,
+                evidence_digest=digest,
+                sanitized_excerpt=excerpt,
+                redacted=has_private_key,
+                detector_id=self.DETECTOR_ID,
+                ruleset_version=RULESET_VERSION,
+                confidence=ConfidenceBand.CONFIRMED,
+                confidence_rationale="Parsed standalone PEM public key block safely",
+                state=EvidenceState.VERIFIED,
+                raw_parameters={"quantum_status": q_status},
+            )
+        ]

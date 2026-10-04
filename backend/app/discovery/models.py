@@ -69,16 +69,16 @@ class Observation(BaseModel):
     source_kind: SourceKind = Field(..., description="Category of file observed")
 
     # Cryptographic properties
-    algorithm: Optional[str] = Field(None, description="Normalized algorithm name (e.g. AES-256-GCM, RSA, SHA-256)")
-    protocol: Optional[str] = Field(None, description="Protocol if applicable (e.g. TLSv1.3, SSHv2)")
-    purpose: Optional[str] = Field(None, description="Inferred purpose (e.g. ENCRYPTION, HASHING, SIGNATURE, KEY_EXCHANGE)")
-    key_size_bits: Optional[int] = Field(None, description="Key length in bits if detectable")
-    curve_name: Optional[str] = Field(None, description="Elliptic curve name (e.g. secp256r1, Ed25519)")
+    algorithm: Optional[str] = Field(default=None, description="Normalized algorithm name (e.g. AES-256-GCM, RSA, SHA-256)")
+    protocol: Optional[str] = Field(default=None, description="Protocol if applicable (e.g. TLSv1.3, SSHv2)")
+    purpose: Optional[str] = Field(default=None, description="Inferred purpose (e.g. ENCRYPTION, HASHING, SIGNATURE, KEY_EXCHANGE)")
+    key_size_bits: Optional[int] = Field(default=None, description="Key length in bits if detectable")
+    curve_name: Optional[str] = Field(default=None, description="Elliptic curve name (e.g. secp256r1, Ed25519)")
 
     # Evidence Anchor
     relative_path: str = Field(..., description="Repository-relative file path")
-    start_line: Optional[int] = Field(None, ge=1, description="Start line of evidence (1-indexed)")
-    end_line: Optional[int] = Field(None, ge=1, description="End line of evidence (1-indexed)")
+    start_line: Optional[int] = Field(default=None, ge=1, description="Start line of evidence (1-indexed)")
+    end_line: Optional[int] = Field(default=None, ge=1, description="End line of evidence (1-indexed)")
     evidence_digest: str = Field(..., description="SHA-256 hex digest of the sanitized snippet")
     sanitized_excerpt: str = Field(..., description="Safe excerpt showing context (secrets redacted)")
     redacted: bool = Field(default=False, description="Flag indicating if any sensitive token was redacted")
