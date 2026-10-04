@@ -45,23 +45,29 @@ def corpus_scan_record() -> ScanRecord:
 
 
 def algo_matches(expected: str, detected: str) -> bool:
-    """Fuzzy/normalized matcher for cryptographic algorithm labels and observations."""
+    """Strict canonical algorithm matcher with verified cryptographic aliases."""
     exp = expected.upper().replace("-", "").replace("_", "")
     det = detected.upper().replace("-", "").replace("_", "")
 
-    if exp == det or exp in det or det in exp:
+    if exp == det:
         return True
 
     aliases = {
-        "ECDSA": ["ECCCURVE", "SECP256R1", "PRIME256V1", "EC"],
+        "ECDSA": ["ECCCURVE", "SECP256R1", "PRIME256V1", "EC", "ECC"],
+        "EC": ["ECCCURVE", "SECP256R1", "PRIME256V1", "ECDSA", "ECC"],
         "CHACHA20": ["CHACHA20POLY1305"],
+        "CHACHA20POLY1305": ["CHACHA20"],
         "RSA2048": ["RSA"],
-        "AES256": ["AES"],
-        "AES128": ["AES"],
+        "RSA": ["RSA2048"],
+        "AES256": ["AES", "AES256GCM", "ECDHEAES256GCM"],
+        "AES128": ["AES", "AES128GCM", "ECDHEAES128GCM"],
+        "AES": ["AES256", "AES128"],
+        "ED25519": ["EDDSA"],
     }
-    for k, v in aliases.items():
-        if (exp == k and det in v) or (det == k and exp in v):
-            return True
+    if exp in aliases and det in aliases[exp]:
+        return True
+    if det in aliases and exp in aliases[det]:
+        return True
 
     return False
 
@@ -70,39 +76,75 @@ def compute_metrics(
     entries: List[Dict],
     observations_by_file: Dict[str, List[str]],
 ) -> Dict[str, float]:
-    """Compute TP, FP, FN, TN, Precision, Recall, F1, and FPR for a set of labelled entries."""
+    """Compute finding-level TP, FP, FN, TN, Precision, Recall, F1, and Negative Control FPR.
+
+    Accounting Rules (Honest Scientific Evaluation):
+    - On positive files:
+      - Matched distinct algorithms count as TP.
+      - Expected algorithms not matched count as FN.
+      - Extra / unlabelled detected algorithms count as FP.
+    - On negative control files:
+      - Clean files with 0 detections count as TN.
+      - Any detected algorithms count as FP.
+    - Negative control FPR = neg_control_violations / neg_control_files (consistent file unit).
+    - Finding-level Precision = TP / (TP + FP)
+    - Finding-level Recall = TP / (TP + FN)
+    - Finding-level F1 = 2 * (P * R) / (P + R)
+    """
     tp = 0
     fp = 0
     fn = 0
-    tn = 0
+    tn_files = 0
+    neg_control_files = 0
+    neg_control_violations = 0
 
     for entry in entries:
         rel_p = entry["relative_path"]
-        expected = entry["expected_algorithms"]
-        detected = observations_by_file.get(rel_p, [])
+        expected = entry.get("expected_algorithms", [])
+        raw_detected = observations_by_file.get(rel_p, [])
+
+        # Extract distinct detected algorithms for this file
+        distinct_detected: List[str] = []
+        for det in raw_detected:
+            if not any(algo_matches(det, existing) for existing in distinct_detected):
+                distinct_detected.append(det)
 
         if entry.get("is_negative", False):
-            if len(detected) == 0:
-                tn += 1
+            neg_control_files += 1
+            if len(distinct_detected) == 0:
+                tn_files += 1
             else:
-                fp += len(detected)
+                neg_control_violations += 1
+                fp += len(distinct_detected)
         else:
+            used_det = set()
             for exp in expected:
-                if any(algo_matches(exp, det) for det in detected):
+                matched_idx = None
+                for idx, det in enumerate(distinct_detected):
+                    if idx not in used_det and algo_matches(exp, det):
+                        matched_idx = idx
+                        break
+                if matched_idx is not None:
                     tp += 1
+                    used_det.add(matched_idx)
                 else:
                     fn += 1
+
+            # Every extra, unlabelled algorithm detected on a positive file is an FP
+            for idx in range(len(distinct_detected)):
+                if idx not in used_det:
+                    fp += 1
 
     precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
     recall = tp / (tp + fn) if (tp + fn) > 0 else 0.0
     f1 = 2 * (precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
-    fpr = fp / (fp + tn) if (fp + tn) > 0 else 0.0
+    fpr = neg_control_violations / neg_control_files if neg_control_files > 0 else 0.0
 
     return {
         "tp": tp,
         "fp": fp,
         "fn": fn,
-        "tn": tn,
+        "tn": tn_files,
         "precision": precision,
         "recall": recall,
         "f1": f1,

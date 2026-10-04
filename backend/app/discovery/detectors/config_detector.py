@@ -24,7 +24,7 @@ CONFIG_SIGNATURES = [
     (r"(?i)\b(TLSv1\.3|TLS 1\.3)\b", "TLSv1.3", "PROTOCOL", "CLASSICAL", ConfidenceBand.CONFIRMED),
     (r"(?i)\b(TLSv1\.2|TLS 1\.2)\b", "TLSv1.2", "PROTOCOL", "CLASSICAL", ConfidenceBand.CONFIRMED),
     (r"(?i)\b(TLSv1\.1|TLS 1\.1)\b", "TLSv1.1", "PROTOCOL", "DEPRECATED", ConfidenceBand.CONFIRMED),
-    (r"(?i)\b(TLSv1\.0|TLS 1\.0|TLSv1)\b", "TLSv1.0", "PROTOCOL", "DEPRECATED", ConfidenceBand.CONFIRMED),
+    (r"(?i)\b(TLSv1\.0|TLS 1\.0|TLSv1(?!\.))\b", "TLSv1.0", "PROTOCOL", "DEPRECATED", ConfidenceBand.CONFIRMED),
     (r"(?i)\b(SSLv3|SSL 3\.0)\b", "SSLv3", "PROTOCOL", "VULNERABLE", ConfidenceBand.CONFIRMED),
     (r"(?i)\b(SSLv2|SSL 2\.0)\b", "SSLv2", "PROTOCOL", "VULNERABLE", ConfidenceBand.CONFIRMED),
 
