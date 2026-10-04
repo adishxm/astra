@@ -710,6 +710,7 @@ html.js-motion .rv-mask.in{opacity:1;transform:none;clip-path:inset(0 0 0 0)}
       <span class="spacer"></span>
       <div class="tools">
         <span class="tag tag-low">0 external requests</span>
+        <span class="tag" id="scan-mode-badge" style="background:rgba(59,130,246,0.15);color:#3b82f6;font-weight:600;letter-spacing:0.02em;">Synthetic Demo Workspace</span>
         <button class="toggle no-print" onclick="window.print()" title="Print as PDF" aria-label="Print">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7"/><rect x="6" y="14" width="12" height="8"/><path d="M6 18H4a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-2"/></svg>
         </button>
@@ -735,7 +736,7 @@ html.js-motion .rv-mask.in{opacity:1;transform:none;clip-path:inset(0 0 0 0)}
     <button class="menu-item rv" data-tab="tab-audit" onclick="switchTab('tab-audit')"><span class="mi-n">06</span><span class="mi-l">Audit log</span><span class="mi-c"></span></button>
     <button class="menu-item rv" data-tab="tab-cli" onclick="switchTab('tab-cli')"><span class="mi-n">07</span><span class="mi-l">CLI guide</span><span class="mi-c"></span></button>
     <div class="menu-foot">
-      <span class="mf-t"><b>88 tests passing</b><br>MIT · Python 3.10+</span>
+      <span class="mf-t"><b>334+ Passing Automated Tests</b><br>142 Backend · 192 Frontend · MIT</span>
       <span class="mf-t">Air-gapped · no telemetry</span>
     </div>
   </nav>
@@ -745,6 +746,14 @@ html.js-motion .rv-mask.in{opacity:1;transform:none;clip-path:inset(0 0 0 0)}
     <!-- ── START ── -->
     <div id="tab-overview" class="tab-content active">
       <div class="stack">
+
+        <div id="demo-banner" class="banner banner-demo" style="display:flex;align-items:center;gap:12px;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.3);border-radius:8px;padding:12px 18px;margin-bottom:18px;font-size:0.875rem;color:var(--ink);">
+          <svg style="width:22px;height:22px;color:#3b82f6;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <div style="flex:1">
+            <strong style="color:#3b82f6;">Synthetic Demo Workspace:</strong> Pre-loaded for interface demonstration; submit a codebase archive (.zip / .tar.gz) or click <em>Run the demo corpus</em> for active live analysis.
+          </div>
+          <span class="tag" style="background:rgba(59,130,246,0.2);color:#3b82f6;font-weight:600;">DEMO DATA</span>
+        </div>
 
         <section class="hero">
           <span class="kicker">Cryptographic discovery · quantum risk · CBOM</span>
@@ -762,7 +771,7 @@ html.js-motion .rv-mask.in{opacity:1;transform:none;clip-path:inset(0 0 0 0)}
             <button class="btn no-print" onclick="window.print()">Print brief</button>
           </div>
           <div class="facts rv">
-            <span><b>88</b> tests in CI</span>
+            <span><b>334+</b> automated tests</span>
             <span><b>6</b> languages</span>
             <span><b>MIT</b> open source</span>
             <span><b>0</b> external requests</span>
@@ -1779,6 +1788,35 @@ Cryptographic Components: 7</pre>
     currentScan = scan;
     var assets = scan.assets;
 
+    var isDemo = (!scan.id || scan.id === 'demo-synthetic-sample');
+    var badge = $('scan-mode-badge');
+    if (badge) {
+      if (isDemo) {
+        badge.textContent = 'Synthetic Demo Workspace';
+        badge.style.background = 'rgba(59,130,246,0.15)';
+        badge.style.color = '#3b82f6';
+      } else {
+        badge.textContent = 'Active Scan: ' + (scan.source || scan.id);
+        badge.style.background = 'rgba(16,185,129,0.15)';
+        badge.style.color = '#10b981';
+      }
+    }
+
+    var banner = $('demo-banner');
+    if (banner) {
+      if (isDemo) {
+        banner.style.display = 'flex';
+        banner.style.background = 'rgba(59,130,246,0.1)';
+        banner.style.borderColor = 'rgba(59,130,246,0.3)';
+        banner.innerHTML = '<svg style="width:22px;height:22px;color:#3b82f6;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg><div style="flex:1"><strong style="color:#3b82f6;">Synthetic Demo Workspace:</strong> Pre-loaded for interface demonstration; submit a codebase archive (.zip / .tar.gz) or click <em>Run the demo corpus</em> for active live analysis.</div><span class="tag" style="background:rgba(59,130,246,0.2);color:#3b82f6;font-weight:600;">DEMO DATA</span>';
+      } else {
+        banner.style.display = 'flex';
+        banner.style.background = 'rgba(16,185,129,0.1)';
+        banner.style.borderColor = 'rgba(16,185,129,0.3)';
+        banner.innerHTML = '<svg style="width:22px;height:22px;color:#10b981;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg><div style="flex:1"><strong style="color:#10b981;">Active Scan:</strong> ' + (scan.source || scan.id) + ' &mdash; ' + scan.filesAssessed + ' of ' + scan.filesTotal + ' files assessed (' + (scan.coverage * 100).toFixed(1) + '% coverage)</div><span class="tag tag-ok">ACTIVE SCAN</span>';
+      }
+    }
+
     /* KPIs — coverage uses the honest assessed/total denominator */
     var covPct = (scan.coverage * 100).toFixed(1) + '%';
     setKpi('kpi-coverage', scan.coverage * 100, '%', 1);
@@ -1806,6 +1844,7 @@ Cryptographic Components: 7</pre>
 
   function renderInventory() {
     var tbody = $('inventory-tbody'); if (!tbody) return;
+    var isDemo = (!currentScan.id || currentScan.id === 'demo-synthetic-sample');
     var q = ($('inventory-search').value || '').trim().toLowerCase();
     var vulnOnly = $('filter-vuln').checked;
     var rows = currentScan.assets.filter(function (a) {
@@ -1814,7 +1853,7 @@ Cryptographic Components: 7</pre>
       return (a.algorithm + ' ' + a.category + ' ' + a.file + ' ' + a.pqc + ' ' + a.purpose + ' ' + a.evidence).toLowerCase().indexOf(q) !== -1;
     });
 
-    $('inventory-count-badge').textContent = currentScan.assets.length + ' artefacts';
+    $('inventory-count-badge').textContent = currentScan.assets.length + ' artefacts' + (isDemo ? ' (Demo Corpus)' : '');
     $('inv-visible-count').textContent = rows.length + ' shown';
 
     if (!rows.length) {
@@ -2154,22 +2193,23 @@ Cryptographic Components: 7</pre>
     var purpose = ((riskEval && riskEval.purpose) || obs.purpose || '').toUpperCase();
     var claim = (obs.claim_type || '').toUpperCase();
 
-    if (algo.indexOf('ML-KEM') !== -1 || algo.indexOf('ML-DSA') !== -1 || algo.indexOf('SLH-DSA') !== -1 || algo.indexOf('FALCON') !== -1 || algo.indexOf('SPHINCS') !== -1 || algo.indexOf('PQC') !== -1) {
+    if (algo.indexOf('ML-KEM') !== -1 || algo.indexOf('ML-DSA') !== -1 || algo.indexOf('SLH-DSA') !== -1 || algo.indexOf('FALCON') !== -1 || algo.indexOf('SPHINCS') !== -1 || algo.indexOf('PQC') !== -1 || algo.indexOf('KYBER') !== -1 || algo.indexOf('DILITHIUM') !== -1) {
       return 'Post-Quantum';
     }
     if (purpose.indexOf('HASH') !== -1 || /^(MD5|SHA-?1|SHA-?256|SHA-?384|SHA-?512|SHA-?3|BLAKE|RIPEMD)/.test(algo)) {
       return 'Hash';
     }
+    // Check ASYMMETRIC purposes explicitly before any SYMMETRIC substring checks
+    if (purpose.indexOf('ASYMMETRIC') !== -1 || purpose.indexOf('KEX') !== -1 || purpose.indexOf('KEY_EXCHANGE') !== -1 || purpose.indexOf('AGREEMENT') !== -1 || purpose.indexOf('ENCAPSULATION') !== -1) {
+      return 'Asymmetric';
+    }
     if (purpose.indexOf('SIGN') !== -1 || algo.indexOf('SIGN') !== -1 || algo.indexOf('DSA') !== -1) {
       return 'Signature';
-    }
-    if (purpose.indexOf('KEX') !== -1 || purpose.indexOf('KEY_EXCHANGE') !== -1 || purpose.indexOf('AGREEMENT') !== -1 || purpose.indexOf('ENCAPSULATION') !== -1 || algo.indexOf('ECDH') !== -1 || algo.indexOf('DH') !== -1 || algo.indexOf('X25519') !== -1) {
-      return 'Asymmetric';
     }
     if (purpose.indexOf('SYMMETRIC') !== -1 || /^(AES|3?DES|RC4|CHACHA|BLOWFISH|CAMELLIA)/.test(algo)) {
       return 'Symmetric';
     }
-    if (algo.indexOf('RSA') !== -1 || algo.indexOf('ECC') !== -1 || algo.indexOf('ECDSA') !== -1 || algo.indexOf('SECP') !== -1 || algo.indexOf('ED25519') !== -1) {
+    if (algo.indexOf('RSA') !== -1 || algo.indexOf('ECC') !== -1 || algo.indexOf('ECDSA') !== -1 || algo.indexOf('SECP') !== -1 || algo.indexOf('ED25519') !== -1 || algo.indexOf('ECDH') !== -1 || algo.indexOf('DH') !== -1 || algo.indexOf('X25519') !== -1) {
       return 'Asymmetric';
     }
     if (claim.indexOf('PROTOCOL') !== -1 || /^(TLS|SSL|SSH|IPSEC|QUIC|HTTPS|DTLS)/.test(algo)) {
