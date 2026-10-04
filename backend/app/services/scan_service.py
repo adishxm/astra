@@ -480,6 +480,46 @@ class ScanService:
         finally:
             sandbox_mgr.cleanup_sandbox(manifest.scan_id)
 
+    def update_scan_context(
+        self,
+        scan_id: str,
+        context: ContextFactors,
+        scenario: Optional[RiskScenario] = None,
+    ) -> ScanRecord:
+        """Update owner context (X, Y, exposure, criticality) and recalculate risk & backlog."""
+        record = self.store.get(scan_id)
+        if not record:
+            raise KeyError(f"ScanRecord {scan_id} not found")
+
+        # Mark as owner enriched
+        context.is_user_enriched = True
+        context.context_source = "OWNER_SUPPLIED"
+
+        active_scenario = scenario or RiskScenario()
+        risk_scorer = RiskScorer(scenario=active_scenario)
+
+        # Re-evaluate all observations with updated owner context
+        new_risk_evals = []
+        for obs in record.observations:
+            eval_res = risk_scorer.evaluate_observation(
+                observation=obs,
+                context=context,
+            )
+            new_risk_evals.append(eval_res)
+
+        # Re-generate backlog items
+        backlog_builder = BacklogBuilder(scenario=active_scenario)
+        backlog_obj = backlog_builder.generate_backlog(
+            observations=record.observations,
+            scan_id=scan_id,
+        )
+        new_backlog_items = [task.model_dump() for task in backlog_obj.tasks]
+
+        record.risk_evaluations = new_risk_evals
+        record.backlog_items = new_backlog_items
+        self.store.save(record)
+        return record
+
     @classmethod
     def scan_directory(
         cls,
@@ -499,6 +539,16 @@ class ScanService:
     ) -> ScanRecord:
         """Classmethod helper routing to global scan service."""
         return GLOBAL_SCAN_SERVICE.run_scan_on_archive(archive_path, target_name, scenario)
+
+    @classmethod
+    def update_context(
+        cls,
+        scan_id: str,
+        context: ContextFactors,
+        scenario: Optional[RiskScenario] = None,
+    ) -> ScanRecord:
+        """Classmethod helper routing to global scan service."""
+        return GLOBAL_SCAN_SERVICE.update_scan_context(scan_id, context, scenario)
 
 
 # Global singleton scan service

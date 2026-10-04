@@ -116,6 +116,10 @@ class RiskScorer:
                 "business_criticality": round((criticality_score * w_crit / composite_score) * 100, 1),
             }
 
+        recommendation_dict = None
+        if profile.migration_candidate:
+            recommendation_dict = profile.migration_candidate.model_dump()
+
         return RiskEvaluation(
             asset_id=observation.candidate_asset_id,
             algorithm=algo_name,
@@ -126,6 +130,9 @@ class RiskScorer:
             mosca_slack_years=mosca_slack,
             factor_contributions=factor_contribs,
             reason_codes=reason_codes,
+            context=ctx,
+            confidence_source="OWNER_SUPPLIED" if ctx.is_user_enriched else "DEFAULT_ASSUMPTION",
+            recommendation=recommendation_dict,
             assumptions_applied={
                 "scenario_id": self.scenario.scenario_id,
                 "quantum_threat_horizon_years": z,

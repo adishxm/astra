@@ -1826,12 +1826,15 @@ Cryptographic Components: 7</pre>
         '<td>' + a.category + '</td>' +
         '<td class="mono num">' + a.keySize + '</td>' +
         '<td><span class="path" title="' + a.file + ':' + a.line + '"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>' + a.file + ':' + a.line + '</span></span></td>' +
-        '<td><span class="tag">' + a.confidence + '</span></td>' +
+        '<td><span class="tag">' + a.confidence + '</span>' +
+        (a.contextSource === 'OWNER_SUPPLIED'
+          ? '<br><span class="tag" style="background:rgba(16,185,129,0.15);color:#10b981;font-size:10px;margin-top:2px;">OWNER VERIFIED</span>'
+          : '<br><span class="tag" style="background:rgba(148,163,184,0.12);color:#94a3b8;font-size:10px;margin-top:2px;">ASSUMPTION</span>') + '</td>' +
         '<td>' + severityTag(a.severity) + '</td>' +
         '<td><span class="arrow-pqc"><span class="to">→</span>' +
         (a.pqc.indexOf('Retain') === 0 || a.pqc.indexOf('Already') === 0
           ? '<span class="dim">' + a.pqc + '</span>'
-          : '<span class="tag tag-pqc">' + a.pqc + '</span>') +
+          : '<span class="tag tag-pqc" title="' + (a.recommendation ? (a.recommendation.target_standard_ref + ' · ' + a.recommendation.performance_impact) : a.pqc) + '">' + a.pqc + '</span>') +
         '</span></td></tr>';
     }).join('');
   }
@@ -2212,6 +2215,7 @@ Cryptographic Components: 7</pre>
               shelfLife: shelfLifeVal,
               migration: migrationVal,
               contextSource: (riskEval && riskEval.context && riskEval.context.context_source) || 'DEFAULT_ASSUMPTION',
+              recommendation: (riskEval && riskEval.recommendation) || null,
               notes: ''
             };
           });

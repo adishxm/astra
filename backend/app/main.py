@@ -290,6 +290,48 @@ def get_scan_risk(
     }
 
 
+@app.put("/api/v1/scans/{scan_id}/context")
+def update_scan_owner_context(
+    scan_id: str,
+    payload: Dict[str, Any] = Body(...),
+):
+    """Enrich a scan with verified owner context (data lifetime X, migration Y, exposure, criticality)."""
+    record = GLOBAL_SCAN_STORE.get(scan_id)
+    if not record:
+        raise HTTPException(status_code=404, detail=f"Scan ID not found: {scan_id}")
+
+    from app.risk.models import ContextFactors, RiskScenario
+    from app.services.scan_service import GLOBAL_SCAN_SERVICE
+
+    try:
+        ctx_data = dict(payload)
+        ctx_data["is_user_enriched"] = True
+        ctx_data["context_source"] = "OWNER_SUPPLIED"
+        
+        # If exposure or criticality passed as int or string, parse them
+        context = ContextFactors(**ctx_data)
+        
+        scenario = None
+        if "quantum_threat_horizon_years" in payload:
+            scenario = RiskScenario(quantum_threat_horizon_years=float(payload["quantum_threat_horizon_years"]))
+
+        updated_record = GLOBAL_SCAN_SERVICE.update_scan_context(
+            scan_id=scan_id,
+            context=context,
+            scenario=scenario,
+        )
+        return {
+            "status": "updated",
+            "scan_id": scan_id,
+            "context": context.model_dump(),
+            "summary": updated_record.to_dict()["summary"],
+            "risk_evaluations": [r.model_dump() for r in updated_record.risk_evaluations],
+            "backlog_items": updated_record.backlog_items,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid context parameters: {str(e)}")
+
+
 @app.get("/api/v1/scans/{scan_id}/export")
 def get_scan_export(scan_id: str, format: str = Query("cyclonedx")):
     """Export CycloneDX 1.6 Cryptographic Bill of Materials (CBOM) for a scan."""

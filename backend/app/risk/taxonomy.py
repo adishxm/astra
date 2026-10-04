@@ -19,6 +19,26 @@ class MigrationCandidate(BaseModel):
     operational_considerations: str
     migration_urgency: str
     recommended_action: str
+    purpose: str = Field(
+        default="Cryptographic Security & Confidentiality",
+        description="Cryptographic functional purpose (e.g. KEM, Signature, Bulk Encryption)",
+    )
+    performance_impact: str = Field(
+        default="Key/signature size expansion; CPU cycle latency increase < 5% on modern architectures",
+        description="Empirical latency, memory, and compute trade-offs",
+    )
+    bandwidth_and_cost: str = Field(
+        default="Network packet overhead in handshakes (TCP fragmentation mitigation required)",
+        description="Storage and bandwidth cost implications",
+    )
+    cisa_nsa_guidance: str = Field(
+        default="NIST Post-Quantum Cryptography Standards (FIPS 203/204/205) / NSA CNSA 2.0 Timeline (2025-2033)",
+        description="Official sovereign migration policy citation",
+    )
+    remediation_steps: List[str] = Field(
+        default_factory=list,
+        description="Step-by-step actionable engineering migration procedures",
+    )
 
 
 class AlgorithmProfile(BaseModel):
@@ -235,6 +255,130 @@ ALGORITHM_CATALOG: Dict[str, AlgorithmProfile] = {
             recommended_action="Enable hybrid X25519 + ML-KEM-768 in TLS listeners",
         ),
     ),
+    "ECDH": AlgorithmProfile(
+        algorithm_name="ECDH",
+        vulnerability_tier="QUANTUM_VULNERABLE",
+        base_vulnerability_score=7.0,
+        primary_threat="Shor's algorithm solves elliptic curve discrete logarithm (ECDLP) in polynomial time",
+        dated_source="NIST FIPS 203 / NIST IR 8547",
+        effective_date="2024-08",
+        migration_candidate=MigrationCandidate(
+            source_algorithm="ECDH",
+            target_standard_algorithm="ML-KEM-768 (NIST FIPS 203)",
+            target_hybrid_algorithm="Hybrid X25519 + ML-KEM-768",
+            target_standard_ref="NIST FIPS 203 (Aug 2024)",
+            compatibility_gaps=["Key exchange share expansion to 1,184 bytes"],
+            operational_considerations="Deploy hybrid key agreement first in TLS 1.3",
+            migration_urgency="PLANNED_QUANTUM_MIGRATION",
+            recommended_action="Migrate to ML-KEM-768 or X25519MLKEM768 hybrid",
+        ),
+    ),
+    "ECDHE": AlgorithmProfile(
+        algorithm_name="ECDHE",
+        vulnerability_tier="QUANTUM_VULNERABLE",
+        base_vulnerability_score=7.0,
+        primary_threat="Shor's algorithm solves ECDLP in polynomial time; vulnerable to Store-Now-Decrypt-Later (SNDL)",
+        dated_source="NIST FIPS 203 / IETF draft-ietf-tls-hybrid-design",
+        effective_date="2024-08",
+        migration_candidate=MigrationCandidate(
+            source_algorithm="ECDHE",
+            target_standard_algorithm="ML-KEM-768",
+            target_hybrid_algorithm="X25519MLKEM768",
+            target_standard_ref="NIST FIPS 203 (Aug 2024)",
+            compatibility_gaps=["TLS ClientHello key share size expands from 32B to 1,216B"],
+            operational_considerations="Natively supported in modern browsers and OpenSSL 3.4+",
+            migration_urgency="PLANNED_QUANTUM_MIGRATION",
+            recommended_action="Enable hybrid post-quantum key exchange in TLS listener",
+        ),
+    ),
+    "ECDHE-AES256-GCM": AlgorithmProfile(
+        algorithm_name="ECDHE-AES256-GCM",
+        vulnerability_tier="QUANTUM_VULNERABLE",
+        base_vulnerability_score=7.0,
+        primary_threat="Key exchange portion (ECDHE) is vulnerable to Shor's algorithm (SNDL risk)",
+        dated_source="NIST FIPS 203 / IETF RFC 8446",
+        effective_date="2024-08",
+        migration_candidate=MigrationCandidate(
+            source_algorithm="ECDHE-AES256-GCM",
+            target_standard_algorithm="ML-KEM-768 + AES-256-GCM",
+            target_hybrid_algorithm="X25519MLKEM768 + AES-256-GCM",
+            target_standard_ref="NIST FIPS 203 & FIPS 197",
+            compatibility_gaps=["ClientHello key share expansion (~1,216 bytes)"],
+            operational_considerations="Bulk encryption (AES-256-GCM) is already quantum-resistant; only key agreement requires upgrade",
+            migration_urgency="PLANNED_QUANTUM_MIGRATION",
+            recommended_action="Upgrade TLS cipher suite to X25519MLKEM768-AES256-GCM",
+        ),
+    ),
+    "ECDHE-AES128-GCM": AlgorithmProfile(
+        algorithm_name="ECDHE-AES128-GCM",
+        vulnerability_tier="QUANTUM_VULNERABLE",
+        base_vulnerability_score=7.5,
+        primary_threat="Key exchange (ECDHE) breaks under Shor; AES-128 offers reduced margin under Grover",
+        dated_source="NIST FIPS 203 & IR 8547",
+        effective_date="2024-08",
+        migration_candidate=MigrationCandidate(
+            source_algorithm="ECDHE-AES128-GCM",
+            target_standard_algorithm="ML-KEM-768 + AES-256-GCM",
+            target_hybrid_algorithm="X25519MLKEM768 + AES-256-GCM",
+            target_standard_ref="NIST FIPS 203 & FIPS 197",
+            compatibility_gaps=["ClientHello expansion (~1,216 bytes); requires 256-bit keys"],
+            operational_considerations="Upgrade both key exchange to PQC and bulk cipher to 256-bit",
+            migration_urgency="PLANNED_QUANTUM_MIGRATION",
+            recommended_action="Upgrade TLS cipher suite to X25519MLKEM768-AES256-GCM",
+        ),
+    ),
+    "TLSV1.0": AlgorithmProfile(
+        algorithm_name="TLSv1.0",
+        vulnerability_tier="BROKEN",
+        base_vulnerability_score=9.5,
+        primary_threat="Deprecated protocol; vulnerable to BEAST, POODLE, and weak MAC-then-encrypt",
+        dated_source="RFC 8996 (Deprecating TLS 1.0 and TLS 1.1, Mar 2021) / NIST SP 800-52 Rev. 2",
+        effective_date="2021-03",
+        migration_candidate=MigrationCandidate(
+            source_algorithm="TLSv1.0",
+            target_standard_algorithm="TLS 1.3 with PQC KEM (X25519MLKEM768)",
+            target_standard_ref="RFC 8446 / NIST SP 800-52 Rev. 2",
+            compatibility_gaps=["Requires client support for TLS 1.3"],
+            operational_considerations="Immediately disable TLS 1.0 in all server listeners",
+            migration_urgency="IMMEDIATE_DEPRECATION",
+            recommended_action="Enforce minimum protocol version TLSv1.2, preferred TLSv1.3",
+        ),
+    ),
+    "TLSV1.1": AlgorithmProfile(
+        algorithm_name="TLSv1.1",
+        vulnerability_tier="BROKEN",
+        base_vulnerability_score=9.0,
+        primary_threat="Deprecated protocol; weak ciphersuites and MD5/SHA-1 dependencies",
+        dated_source="RFC 8996 / NIST SP 800-52 Rev. 2",
+        effective_date="2021-03",
+        migration_candidate=MigrationCandidate(
+            source_algorithm="TLSv1.1",
+            target_standard_algorithm="TLS 1.3 with PQC KEM",
+            target_standard_ref="RFC 8446 / NIST SP 800-52 Rev. 2",
+            compatibility_gaps=["Requires client support for TLS 1.3"],
+            operational_considerations="Immediately disable TLS 1.1 in all server listeners",
+            migration_urgency="IMMEDIATE_DEPRECATION",
+            recommended_action="Enforce minimum protocol version TLSv1.2, preferred TLSv1.3",
+        ),
+    ),
+    "TLSV1.2": AlgorithmProfile(
+        algorithm_name="TLSv1.2",
+        vulnerability_tier="CLASSICAL_RESISTANT",
+        base_vulnerability_score=3.0,
+        primary_threat="Classical security acceptable; lacks mandatory forward secrecy and native PQC hybrid suites",
+        dated_source="NIST SP 800-52 Rev. 2 / BSI TR-02102-2",
+        effective_date="2024-08",
+        migration_candidate=MigrationCandidate(
+            source_algorithm="TLSv1.2",
+            target_standard_algorithm="TLS 1.3",
+            target_hybrid_algorithm="TLS 1.3 + X25519MLKEM768",
+            target_standard_ref="RFC 8446 / NIST SP 800-52 Rev. 2",
+            compatibility_gaps=["TLS 1.3 removes obsolete cipher suites and renegotiation"],
+            operational_considerations="Ensure servers enable TLS 1.3 alongside 1.2 during migration",
+            migration_urgency="MEDIUM",
+            recommended_action="Enable TLS 1.3 with post-quantum hybrid key exchange groups",
+        ),
+    ),
 
     # 3. Classical Strong / Quantum-Resistant Symmetric & Hash
     "AES-256": AlgorithmProfile(
@@ -312,10 +456,10 @@ def lookup_algorithm_profile(algorithm_name: str) -> AlgorithmProfile:
     if norm in ALGORITHM_CATALOG:
         return ALGORITHM_CATALOG[norm]
 
-    # Partial / normalized match
-    for key, profile in ALGORITHM_CATALOG.items():
+    # Partial / normalized match: prioritize longer, more specific algorithm keys first
+    for key in sorted(ALGORITHM_CATALOG.keys(), key=len, reverse=True):
         if key in norm or norm in key:
-            return profile
+            return ALGORITHM_CATALOG[key]
 
     # Default fallback for unknown algorithms
     return AlgorithmProfile(

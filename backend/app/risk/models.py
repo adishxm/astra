@@ -124,6 +124,18 @@ class RiskEvaluation(BaseModel):
     assumptions_applied: Dict[str, Any] = Field(
         default_factory=dict, description="Active scenario horizon and factor parameters"
     )
+    context: ContextFactors = Field(
+        default_factory=ContextFactors,
+        description="Owner-supplied or default context factors evaluated for this asset",
+    )
+    confidence_source: str = Field(
+        default="DEFAULT_ASSUMPTION",
+        description="Origin of context: DEFAULT_ASSUMPTION vs OWNER_CONFIRMED",
+    )
+    recommendation: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="Grounded PQC migration candidate with purpose, citations, and performance/cost trade-offs",
+    )
     evaluated_at: datetime = Field(
         default_factory=lambda: datetime.now(timezone.utc)
     )
