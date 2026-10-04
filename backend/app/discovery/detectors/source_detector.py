@@ -281,11 +281,19 @@ class SourceCryptoDetector:
             return obs
 
         for node in ast.walk(tree):
-            # Detect: from hashlib import sha256, md5
+            # Detect: from hashlib import sha256, md5 or from cryptography... import rsa
             if isinstance(node, ast.ImportFrom):
                 module = node.module or ""
                 if "hashlib" in module or "cryptography" in module or "Crypto" in module:
+                    non_algo_helpers = {
+                        "cipher", "ciphers", "algorithm", "algorithms", "mode", "modes",
+                        "hazmat", "primitives", "asymmetric", "symmetric", "hashes",
+                        "padding", "backends", "default_backend", "serialization", "x509",
+                        "backend", "types", "utils"
+                    }
                     for alias in node.names:
+                        if alias.name.lower() in non_algo_helpers:
+                            continue
                         algo = alias.name.upper()
                         sanitized, red = sanitize_snippet(lines[node.lineno - 1].strip() if node.lineno <= len(lines) else "")
                         obs.append(

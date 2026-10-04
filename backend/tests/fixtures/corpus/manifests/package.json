@@ -1,0 +1,8 @@
+{
+  "name": "astra-positive-npm",
+  "version": "1.0.0",
+  "dependencies": {
+    "crypto-js": "^4.2.0",
+    "node-forge": "^1.3.1"
+  }
+}

@@ -23,8 +23,13 @@ client = TestClient(app)
 
 def create_synthetic_sample_zip() -> io.BytesIO:
     """Pack examples/synthetic_sample into an in-memory zip archive."""
-    sample_dir = Path("examples/synthetic_sample").resolve()
-    assert sample_dir.exists() and sample_dir.is_dir(), "examples/synthetic_sample directory must exist"
+    candidates = [
+        Path("examples/synthetic_sample").resolve(),
+        Path(__file__).resolve().parent.parent.parent / "examples" / "synthetic_sample",
+        Path(__file__).resolve().parent.parent / "examples" / "synthetic_sample",
+    ]
+    sample_dir = next((c for c in candidates if c.exists() and c.is_dir()), None)
+    assert sample_dir is not None, "examples/synthetic_sample directory must exist"
 
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:

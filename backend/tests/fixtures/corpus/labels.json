@@ -1,0 +1,186 @@
+{
+  "corpus_version": "1.0",
+  "training_set": [
+    {
+      "relative_path": "python/crypto_positive.py",
+      "surface": "SOURCE_CODE",
+      "is_negative": false,
+      "expected_algorithms": [
+        "RSA-2048",
+        "AES-256",
+        "MD5",
+        "SHA-256"
+      ]
+    },
+    {
+      "relative_path": "python/crypto_negative.py",
+      "surface": "SOURCE_CODE",
+      "is_negative": true,
+      "expected_algorithms": []
+    },
+    {
+      "relative_path": "javascript/crypto_positive.js",
+      "surface": "SOURCE_CODE",
+      "is_negative": false,
+      "expected_algorithms": [
+        "AES-256",
+        "SHA-256",
+        "MD5",
+        "RSA-2048"
+      ]
+    },
+    {
+      "relative_path": "javascript/crypto_negative.js",
+      "surface": "SOURCE_CODE",
+      "is_negative": true,
+      "expected_algorithms": []
+    },
+    {
+      "relative_path": "go/crypto_positive.go",
+      "surface": "SOURCE_CODE",
+      "is_negative": false,
+      "expected_algorithms": [
+        "AES-256",
+        "RSA-2048",
+        "SHA-256",
+        "MD5"
+      ]
+    },
+    {
+      "relative_path": "go/crypto_negative.go",
+      "surface": "SOURCE_CODE",
+      "is_negative": true,
+      "expected_algorithms": []
+    },
+    {
+      "relative_path": "java/CryptoPositive.java",
+      "surface": "SOURCE_CODE",
+      "is_negative": false,
+      "expected_algorithms": [
+        "RSA-2048",
+        "AES-256",
+        "SHA-256",
+        "MD5"
+      ]
+    },
+    {
+      "relative_path": "c/crypto_positive.c",
+      "surface": "SOURCE_CODE",
+      "is_negative": false,
+      "expected_algorithms": [
+        "AES-256",
+        "RSA-2048",
+        "SHA-256",
+        "MD5"
+      ]
+    },
+    {
+      "relative_path": "manifests/package.json",
+      "surface": "MANIFEST",
+      "is_negative": false,
+      "expected_algorithms": [
+        "crypto-js",
+        "node-forge"
+      ]
+    },
+    {
+      "relative_path": "manifests/requirements.txt",
+      "surface": "MANIFEST",
+      "is_negative": false,
+      "expected_algorithms": [
+        "cryptography",
+        "pycryptodome"
+      ]
+    },
+    {
+      "relative_path": "manifests/clean/package.json",
+      "surface": "MANIFEST",
+      "is_negative": true,
+      "expected_algorithms": []
+    },
+    {
+      "relative_path": "certificates/valid_rsa_cert.pem",
+      "surface": "CERTIFICATE",
+      "is_negative": false,
+      "expected_algorithms": [
+        "RSA-2048"
+      ]
+    },
+    {
+      "relative_path": "certificates/not_a_cert.pem",
+      "surface": "CERTIFICATE",
+      "is_negative": true,
+      "expected_algorithms": []
+    },
+    {
+      "relative_path": "configs/tls_positive.conf",
+      "surface": "CONFIG",
+      "is_negative": false,
+      "expected_algorithms": [
+        "TLSv1.2",
+        "TLSv1.3",
+        "ECDHE-AES256-GCM",
+        "ECDHE-AES128-GCM"
+      ]
+    },
+    {
+      "relative_path": "configs/plain_nginx.conf",
+      "surface": "CONFIG",
+      "is_negative": true,
+      "expected_algorithms": []
+    }
+  ],
+  "holdout_set": [
+    {
+      "relative_path": "holdout/holdout_python.py",
+      "surface": "SOURCE_CODE",
+      "is_negative": false,
+      "expected_algorithms": [
+        "ECDSA",
+        "ChaCha20"
+      ]
+    },
+    {
+      "relative_path": "holdout/holdout_js.js",
+      "surface": "SOURCE_CODE",
+      "is_negative": false,
+      "expected_algorithms": [
+        "AES-128",
+        "SHA-512"
+      ]
+    },
+    {
+      "relative_path": "holdout/holdout_go.go",
+      "surface": "SOURCE_CODE",
+      "is_negative": false,
+      "expected_algorithms": [
+        "Ed25519",
+        "SHA-512"
+      ]
+    },
+    {
+      "relative_path": "holdout/manifests/package.json",
+      "surface": "MANIFEST",
+      "is_negative": false,
+      "expected_algorithms": [
+        "bcrypt",
+        "tweetnacl"
+      ]
+    },
+    {
+      "relative_path": "holdout/holdout_config.yaml",
+      "surface": "CONFIG",
+      "is_negative": false,
+      "expected_algorithms": [
+        "TLSv1.3",
+        "AES"
+      ]
+    },
+    {
+      "relative_path": "holdout/holdout_negative.py",
+      "surface": "SOURCE_CODE",
+      "is_negative": true,
+      "expected_algorithms": []
+    }
+  ]
+}

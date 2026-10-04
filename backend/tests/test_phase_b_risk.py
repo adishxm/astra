@@ -23,7 +23,13 @@ client = TestClient(app)
 
 def get_test_scan_id() -> str:
     """Helper to upload synthetic sample and return scan_id."""
-    sample_dir = Path("examples/synthetic_sample").resolve()
+    candidates = [
+        Path("examples/synthetic_sample").resolve(),
+        Path(__file__).resolve().parent.parent.parent / "examples" / "synthetic_sample",
+        Path(__file__).resolve().parent.parent / "examples" / "synthetic_sample",
+    ]
+    sample_dir = next((c for c in candidates if c.exists() and c.is_dir()), None)
+    assert sample_dir is not None, "examples/synthetic_sample directory must exist"
     zip_buffer = io.BytesIO()
     with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zf:
         for file_p in sorted(sample_dir.glob("*")):
