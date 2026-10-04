@@ -1,12 +1,14 @@
-# Worker 02 status
+# Worker 02 Status: 100-Point Improvement Roadmap
 
-**Overall:** ALL MVP PHASES (MVP-01, MVP-02) AND PRODUCTION PHASES (PROD-01, PROD-02) IMPLEMENTED & VALIDATED.
+**Current State:** PHASE PLANNING COMPLETE (Phases A through E fully planned and specified). Ready for Git push before starting Phase A execution.
 
-| Phase | Status | Gate/next action |
-|---|---|---|
-| MVP-01 — Canonical evidence, identity and redaction model | IMPLEMENTED & VALIDATED | 3/3 tests passed; CanonicalEvidence, AssetIdentity, parametric redaction active |
-| MVP-02 — Context graph, review audit and CBOM-style export | IMPLEMENTED & VALIDATED | 3/3 tests passed; Relationship graph, AuditRecord, InventoryExport active |
-| PROD-01 — Temporal identity, change history and evidence reconciliation | IMPLEMENTED & VALIDATED | 2/2 tests passed; TemporalLineageEngine, Cryptographic DNA hashing & downgrade detection active |
-| PROD-02 — CBOM conformance and multi-generator reconciliation | IMPLEMENTED & VALIDATED | 2/2 tests passed; CycloneDX 1.6 validator, multi-generator reconciliation & Discrepancy Index active |
+| Phase | Title | Status | Gate / Next Action |
+|---|---|---|---|
+| **Phase A** | Close the MVP Integrity Gap (UI/API Contract, Scan ID Propagation, Archive Accounting & Canonical Frontend Sync) | PLANNED | Ready for implementation |
+| **Phase B** | Defensible Risk Models & Grounded Recommendations | PLANNED | Pending Phase A completion |
+| **Phase C** | Prove Detector Quality with End-to-End Ground Truth Benchmarking | PLANNED | Pending Phase B completion |
+| **Phase D** | Security Hardening, Operational Controls & Surface Discovery Expansion | PLANNED | Pending Phase C completion |
+| **Phase E** | Judging Rehearsal, Verification & 100/100 Certification | PLANNED | Final gate |
 
-**Total Worker 02 Test Suite:** 7 passed / 7 total (100% pass rate). Entire repository: 67/67 passing tests.
+---
+**Active Obligation:** Push phase plans (`phase_a.md` through `phase_e.md`, `phase_index.md`, `status.md`) to Git before starting Phase A implementation, as requested by user.
