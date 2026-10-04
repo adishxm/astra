@@ -99,6 +99,11 @@ class ReconciliationResult(BaseModel):
 class CBOMReconciliationEngine:
     """Validates CycloneDX 1.6 CBOM profiles and reconciles output from multiple generators."""
 
+    @classmethod
+    def validate_cbom(cls, data: Dict[str, Any]) -> CBOMValidationResult:
+        """Alias for validate_cyclonedx_16."""
+        return cls.validate_cyclonedx_16(data)
+
     @staticmethod
     def validate_cyclonedx_16(data: Dict[str, Any]) -> CBOMValidationResult:
         """Validate CBOM JSON conformity to CycloneDX 1.6 cryptographic profile."""

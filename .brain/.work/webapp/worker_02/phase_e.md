@@ -63,8 +63,8 @@ Phase E completes the 100-Point Improvement Roadmap by executing an end-to-end j
 
 ## 4. Phase E Deliverables
 - [x] Architecture specification (`phase_e.md`)
-- [ ] Judging rehearsal runner script: `scripts/run_judging_rehearsal.py`
-- [ ] Automated rehearsal verification test: `backend/tests/test_phase_e_rehearsal.py`
-- [ ] Documentation update: `README.md`
-- [ ] Phase completion report: `.brain/.work/.report/phase_e_report.md`
-- [ ] Git commit and push upon completion.
+- [x] Judging rehearsal runner script: `scripts/run_judging_rehearsal.py`
+- [x] Automated rehearsal verification test: `backend/tests/test_phase_e_rehearsal.py`
+- [x] Documentation update: `README.md`
+- [x] Phase completion report: `.brain/.work/.report/phase_e_report.md`
+- [x] Git commit and push upon completion.
