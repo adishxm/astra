@@ -1,12 +1,14 @@
-# Worker 04 status
+# Worker 04 Status: 100-Point Fresh Reassessment Recovery
 
-**Overall:** ALL MVP PHASES (MVP-01, MVP-02, MVP-03) AND PRODUCTION PHASES (PROD-01) IMPLEMENTED & VALIDATED.
+**Overall Status:** ARCHITECTURE PLANNING COMPLETE (PHASES A THROUGH E DEFINED). Ready for initial Git push before starting Phase A.
 
-| Phase | Status | Gate/next action |
-|---|---|---|
-| MVP-01 — Complete user journey, roles and scan lifecycle | IMPLEMENTED & VALIDATED | Web workflow API active (`/api/v1/workflow/audit`, `/evidence/{id}`) |
-| MVP-02 — Integrated evidence review, risk queue and export experience | IMPLEMENTED & VALIDATED | Export endpoint active (`/api/v1/workflow/export`); 4/4 tests passed |
-| MVP-03 — MVP packaging, documentation and demo acceptance | IMPLEMENTED & VALIDATED | Dockerfile, compose, CI workflow, packaging, pyproject.toml active |
-| PROD-01 — Offline operations, security hardening and production release readiness | IMPLEMENTED & VALIDATED | 3/3 tests passed; Air-gapped offline bundle manager, tamper-evident audit chaining, production health active |
+| Phase | Title | Status | Gate / Next Action |
+|---|---|---|---|
+| **Phase A** | Frontend Semantics & Demo Data Transparency | PLANNED | Fix `resolveCategory` asymmetric substring bug, badge initial synthetic demo view, synchronize 334+ test counters |
+| **Phase B** | Server-Persisted Cryptographic Audit Chain & Tenant Scoping | PLANNED | File-backed JSON audit store, automatic pipeline audit events, tenant/user scoping, server-verified frontend audit panel |
+| **Phase C** | Cloud KMS & Hardware Security Module (PKCS#11) Discovery Adapters | PLANNED | AWS KMS / Azure Key Vault / GCP KMS detector, PKCS#11 HSM detector, pipeline and CBOM integration |
+| **Phase D** | Empirical Holdout Expansion, Real Surface Confusion Matrices & Ground-Truth Verification | PLANNED | Multi-surface holdout expansion, per-surface confusion matrices (8 categories), strict bipartite FP accounting |
+| **Phase E** | Dynamic Quality Gate Rehearsal Alignment, Complete Documentation Sync & 100/100 Closeout | PLANNED | Align rehearsal script with full surface suite, synchronize README test counts (334+), repository-wide verification |
 
-**Total Worker 04 Test Suite:** 7 passed / 7 total (100% pass rate). Entire repository: 74/74 passing tests.
+---
+**Next Immediate Action:** Commit and push planning phase specifications to Git (`origin/main`) prior to commencing Phase A implementation.
