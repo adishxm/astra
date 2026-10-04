@@ -477,6 +477,226 @@ html.js-motion .rv-mask.in{opacity:1;transform:none;clip-path:inset(0 0 0 0)}
   html.js-motion .rv,html.js-motion .rv-mask{opacity:1!important;transform:none!important;clip-path:none!important;transition:none!important}
   .scroll-cue{display:none}
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   02 / MOSCA RISK 3D PARAMETER SPACE VISUALIZER
+   ══════════════════════════════════════════════════════════════════ */
+.mosca-3d-card {
+  margin: 22px 0 26px 0;
+  background: var(--card);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+}
+.m3d-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--rule);
+  background: var(--tint);
+}
+.m3d-title-group {
+  max-width: 600px;
+}
+.m3d-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 4px;
+}
+.m3d-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: m3d-pulse 2s infinite ease-in-out;
+}
+@keyframes m3d-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.8); }
+}
+.m3d-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin: 0 0 4px 0;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+}
+.m3d-sub {
+  font-size: 0.8rem;
+  color: var(--ink-2);
+  margin: 0;
+  line-height: 1.45;
+}
+.m3d-sub code {
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  background: var(--rule-2);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+.m3d-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.m3d-btn-group {
+  display: inline-flex;
+  border: 1px solid var(--rule-2);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--card);
+}
+.m3d-btn {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 6px 11px;
+  border: 1px solid var(--rule-2);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--ink-2);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+.m3d-btn-group .m3d-btn {
+  border: none;
+  border-right: 1px solid var(--rule-2);
+  border-radius: 0;
+}
+.m3d-btn-group .m3d-btn:last-child {
+  border-right: none;
+}
+.m3d-btn:hover {
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+}
+.m3d-btn.active {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.m3d-viewport-container {
+  position: relative;
+  width: 100%;
+  height: 440px;
+  background: var(--night);
+  overflow: hidden;
+  user-select: none;
+  cursor: grab;
+}
+.m3d-viewport-container:active {
+  cursor: grabbing;
+}
+#mosca-3d-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.m3d-hud-legend {
+  position: absolute;
+  top: 14px;
+  left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  pointer-events: none;
+  background: rgba(18, 18, 17, 0.82);
+  backdrop-filter: blur(8px);
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: var(--mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  color: #f1eee6;
+}
+.m3d-hud-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.m3d-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+.m3d-swatch-current {
+  background: #f59e0b;
+  box-shadow: 0 0 8px #f59e0b;
+  border-radius: 50%;
+}
+.m3d-swatch-risk {
+  background: rgba(220, 75, 45, 0.65);
+  border: 1px solid #e8722f;
+}
+.m3d-swatch-safe {
+  background: rgba(46, 125, 50, 0.55);
+  border: 1px solid #86c794;
+}
+.m3d-swatch-asset-vuln {
+  background: #ef4444;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(239, 68, 68, 0.6);
+}
+.m3d-swatch-asset-safe {
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
+}
+.m3d-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(16, 15, 13, 0.95);
+  color: #fff;
+  border: 1px solid var(--accent);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  line-height: 1.45;
+  box-shadow: 0 10px 28px rgba(0,0,0,0.55);
+  transform: translate(-50%, -100%);
+  margin-top: -12px;
+  z-index: 10;
+  white-space: nowrap;
+}
+.m3d-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 12px 24px;
+  background: var(--tint);
+  border-top: 1px solid var(--rule);
+  font-family: var(--mono);
+  font-size: 0.72rem;
+}
+.m3d-stat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--ink-2);
+}
+.m3d-stat-lbl {
+  color: var(--ink-3);
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
 </style>
 </head>
 <body>
@@ -764,6 +984,49 @@ html.js-motion .rv-mask.in{opacity:1;transform:none;clip-path:inset(0 0 0 0)}
         <div class="vitem"><span class="lbl">Z horizon</span><strong id="mv-z">8.0 yrs</strong></div>
         <div class="vres risk" id="mv-result">SNDL exposure</div>
       </div>
+
+      <!-- ── 3D Mosca Parameter Space Visualization ── -->
+      <div class="mosca-3d-card rv">
+        <div class="m3d-head">
+          <div class="m3d-title-group">
+            <div class="m3d-badge"><span class="m3d-dot"></span> 3D PARAMETER SPACE</div>
+            <h3 class="m3d-title">Interactive Mosca Horizon Geometry (X × Y × Z)</h3>
+            <p class="m3d-sub">Visualizing the Store-Now-Decrypt-Later boundary hypersurface <code>X + Y = Z</code>. Drag to rotate in 3D · Scroll to zoom · Hover over nodes to inspect assets.</p>
+          </div>
+          <div class="m3d-controls no-print">
+            <div class="m3d-btn-group">
+              <button type="button" class="m3d-btn active" id="m3d-preset-iso" title="Isometric Perspective">Isometric</button>
+              <button type="button" class="m3d-btn" id="m3d-preset-xy" title="Top-down X vs Y">X-Y Plane</button>
+              <button type="button" class="m3d-btn" id="m3d-preset-xz" title="Front X vs Z">X-Z Plane</button>
+            </div>
+            <button type="button" class="m3d-btn active" id="m3d-toggle-plane" title="Toggle X+Y=Z Hypersurface">Plane: ON</button>
+            <button type="button" class="m3d-btn active" id="m3d-toggle-spin" title="Toggle 3D Rotation">Auto-Spin: ON</button>
+            <button type="button" class="m3d-btn" id="m3d-btn-reset" title="Reset Camera">Reset</button>
+          </div>
+        </div>
+
+        <div class="m3d-viewport-container">
+          <canvas id="mosca-3d-canvas"></canvas>
+          <div id="m3d-tooltip" class="m3d-tooltip" style="display:none;"></div>
+          
+          <div class="m3d-hud-legend no-print">
+            <div class="m3d-hud-item"><span class="m3d-swatch m3d-swatch-current"></span> Current Scenario (X, Y, Z)</div>
+            <div class="m3d-hud-item"><span class="m3d-swatch m3d-swatch-risk"></span> SNDL Risk Zone (X + Y &gt; Z)</div>
+            <div class="m3d-hud-item"><span class="m3d-swatch m3d-swatch-safe"></span> Safe Slack Zone (X + Y &le; Z)</div>
+            <div class="m3d-hud-item"><span class="m3d-swatch m3d-swatch-asset-vuln"></span> Vulnerable Asset (RSA, ECC, SHA1)</div>
+            <div class="m3d-hud-item"><span class="m3d-swatch m3d-swatch-asset-safe"></span> Quantum-Resistant / PQC</div>
+          </div>
+        </div>
+
+        <div class="m3d-foot">
+          <div class="m3d-stat"><span class="m3d-stat-lbl">X-AXIS:</span> <strong>Shelf-Life (0–25y)</strong></div>
+          <div class="m3d-stat"><span class="m3d-stat-lbl">Y-AXIS:</span> <strong>Migration (0–10y)</strong></div>
+          <div class="m3d-stat"><span class="m3d-stat-lbl">Z-AXIS:</span> <strong>Threat Horizon (0–15y)</strong></div>
+          <div class="m3d-stat"><span class="m3d-stat-lbl">CURRENT SCENARIO:</span> <strong id="m3d-coord-display">X=7.0y, Y=3.0y, Z=8.0y</strong></div>
+          <div class="m3d-stat"><span class="m3d-stat-lbl">STATUS:</span> <strong id="m3d-status-display" style="color:var(--crit)">EXPOSED (+2.0y)</strong></div>
+        </div>
+      </div>
+
 
       <div class="legend no-print rv">
         <span><i class="lg-x"></i> X shelf-life</span>
@@ -1645,6 +1908,10 @@ Cryptographic Components: 7</pre>
     res.textContent = exposed ? 'SNDL exposure' : 'Within horizon';
     res.className = 'vres ' + (exposed ? 'risk' : 'safe');
 
+    if (window.updateMosca3D) {
+      window.updateMosca3D(x, y, z);
+    }
+
     ['slider-z', 'slider-x', 'slider-y'].forEach(function (id) { paintRange($(id)); });
     if (currentScan) {
       renderMoscaTable();
@@ -1997,11 +2264,569 @@ Cryptographic Components: 7</pre>
     });
   }
 
+  
+  /* ══════════════════════════════════════════════════════════════════
+     MOSCA 3D PARAMETER SPACE ENGINE
+     ══════════════════════════════════════════════════════════════════ */
+  var m3d = {
+    canvas: null,
+    ctx: null,
+    container: null,
+    tooltip: null,
+    W_BOX: 300,
+    D_BOX: 200,
+    H_BOX: 180,
+    X_MAX: 25,
+    Y_MAX: 10,
+    Z_MAX: 15,
+    x: 7.0,
+    y: 3.0,
+    z: 8.0,
+    yaw: -0.75,
+    pitch: 0.38,
+    zoom: 1.0,
+    targetYaw: -0.75,
+    targetPitch: 0.38,
+    targetZoom: 1.0,
+    isAutoSpin: true,
+    showPlane: true,
+    isDragging: false,
+    lastMouseX: 0,
+    lastMouseY: 0,
+    hoveredAsset: null,
+    pulseTime: 0,
+    projectedAssets: [],
+    initialized: false
+  };
+
+  function initMosca3D() {
+    m3d.canvas = $('mosca-3d-canvas');
+    if (!m3d.canvas) return;
+    m3d.ctx = m3d.canvas.getContext('2d');
+    m3d.container = m3d.canvas.parentElement;
+    m3d.tooltip = $('m3d-tooltip');
+
+    var btnIso = $('m3d-preset-iso');
+    var btnXY = $('m3d-preset-xy');
+    var btnXZ = $('m3d-preset-xz');
+    var btnPlane = $('m3d-toggle-plane');
+    var btnSpin = $('m3d-toggle-spin');
+    var btnReset = $('m3d-btn-reset');
+
+    function updateSpinBtn() {
+      if (btnSpin) {
+        btnSpin.textContent = 'Auto-Spin: ' + (m3d.isAutoSpin ? 'ON' : 'OFF');
+        btnSpin.classList.toggle('active', m3d.isAutoSpin);
+      }
+    }
+
+    function setActivePreset(activeBtn) {
+      [btnIso, btnXY, btnXZ].forEach(function (b) {
+        if (b) b.classList.toggle('active', b === activeBtn);
+      });
+    }
+
+    if (btnIso) btnIso.onclick = function () {
+      setActivePreset(btnIso);
+      m3d.targetYaw = -0.75;
+      m3d.targetPitch = 0.38;
+      m3d.targetZoom = 1.0;
+      m3d.isAutoSpin = false;
+      updateSpinBtn();
+    };
+    if (btnXY) btnXY.onclick = function () {
+      setActivePreset(btnXY);
+      m3d.targetYaw = 0;
+      m3d.targetPitch = Math.PI / 2 - 0.05;
+      m3d.targetZoom = 1.05;
+      m3d.isAutoSpin = false;
+      updateSpinBtn();
+    };
+    if (btnXZ) btnXZ.onclick = function () {
+      setActivePreset(btnXZ);
+      m3d.targetYaw = 0;
+      m3d.targetPitch = 0.04;
+      m3d.targetZoom = 1.05;
+      m3d.isAutoSpin = false;
+      updateSpinBtn();
+    };
+    if (btnPlane) btnPlane.onclick = function () {
+      m3d.showPlane = !m3d.showPlane;
+      btnPlane.textContent = 'Plane: ' + (m3d.showPlane ? 'ON' : 'OFF');
+      btnPlane.classList.toggle('active', m3d.showPlane);
+    };
+    if (btnSpin) btnSpin.onclick = function () {
+      m3d.isAutoSpin = !m3d.isAutoSpin;
+      updateSpinBtn();
+    };
+    if (btnReset) btnReset.onclick = function () {
+      setActivePreset(btnIso);
+      m3d.targetYaw = -0.75;
+      m3d.targetPitch = 0.38;
+      m3d.targetZoom = 1.0;
+      m3d.isAutoSpin = true;
+      updateSpinBtn();
+    };
+
+    m3d.container.addEventListener('mousedown', function (e) {
+      m3d.isDragging = true;
+      m3d.lastMouseX = e.clientX;
+      m3d.lastMouseY = e.clientY;
+      m3d.container.style.cursor = 'grabbing';
+    });
+
+    window.addEventListener('mouseup', function () {
+      if (m3d.isDragging) {
+        m3d.isDragging = false;
+        m3d.container.style.cursor = 'grab';
+      }
+    });
+
+    m3d.container.addEventListener('mousemove', function (e) {
+      var rect = m3d.canvas.getBoundingClientRect();
+      var mx = e.clientX - rect.left;
+      var my = e.clientY - rect.top;
+
+      if (m3d.isDragging) {
+        var dx = e.clientX - m3d.lastMouseX;
+        var dy = e.clientY - m3d.lastMouseY;
+        m3d.targetYaw += dx * 0.009;
+        m3d.targetPitch += dy * 0.009;
+        m3d.targetPitch = Math.max(-Math.PI / 2 + 0.06, Math.min(Math.PI / 2 - 0.06, m3d.targetPitch));
+        m3d.lastMouseX = e.clientX;
+        m3d.lastMouseY = e.clientY;
+        m3d.isAutoSpin = false;
+        updateSpinBtn();
+      } else {
+        var found = null;
+        var minD = 18;
+        for (var i = 0; i < m3d.projectedAssets.length; i++) {
+          var item = m3d.projectedAssets[i];
+          var d = Math.hypot(mx - item.sx, my - item.sy);
+          if (d < minD) {
+            minD = d;
+            found = item;
+          }
+        }
+        m3d.hoveredAsset = found;
+        if (found && m3d.tooltip) {
+          m3d.container.style.cursor = 'pointer';
+          m3d.tooltip.style.display = 'block';
+          m3d.tooltip.style.left = found.sx + 'px';
+          m3d.tooltip.style.top = found.sy + 'px';
+          var a = found.asset;
+          var exposed = (a.shelfLife + a.migration) > m3d.z;
+          var slack = m3d.z - (a.shelfLife + a.migration);
+          m3d.tooltip.innerHTML = '<div style="font-weight:700; color:' + (exposed ? '#ef4444' : '#10b981') + '">' +
+            (a.algorithm || 'Asset') + ' · ' + (exposed ? 'SNDL EXPOSURE' : 'DEFENSIBLE') + '</div>' +
+            '<div style="font-size:0.68rem; color:#aaa; margin:2px 0;">' + (a.file || '') + (a.line ? ':' + a.line : '') + '</div>' +
+            '<div style="font-size:0.68rem;">X Shelf: <b>' + a.shelfLife.toFixed(1) + 'y</b> · Y Mig: <b>' + a.migration.toFixed(1) + 'y</b></div>' +
+            '<div style="font-size:0.68rem;">Z Horizon: <b>' + m3d.z.toFixed(1) + 'y</b> · ' +
+            (exposed ? '<span style="color:#ef4444">Deficit: −' + Math.abs(slack).toFixed(1) + 'y</span>' : '<span style="color:#10b981">Slack: +' + slack.toFixed(1) + 'y</span>') + '</div>';
+        } else {
+          if (!m3d.isDragging) m3d.container.style.cursor = 'grab';
+          if (m3d.tooltip) m3d.tooltip.style.display = 'none';
+        }
+      }
+    });
+
+    m3d.container.addEventListener('wheel', function (e) {
+      e.preventDefault();
+      var delta = e.deltaY < 0 ? 0.08 : -0.08;
+      m3d.targetZoom = Math.max(0.65, Math.min(2.3, m3d.targetZoom + delta));
+    }, { passive: false });
+
+    m3d.container.addEventListener('click', function () {
+      if (m3d.hoveredAsset) {
+        switchTab('tab-inventory');
+        var tr = document.getElementById('row-' + m3d.hoveredAsset.asset.id);
+        if (tr) {
+          tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          tr.style.outline = '2px solid var(--accent)';
+          setTimeout(function () { tr.style.outline = ''; }, 2500);
+        }
+      }
+    });
+
+    function resizeCanvas() {
+      if (!m3d.canvas || !m3d.container) return;
+      var dpr = window.devicePixelRatio || 1;
+      var w = m3d.container.clientWidth;
+      var h = m3d.container.clientHeight;
+      if (m3d.canvas.width !== w * dpr || m3d.canvas.height !== h * dpr) {
+        m3d.canvas.width = w * dpr;
+        m3d.canvas.height = h * dpr;
+      }
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    m3d.initialized = true;
+    raf(renderMosca3DLoop);
+  }
+
+  function project3D(x, y, z, cx, cy) {
+    var wx = (x / m3d.X_MAX - 0.5) * m3d.W_BOX;
+    var wy = (y / m3d.Y_MAX - 0.5) * m3d.D_BOX;
+    var wz = (z / m3d.Z_MAX - 0.5) * m3d.H_BOX;
+
+    var cyaw = Math.cos(m3d.yaw), syaw = Math.sin(m3d.yaw);
+    var rx1 = wx * cyaw - wy * syaw;
+    var ry1 = wx * syaw + wy * cyaw;
+    var rz1 = wz;
+
+    var cp = Math.cos(m3d.pitch), sp = Math.sin(m3d.pitch);
+    var rx2 = rx1;
+    var ry2 = ry1 * cp - rz1 * sp;
+    var rz2 = ry1 * sp + rz1 * cp;
+
+    var dist = 520 / m3d.zoom;
+    var depth = dist + ry2;
+    var s = 620 / Math.max(90, depth);
+
+    return {
+      sx: cx + rx2 * s,
+      sy: cy - rz2 * s,
+      depth: ry2,
+      scale: s
+    };
+  }
+
+  function renderMosca3DLoop(timestamp) {
+    raf(renderMosca3DLoop);
+    if (!m3d.ctx || !m3d.canvas || !m3d.initialized) return;
+
+    var dpr = window.devicePixelRatio || 1;
+    var w = m3d.canvas.width / dpr;
+    var h = m3d.canvas.height / dpr;
+
+    m3d.yaw += (m3d.targetYaw - m3d.yaw) * 0.12;
+    m3d.pitch += (m3d.targetPitch - m3d.pitch) * 0.12;
+    m3d.zoom += (m3d.targetZoom - m3d.zoom) * 0.12;
+
+    if (m3d.isAutoSpin && !m3d.isDragging) {
+      m3d.targetYaw += 0.0022;
+    }
+    m3d.pulseTime = (timestamp || 0) * 0.003;
+
+    var ctx = m3d.ctx;
+    ctx.save();
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, w, h);
+
+    var cx = w * 0.52;
+    var cy = h * 0.52;
+
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var colGrid = isDark ? 'rgba(241, 238, 230, 0.08)' : 'rgba(18, 18, 17, 0.09)';
+    var colRule = isDark ? 'rgba(241, 238, 230, 0.22)' : 'rgba(18, 18, 17, 0.24)';
+    var colText = isDark ? '#9c978b' : '#635f56';
+    var colAccent = isDark ? '#e8722f' : '#c2471c';
+
+    // 1. Draw Grid Walls
+    draw3DWalls(ctx, cx, cy, colGrid, colRule, colText);
+
+    // 2. Draw Threshold Plane (X + Y = Z)
+    if (m3d.showPlane) {
+      draw3DThresholdPlane(ctx, cx, cy, isDark);
+    }
+
+    // 3. Draw Plotted Assets
+    draw3DAssets(ctx, cx, cy, isDark);
+
+    // 4. Draw Current Scenario Beacon
+    draw3DBeacon(ctx, cx, cy, colAccent);
+
+    ctx.restore();
+  }
+
+  function draw3DWalls(ctx, cx, cy, colGrid, colRule, colText) {
+    // Floor Z = 0 grid
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = colGrid;
+    
+    // Lines parallel to Y
+    for (var x = 0; x <= m3d.X_MAX; x += 5) {
+      var p0 = project3D(x, 0, 0, cx, cy);
+      var p1 = project3D(x, m3d.Y_MAX, 0, cx, cy);
+      ctx.beginPath();
+      ctx.moveTo(p0.sx, p0.sy);
+      ctx.lineTo(p1.sx, p1.sy);
+      ctx.stroke();
+    }
+    // Lines parallel to X
+    for (var y = 0; y <= m3d.Y_MAX; y += 2) {
+      var p0 = project3D(0, y, 0, cx, cy);
+      var p1 = project3D(m3d.X_MAX, y, 0, cx, cy);
+      ctx.beginPath();
+      ctx.moveTo(p0.sx, p0.sy);
+      ctx.lineTo(p1.sx, p1.sy);
+      ctx.stroke();
+    }
+
+    // Wall X = 0 (Y vs Z)
+    for (var z = 3; z <= m3d.Z_MAX; z += 3) {
+      var p0 = project3D(0, 0, z, cx, cy);
+      var p1 = project3D(0, m3d.Y_MAX, z, cx, cy);
+      ctx.beginPath();
+      ctx.moveTo(p0.sx, p0.sy);
+      ctx.lineTo(p1.sx, p1.sy);
+      ctx.stroke();
+    }
+    for (var y = 2; y <= m3d.Y_MAX; y += 2) {
+      var p0 = project3D(0, y, 0, cx, cy);
+      var p1 = project3D(0, y, m3d.Z_MAX, cx, cy);
+      ctx.beginPath();
+      ctx.moveTo(p0.sx, p0.sy);
+      ctx.lineTo(p1.sx, p1.sy);
+      ctx.stroke();
+    }
+
+    // Main Coordinate Axes
+    var origin = project3D(0, 0, 0, cx, cy);
+    var xAxis = project3D(m3d.X_MAX, 0, 0, cx, cy);
+    var yAxis = project3D(0, m3d.Y_MAX, 0, cx, cy);
+    var zAxis = project3D(0, 0, m3d.Z_MAX, cx, cy);
+
+    // X-axis: Shelf Life (warm amber)
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#e8722f';
+    ctx.beginPath();
+    ctx.moveTo(origin.sx, origin.sy);
+    ctx.lineTo(xAxis.sx, xAxis.sy);
+    ctx.stroke();
+
+    // Y-axis: Migration Duration (sky/teal)
+    ctx.strokeStyle = '#38bdf8';
+    ctx.beginPath();
+    ctx.moveTo(origin.sx, origin.sy);
+    ctx.lineTo(yAxis.sx, yAxis.sy);
+    ctx.stroke();
+
+    // Z-axis: Threat Horizon (purple)
+    ctx.strokeStyle = '#a855f7';
+    ctx.beginPath();
+    ctx.moveTo(origin.sx, origin.sy);
+    ctx.lineTo(zAxis.sx, zAxis.sy);
+    ctx.stroke();
+
+    // Axis Labels
+    ctx.font = '600 11px JetBrains Mono, monospace';
+    ctx.fillStyle = '#e8722f';
+    ctx.fillText('X: Shelf-Life (25y)', xAxis.sx + 8, xAxis.sy + 4);
+
+    ctx.fillStyle = '#38bdf8';
+    ctx.fillText('Y: Migration (10y)', yAxis.sx + 8, yAxis.sy + 4);
+
+    ctx.fillStyle = '#a855f7';
+    ctx.fillText('Z: Threat Horizon (15y)', zAxis.sx - 12, zAxis.sy - 12);
+  }
+
+  function draw3DThresholdPlane(ctx, cx, cy, isDark) {
+    // Plane: X + Y = Z inside [0..25] x [0..10] x [0..15]
+    // Vertices: (0,0,0), (15,0,15), (5,10,15), (0,10,10)
+    var p0 = project3D(0, 0, 0, cx, cy);
+    var p1 = project3D(15, 0, 15, cx, cy);
+    var p2 = project3D(5, 10, 15, cx, cy);
+    var p3 = project3D(0, 10, 10, cx, cy);
+
+    ctx.save();
+    // Translucent polygon fill
+    ctx.beginPath();
+    ctx.moveTo(p0.sx, p0.sy);
+    ctx.lineTo(p1.sx, p1.sy);
+    ctx.lineTo(p2.sx, p2.sy);
+    ctx.lineTo(p3.sx, p3.sy);
+    ctx.closePath();
+
+    var grad = ctx.createLinearGradient(p0.sx, p0.sy, p2.sx, p2.sy);
+    if (isDark) {
+      grad.addColorStop(0, 'rgba(232, 114, 47, 0.28)');
+      grad.addColorStop(1, 'rgba(240, 147, 139, 0.12)');
+    } else {
+      grad.addColorStop(0, 'rgba(194, 71, 28, 0.22)');
+      grad.addColorStop(1, 'rgba(220, 80, 40, 0.08)');
+    }
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Outline
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = isDark ? 'rgba(232, 114, 47, 0.75)' : 'rgba(194, 71, 28, 0.85)';
+    ctx.setLineDash([4, 3]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Internal isoclines for Z = 5, 10
+    var iz5a = project3D(5, 0, 5, cx, cy);
+    var iz5b = project3D(0, 5, 5, cx, cy);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = 'rgba(232, 114, 47, 0.4)';
+    ctx.beginPath();
+    ctx.moveTo(iz5a.sx, iz5a.sy);
+    ctx.lineTo(iz5b.sx, iz5b.sy);
+    ctx.stroke();
+
+    // Label on the surface
+    var mid = project3D(7.5, 4.0, 11.5, cx, cy);
+    ctx.font = '600 10px JetBrains Mono, monospace';
+    ctx.fillStyle = isDark ? 'rgba(232, 114, 47, 0.9)' : 'rgba(166, 60, 17, 0.95)';
+    ctx.fillText('CRITICAL THRESHOLD: X + Y = Z', mid.sx - 80, mid.sy);
+
+    ctx.restore();
+  }
+
+  function draw3DAssets(ctx, cx, cy, isDark) {
+    m3d.projectedAssets = [];
+    var assets = (currentScan && currentScan.assets && currentScan.assets.length) ? currentScan.assets : DEMO_SCAN.assets;
+
+    for (var i = 0; i < assets.length; i++) {
+      var a = assets[i];
+      var ax = Math.min(m3d.X_MAX, Math.max(0.5, a.shelfLife || 7.0));
+      var ay = Math.min(m3d.Y_MAX, Math.max(0.5, a.migration || 3.0));
+      var az = Math.min(m3d.Z_MAX, Math.max(0.5, m3d.z));
+
+      var p = project3D(ax, ay, az, cx, cy);
+      m3d.projectedAssets.push({ asset: a, sx: p.sx, sy: p.sy, depth: p.depth });
+
+      var exposed = (ax + ay) > m3d.z;
+      var isHovered = m3d.hoveredAsset && m3d.hoveredAsset.asset === a;
+      var nodeColor = exposed ? '#ef4444' : '#10b981';
+
+      // Drop-line to floor
+      var floorP = project3D(ax, ay, 0, cx, cy);
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.12)';
+      ctx.setLineDash([2, 3]);
+      ctx.beginPath();
+      ctx.moveTo(p.sx, p.sy);
+      ctx.lineTo(floorP.sx, floorP.sy);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Floor footprint
+      ctx.fillStyle = exposed ? 'rgba(239, 68, 68, 0.3)' : 'rgba(16, 185, 129, 0.3)';
+      ctx.beginPath();
+      ctx.arc(floorP.sx, floorP.sy, 2.5 * p.scale, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Node sphere
+      var radius = (isHovered ? 7.5 : 4.5) * p.scale;
+      ctx.beginPath();
+      ctx.arc(p.sx, p.sy, radius, 0, Math.PI * 2);
+      ctx.fillStyle = nodeColor;
+      ctx.shadowColor = nodeColor;
+      ctx.shadowBlur = isHovered ? 14 : 6;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+
+      // Specular highlight
+      ctx.beginPath();
+      ctx.arc(p.sx - radius * 0.3, p.sy - radius * 0.3, radius * 0.35, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+      ctx.fill();
+
+      // Node label
+      if (p.scale > 0.8 || isHovered) {
+        ctx.font = (isHovered ? '700 11px' : '500 9px') + ' JetBrains Mono, monospace';
+        ctx.fillStyle = isDark ? '#f1eee6' : '#121211';
+        ctx.fillText(a.algorithm || 'Asset', p.sx + radius + 4, p.sy + 3);
+      }
+    }
+  }
+
+  function draw3DBeacon(ctx, cx, cy, colAccent) {
+    var p = project3D(m3d.x, m3d.y, m3d.z, cx, cy);
+    var floorP = project3D(m3d.x, m3d.y, 0, cx, cy);
+    var zP = project3D(0, 0, m3d.z, cx, cy);
+
+    // Projection dashed guidelines
+    ctx.lineWidth = 1.5;
+    ctx.strokeStyle = '#f59e0b';
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.moveTo(p.sx, p.sy);
+    ctx.lineTo(floorP.sx, floorP.sy);
+    ctx.moveTo(p.sx, p.sy);
+    ctx.lineTo(zP.sx, zP.sy);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Floor shadow halo
+    ctx.fillStyle = 'rgba(245, 158, 11, 0.35)';
+    ctx.beginPath();
+    ctx.ellipse(floorP.sx, floorP.sy, 12 * p.scale, 5 * p.scale, 0, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Pulsating radar ripple
+    var ripplePhase = (m3d.pulseTime % 2.0) / 2.0;
+    var rippleR = (8 + ripplePhase * 26) * p.scale;
+    var rippleA = Math.max(0, 1 - ripplePhase);
+    ctx.lineWidth = 1.8;
+    ctx.strokeStyle = 'rgba(245, 158, 11, ' + rippleA.toFixed(2) + ')';
+    ctx.beginPath();
+    ctx.arc(p.sx, p.sy, rippleR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // Central beacon sphere
+    var r = 7 * p.scale;
+    ctx.beginPath();
+    ctx.arc(p.sx, p.sy, r, 0, Math.PI * 2);
+    ctx.fillStyle = '#f59e0b';
+    ctx.shadowColor = '#f59e0b';
+    ctx.shadowBlur = 16;
+    ctx.fill();
+    ctx.shadowBlur = 0;
+
+    // Specular
+    ctx.beginPath();
+    ctx.arc(p.sx - r * 0.3, p.sy - r * 0.3, r * 0.35, 0, Math.PI * 2);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+
+    // Scenario floating badge
+    var exposed = (m3d.x + m3d.y) > m3d.z;
+    var diff = (m3d.x + m3d.y) - m3d.z;
+    var badgeText = 'Scenario (' + m3d.x.toFixed(1) + ', ' + m3d.y.toFixed(1) + ', ' + m3d.z.toFixed(1) + ') · ' +
+      (exposed ? 'EXPOSED (+' + diff.toFixed(1) + 'y)' : 'SAFE (' + Math.abs(diff).toFixed(1) + 'y slack)');
+
+    ctx.font = '700 10px JetBrains Mono, monospace';
+    var tw = ctx.measureText(badgeText).width;
+    var bx = p.sx - tw / 2 - 8;
+    var by = p.sy - 22;
+
+    ctx.fillStyle = exposed ? 'rgba(220, 38, 38, 0.92)' : 'rgba(22, 101, 52, 0.92)';
+    ctx.beginPath();
+    ctx.roundRect ? ctx.roundRect(bx, by - 12, tw + 16, 18, 4) : ctx.rect(bx, by - 12, tw + 16, 18);
+    ctx.fill();
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillText(badgeText, bx + 8, by + 1);
+  }
+
+  window.updateMosca3D = function (x, y, z) {
+    m3d.x = x;
+    m3d.y = y;
+    m3d.z = z;
+    var coordEl = $('m3d-coord-display');
+    var statusEl = $('m3d-status-display');
+    if (coordEl) coordEl.textContent = 'X=' + x.toFixed(1) + 'y, Y=' + y.toFixed(1) + 'y, Z=' + z.toFixed(1) + 'y';
+    if (statusEl) {
+      var exposed = (x + y) > z;
+      var diff = (x + y) - z;
+      statusEl.textContent = exposed ? 'EXPOSED (+' + diff.toFixed(1) + 'y)' : 'SAFE (' + Math.abs(diff).toFixed(1) + 'y slack)';
+      statusEl.style.color = exposed ? 'var(--crit)' : 'var(--low)';
+    }
+  };
+
+
   /* ── boot ──────────────────────────────────────────────────────── */
   function boot() {
     initDropzone();
     ['slider-z', 'slider-x', 'slider-y'].forEach(function (id) { paintRange($(id)); });
     updateMoscaSim();                                  /* sliders + verdict */
+    initMosca3D();                                     /* interactive 3D parameter space */
     Object.defineProperty(window, '__astraBooted', { value: true, enumerable: false, configurable: true });
     renderDashboard(DEMO_SCAN);                        /* demo corpus on first paint */
     renderAudit();                                     /* seeded hash-chained log */

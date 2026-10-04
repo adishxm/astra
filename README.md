@@ -4,7 +4,9 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![CI](https://github.com/adishxm/astra/actions/workflows/ci.yml/badge.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
-[![Test Suite](https://img.shields.io/badge/tests-88%20passing%20in%20CI-brightgreen.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
+[![Backend Tests](https://img.shields.io/badge/backend%20tests-88%20passing-brightgreen.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
+[![Frontend Tests](https://img.shields.io/badge/frontend%20tests-192%20passing-brightgreen.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
+[![3D Visualization](https://img.shields.io/badge/3D%20Engine-Mosca%20Parameter%20Space-orange.svg)]()
 [![Team: HEXARK](https://img.shields.io/badge/Team-HEXARK-blue.svg)]()
 [![NIST PQC](https://img.shields.io/badge/NIST-FIPS%20203%20%7C%20204%20%7C%20205-purple.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
 [![CycloneDX CBOM](https://img.shields.io/badge/CycloneDX-1.6%20CBOM-orange.svg)](https://cyclonedx.org/)
@@ -34,6 +36,7 @@
 6. [Interactive Web Dashboard — Real-Time Features](#interactive-web-dashboard--real-time-features)
    - [Drag-and-Drop Archive Intake](#drag-and-drop-archive-intake)
    - [Interactive Mosca Slider ($Z$, $X$, $Y$)](#interactive-mosca-slider)
+   - [3D Parameter Space Visualizer ($X \times Y \times Z$)](#3d-parameter-space-visualizer-x--y--z)
    - [Cryptographic Inventory Browser](#cryptographic-inventory-browser)
    - [Cryptographic DNA Viewer & Drift Regression Alerts](#cryptographic-dna-viewer--drift-regression-alerts)
    - [One-Click CBOM Export & Copy](#one-click-cbom-export--copy)
@@ -451,6 +454,15 @@ Access the dashboard at **`http://localhost:8000`** after launching the server.
 - **Instant Client-Side Recalculation**: Urgency counts (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`) and backlog priority order dynamically recalculate without triggering server re-scans.
 - Items where $X + Y > Z$ instantly flag with glowing red indicators and Store-Now-Decrypt-Later alerts.
 
+### 3D Parameter Space Visualizer ($X \times Y \times Z$)
+Directly below the Mosca sliders in the `02 / MOSCA RISK` tab, an interactive 3D coordinate space visualizer renders the geometric reality of Store-Now-Decrypt-Later exposure:
+- **3D Coordinate Axes**: Maps Shelf-Life ($X$, 0–25y in amber), Migration Duration ($Y$, 0–10y in cyan), and Threat Horizon ($Z$, 0–15y in purple).
+- **Critical Boundary Hypersurface ($X + Y = Z$)**: A translucent 3D plane dynamically partitions the parameter volume into the **SNDL Risk Exposure Zone** ($X + Y > Z$) and the **Safe Horizon Zone** ($X + Y \le Z$), with contour isoclines and boundary annotations.
+- **Live Scenario Beacon & Radar Pulsing**: Adjusting any slider dynamically repositions a pulsating amber beacon with real-time drop-lines, floor shadow projection, and coordinate HUD status readout.
+- **Plotted Cryptographic Assets**: Assets from the scan inventory are plotted directly in 3D (green nodes for safe assets, red glowing nodes for SNDL-exposed assets) with floor footprint projections and interactive mouse hover HUD cards showing algorithm details, location, and exposure slack.
+- **Full Camera Controls**: Interactive pitch/yaw drag rotation, wheel zoom, preset perspective buttons (`Isometric`, `X-Y Plane`, `X-Z Elevation`), camera reset, and auto-spin orbit toggle.
+- **Air-Gapped Sovereign Design**: Engineered with a self-contained HTML5 Canvas 3D projection engine with zero external CDNs or remote dependencies, preserving complete air-gapped isolation.
+
 ### Cryptographic Inventory Browser
 - Instant search and filtering across algorithm names, key sizes, source file locations, and confidence levels.
 - Click any row to expand the full canonical evidence chain, line numbers, and SHA-256 evidence digests.
@@ -565,10 +577,11 @@ Configure ASTRA via `.env` file or environment variables:
 
 ---
 
-## Automated Test Suite (88 Passing Tests)
+## Automated Test Suite (280 Passing Tests)
 
-ASTRA includes an exhaustive automated test suite with **88 tests passing** in CI across unit, integration, adversarial security, and end-to-end user journeys:
+ASTRA includes an exhaustive automated test suite with **280 tests passing** (88 backend + 192 frontend) across unit, integration, adversarial security, frontend UI components, 3D parameter space logic, and end-to-end user journeys:
 
+### 1. Backend Test Suite (88 Tests)
 ```bash
 python -m pytest backend/tests -v
 ```
@@ -577,7 +590,7 @@ Output:
 ============================= 88 passed in 3.52s ==============================
 ```
 
-### Test Module Breakdown
+#### Backend Module Breakdown
 
 | Test Suite Module | Tests | Verification Scope |
 |---|---|---|
@@ -590,6 +603,23 @@ Output:
 | `test_functional_assurance/` | 9 | End-to-end user journey cycles (V01 & V02) |
 | `test_integration_security/` | 10 | Zero private-key retention, parameter allowlist redaction, hostile archive attack matrix, alert fatigue reduction target ($>50\%$) |
 | `test_e2e_product.py` | 10 | Master FastAPI application factory, static dashboard serving, dynamic scenario risk API, standalone CLI commands, synthetic demo scan |
+
+### 2. Frontend Test Suite (192 Tests Across 48 Test Suites)
+```bash
+cd frontend
+npm test
+```
+Output:
+```text
+ Test Files  48 passed (48)
+      Tests  192 passed (192)
+```
+
+#### Frontend Verification Scope
+- **Component Primitives**: Modals, Badges, Tabs, Progress Rings, Tooltips, Empty States, and Error Boundaries.
+- **Inventory & CBOM**: CycloneDX 1.6 export modals, algorithm matrix mapping, pagination, filtering, and evidence viewers.
+- **Mosca Risk & 3D Visualization**: Interactive slider recalculation, SNDL deadline tracking, 3D parameter space projection math, depth sorting, and canvas lifecycle.
+- **Scan & Migration Flow**: Drag-and-drop intake, live progress hooks, Kahn topological roadmap rendering, and transition banners.
 
 ---
 
