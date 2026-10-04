@@ -10,6 +10,7 @@ import os
 import re
 import shutil
 import tempfile
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -25,45 +26,14 @@ from app.inventory.models import CanonicalEvidence, InventoryExport
 from app.inventory.cbom_reconciliation import CBOMReconciliationEngine
 
 
-def is_hosted_mode() -> bool:
-    """Check if ASTRA is running in hosted demo mode."""
-    return os.getenv("ASTRA_HOSTED_MODE", "false").lower() in ("1", "true", "yes")
-
-
-def is_directory_scan_allowed() -> bool:
-    """Determine whether arbitrary filesystem directory scans are permitted."""
-    if is_hosted_mode():
-        return os.getenv("ASTRA_ALLOW_DIRECTORY_SCAN", "false").lower() in ("1", "true", "yes")
-    return os.getenv("ASTRA_ALLOW_DIRECTORY_SCAN", "true").lower() in ("1", "true", "yes")
-
-
-def get_max_upload_size() -> int:
-    """Return maximum permitted upload archive size in bytes (default 50 MB)."""
-    return int(os.getenv("ASTRA_MAX_UPLOAD_SIZE_BYTES", str(50 * 1024 * 1024)))
-
-
-def verify_api_key(request: Request):
-    """Enforce API token authentication when ASTRA_API_KEY is configured in the environment."""
-    expected_key = os.getenv("ASTRA_API_KEY")
-    if not expected_key:
-        return
-
-    # Check X-ASTRA-API-KEY header
-    header_key = request.headers.get("X-ASTRA-API-KEY")
-    if header_key and header_key == expected_key:
-        return
-
-    # Check Authorization: Bearer <token>
-    auth_header = request.headers.get("Authorization", "")
-    if auth_header.startswith("Bearer "):
-        token = auth_header[7:].strip()
-        if token == expected_key:
-            return
-
-    raise HTTPException(
-        status_code=401,
-        detail="Unauthorized: Missing or invalid API key. Supply X-ASTRA-API-KEY header or Bearer token.",
-    )
+from app.auth import (
+    is_hosted_mode,
+    is_directory_scan_allowed,
+    get_max_upload_size,
+    check_upload_rate_limit,
+    verify_api_key,
+    _UPLOAD_RATE_LIMIT_STORE,
+)
 
 app = FastAPI(
     title="ASTRA - Enterprise Cryptographic Discovery & Analysis Tool",
@@ -110,6 +80,7 @@ def get_health():
         "team": "HEXARK",
         "profile": "AIR_GAPPED_SOVEREIGN_ENTERPRISE",
         "hosted_mode": is_hosted_mode(),
+        "authentication_enforced": bool(os.getenv("ASTRA_API_KEY")) or is_hosted_mode(),
         "directory_scan_permitted": is_directory_scan_allowed(),
         "privacy_notice": {
             "processing": "LOCAL_CPU_ONLY",
@@ -124,10 +95,12 @@ def get_health():
 
 @app.post("/api/v1/scans/upload")
 async def upload_and_scan(
+    request: Request,
     file: UploadFile = File(...),
     _: None = Depends(verify_api_key),
 ):
     """Upload an authorized repository archive (.zip, .tar.gz) and execute complete scan pipeline."""
+    check_upload_rate_limit(request)
     valid_suffixes = {".zip", ".tar", ".gz", ".tgz", ".bz2"}
     raw_filename = file.filename or "uploaded_archive.zip"
 
@@ -231,13 +204,13 @@ def scan_directory(
 
 
 @app.get("/api/v1/scans")
-def list_scans():
+def list_scans(_: None = Depends(verify_api_key)):
     """List all previously executed scans."""
     return GLOBAL_SCAN_STORE.list_all()
 
 
 @app.get("/api/v1/scans/{scan_id}")
-def get_scan(scan_id: str):
+def get_scan(scan_id: str, _: None = Depends(verify_api_key)):
     """Retrieve complete scan record by ID."""
     record = GLOBAL_SCAN_STORE.get(scan_id)
     if not record:
@@ -246,7 +219,7 @@ def get_scan(scan_id: str):
 
 
 @app.get("/api/v1/scans/{scan_id}/findings")
-def get_scan_findings(scan_id: str):
+def get_scan_findings(scan_id: str, _: None = Depends(verify_api_key)):
     """Retrieve canonical assets and observations for a scan."""
     record = GLOBAL_SCAN_STORE.get(scan_id)
     if not record:
@@ -268,7 +241,7 @@ def get_scan_findings(scan_id: str):
 
 
 @app.get("/api/v1/scans/{scan_id}/coverage")
-def get_scan_coverage(scan_id: str):
+def get_scan_coverage(scan_id: str, _: None = Depends(verify_api_key)):
     """Retrieve truthful coverage report for a scan."""
     record = GLOBAL_SCAN_STORE.get(scan_id)
     if not record:
@@ -283,6 +256,7 @@ def get_scan_risk(
     horizon: Optional[float] = Query(None, description="Quantum threat horizon Z in years (scenario assumption)"),
     shelf_life: Optional[float] = Query(None, description="Data secrecy shelf-life X in years"),
     migration: Optional[float] = Query(None, description="Migration duration Y in years"),
+    _: None = Depends(verify_api_key),
 ):
     """Retrieve Mosca risk calculations or dynamically re-evaluate under custom scenario assumptions."""
     record = GLOBAL_SCAN_STORE.get(scan_id)
@@ -381,7 +355,11 @@ def update_scan_owner_context(
 
 
 @app.get("/api/v1/scans/{scan_id}/export")
-def get_scan_export(scan_id: str, format: str = Query("cyclonedx")):
+def get_scan_export(
+    scan_id: str,
+    format: str = Query("cyclonedx"),
+    _: None = Depends(verify_api_key),
+):
     """Export CycloneDX 1.6 Cryptographic Bill of Materials (CBOM) for a scan."""
     record = GLOBAL_SCAN_STORE.get(scan_id)
     if not record:
@@ -393,7 +371,10 @@ def get_scan_export(scan_id: str, format: str = Query("cyclonedx")):
 
 # Override workflow stub endpoints with persistent scan data
 @app.get("/api/v1/workflow/evidence/{asset_id}", response_model=List[CanonicalEvidence])
-def get_evidence_drilldown(asset_id: str):
+def get_evidence_drilldown(
+    asset_id: str,
+    _: None = Depends(verify_api_key),
+):
     """Evidence drill-down for a specific asset across all executed scans."""
     evidences = []
     # Search in-memory cache and persisted records
@@ -410,7 +391,7 @@ def get_evidence_drilldown(asset_id: str):
 
 
 @app.get("/api/v1/workflow/export", response_model=InventoryExport)
-def get_latest_export():
+def get_latest_export(_: None = Depends(verify_api_key)):
     """Sanitized export of the latest scan findings."""
     all_scans = GLOBAL_SCAN_STORE.list_all()
     if not all_scans:

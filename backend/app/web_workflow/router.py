@@ -1,7 +1,8 @@
 """Worker 04 - Web Workflow API."""
 
-from fastapi import APIRouter, HTTPException, Body
+from fastapi import APIRouter, HTTPException, Body, Depends
 from typing import Any, Dict, List, Optional
+from app.auth import verify_api_key
 from app.inventory.models import CanonicalEvidence, AuditRecord, InventoryExport
 from app.web_workflow.hardening import (
     AirGappedBundleManager,
@@ -10,7 +11,11 @@ from app.web_workflow.hardening import (
     ChainedAuditEvent,
 )
 
-router = APIRouter(prefix="/api/v1/workflow", tags=["Worker 04"])
+router = APIRouter(
+    prefix="/api/v1/workflow",
+    tags=["Worker 04"],
+    dependencies=[Depends(verify_api_key)],
+)
 
 # In-memory chain for demo and verification
 _GLOBAL_AUDIT_CHAIN: List[ChainedAuditEvent] = []
