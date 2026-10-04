@@ -58,11 +58,15 @@ def algo_matches(expected: str, detected: str) -> bool:
         "CHACHA20": ["CHACHA20POLY1305"],
         "CHACHA20POLY1305": ["CHACHA20"],
         "RSA2048": ["RSA"],
-        "RSA": ["RSA2048"],
+        "RSA": ["RSA2048", "RSAPSS"],
         "AES256": ["AES", "AES256GCM", "ECDHEAES256GCM"],
         "AES128": ["AES", "AES128GCM", "ECDHEAES128GCM"],
-        "AES": ["AES256", "AES128"],
+        "AES": ["AES256", "AES128", "AESGCM", "AES256GCM"],
+        "AESGCM": ["AES256GCM", "AES128GCM", "AES", "AES256"],
+        "AES256GCM": ["AESGCM", "AES256", "AES"],
         "ED25519": ["EDDSA"],
+        "OPENSSL": ["OPENSSL3X", "OPENSSL11", "OPENSSLDEV", "LIBSSL"],
+        "OPENSSL3X": ["OPENSSL", "LIBSSL3"],
     }
     if exp in aliases and det in aliases[exp]:
         return True
@@ -234,7 +238,15 @@ def test_per_surface_breakdown(
     obs_by_file = _group_observations(corpus_scan_record)
     all_entries = corpus_labels["training_set"] + corpus_labels["holdout_set"]
 
-    surfaces = {"SOURCE_CODE", "MANIFEST", "CERTIFICATE", "CONFIG"}
+    surfaces = {
+        "SOURCE_CODE",
+        "MANIFEST",
+        "CERTIFICATE",
+        "CONFIG",
+        "CONTAINER",
+        "CLOUD_KMS",
+        "PKCS11_HSM",
+    }
 
     for surface in surfaces:
         surface_entries = [e for e in all_entries if e.get("surface") == surface]

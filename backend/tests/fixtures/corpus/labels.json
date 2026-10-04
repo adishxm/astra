@@ -181,6 +181,45 @@
       "surface": "SOURCE_CODE",
       "is_negative": true,
       "expected_algorithms": []
+    },
+    {
+      "relative_path": "holdout/clean_controls.py",
+      "surface": "SOURCE_CODE",
+      "is_negative": true,
+      "expected_algorithms": []
+    },
+    {
+      "relative_path": "holdout/cloud_kms.tf",
+      "surface": "CLOUD_KMS",
+      "is_negative": false,
+      "expected_algorithms": [
+        "AES-256-GCM",
+        "RSA",
+        "ECDSA"
+      ]
+    },
+    {
+      "relative_path": "holdout/pkcs11.conf",
+      "surface": "PKCS11_HSM",
+      "is_negative": false,
+      "expected_algorithms": [
+        "RSA",
+        "ECDSA",
+        "AES-GCM",
+        "SHA-256"
+      ]
+    },
+    {
+      "relative_path": "holdout/Dockerfile",
+      "surface": "CONTAINER",
+      "is_negative": false,
+      "expected_algorithms": [
+        "CONTAINER_BASE:alpine:3.18",
+        "OpenSSL",
+        "OpenSSL-3.x",
+        "X.509-Root-Trust-Store",
+        "OpenSSL-Configuration"
+      ]
     }
   ]
 }

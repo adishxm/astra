@@ -10,6 +10,7 @@ Provides:
 import json
 import os
 import threading
+import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -63,11 +64,33 @@ class AuditChainStore:
 
     def _save_to_disk(self) -> None:
         """Atomically persist current audit chain to disk as formatted JSON."""
-        temp_path = self.file_path.with_suffix(".tmp")
+        temp_path = self.file_path.with_suffix(f".tmp.{os.getpid()}")
         data = [event.model_dump() for event in self._chain]
-        with open(temp_path, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, sort_keys=True)
-        temp_path.replace(self.file_path)
+        try:
+            with open(temp_path, "w", encoding="utf-8") as f:
+                json.dump(data, f, indent=2, sort_keys=True)
+            
+            for attempt in range(5):
+                try:
+                    temp_path.replace(self.file_path)
+                    break
+                except (PermissionError, OSError):
+                    time.sleep(0.02)
+            else:
+                with open(self.file_path, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=2, sort_keys=True)
+                if temp_path.exists():
+                    try:
+                        temp_path.unlink()
+                    except OSError:
+                        pass
+        except Exception as e:
+            # Fallback direct write to avoid interrupting critical scan flows
+            try:
+                with open(self.file_path, "w", encoding="utf-8") as f:
+                    json.dump(data, f, indent=2, sort_keys=True)
+            except Exception:
+                pass
 
     def append_event(
         self,
