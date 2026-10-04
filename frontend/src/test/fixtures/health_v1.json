@@ -9,7 +9,7 @@
   "privacy_notice": {
     "processing": "LOCAL_CPU_ONLY",
     "telemetry_egress": "DISABLED",
-    "retention": "EPHEMERAL_DELETED_ON_COMPLETION",
+    "retention": "PERSISTED_LOCALLY_IN_ASTRA_STORE",
     "secrets_handling": "AUTOMATIC_PRIVATE_KEY_REDACTION"
   },
   "timestamp": "2026-10-03T16:58:45.404911+00:00",

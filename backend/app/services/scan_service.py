@@ -124,6 +124,8 @@ class ScanRecord:
                     1 for r in self.risk_evaluations if r.urgency.value in {"LOW", "INFORMATIONAL"}
                 ),
             },
+            "observations": [o.model_dump() for o in self.observations],
+            "snapshot": self.snapshot.model_dump(),
             "canonical_assets": [a.model_dump() for a in self.canonical_assets],
             "risk_evaluations": [r.model_dump() for r in self.risk_evaluations],
             "backlog_items": self.backlog_items,
@@ -156,14 +158,57 @@ class ScanStore:
             try:
                 with open(file_path, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                    # Return cached or parsed dictionary wrapped structure
-                    return data
+                    
+                from app.intake.models import ScanManifest
+                from app.coverage.models import CoverageReport
+                from app.inventory.models import AssetIdentity
+                from app.inventory.temporal import InventorySnapshot
+                from app.risk.models import RiskEvaluation
+                from app.discovery.models import Observation
+                
+                manifest = ScanManifest(**data["manifest"])
+                coverage = CoverageReport(**data["coverage"])
+                observations = [Observation(**o) for o in data.get("observations", [])]
+                canonical_assets = [AssetIdentity(**a) for a in data.get("canonical_assets", [])]
+                risk_evaluations = [RiskEvaluation(**r) for r in data.get("risk_evaluations", [])]
+                if "snapshot" in data:
+                    snapshot = InventorySnapshot(**data["snapshot"])
+                else:
+                    snapshot = InventorySnapshot(
+                        snapshot_id=f"snap-{scan_id[:8]}",
+                        scan_id=scan_id, 
+                        version_tag="v1", 
+                        cryptographic_dna_hash=data.get("cryptographic_dna_hash", "")
+                    )
+                
+                record = ScanRecord(
+                    scan_id=data["scan_id"],
+                    target_name=data["target_name"],
+                    manifest=manifest,
+                    coverage=coverage,
+                    observations=observations,
+                    canonical_assets=canonical_assets,
+                    risk_evaluations=risk_evaluations,
+                    backlog_items=data.get("backlog_items", []),
+                    snapshot=snapshot,
+                    cbom_data=data.get("cbom_data", {})
+                )
+                self._memory_cache[scan_id] = record
+                return record
             except Exception:
-                return None
+                raise ValueError("Malformed JSON")
         return None
 
     def list_all(self) -> List[Dict[str, Any]]:
         """List summary of all persisted scans."""
+        for file_path in self.storage_dir.glob("*.json"):
+            scan_id = file_path.stem
+            if scan_id not in self._memory_cache:
+                try:
+                    self.get(scan_id)
+                except ValueError:
+                    continue
+                
         scans = []
         for sid, rec in self._memory_cache.items():
             scans.append({
@@ -203,68 +248,83 @@ class ScanService:
         name = target_name or dir_path.name
         active_scenario = scenario or RiskScenario()
 
+        import tempfile
+        import shutil
+        output_dir = Path(tempfile.gettempdir()) / "astra_outputs" / scan_id
+        output_dir.mkdir(parents=True, exist_ok=True)
+        
         # 1. Collect files & build manifest
         all_files = []
         for root, _, files in os.walk(dir_path):
             for file in sorted(files):
-                if file in ("observations.json", ".DS_Store", "Thumbs.db"):
-                    continue
-                full_p = Path(root) / file
+                    if file in ("observations.json", ".DS_Store", "Thumbs.db"):
+                        continue
+                    full_p = Path(root) / file
+                    
+                    if full_p.is_symlink():
+                        try:
+                            resolved_path = full_p.resolve(strict=True)
+                            if not resolved_path.is_relative_to(dir_path):
+                                continue
+                        except Exception:
+                            continue
+                    
+                    try:
+                        rel_p = str(full_p.relative_to(dir_path)).replace("\\", "/")
+                        size = full_p.stat().st_size
+                        all_files.append((rel_p, size))
+                    except Exception:
+                        continue
+
+            all_files.sort(key=lambda x: x[0])
+
+            extracted_entries = []
+            for rel_p, size in all_files:
+                full_p = dir_path / rel_p
+                h = hashlib.sha256()
                 try:
-                    rel_p = str(full_p.relative_to(dir_path)).replace("\\", "/")
-                    size = full_p.stat().st_size
-                    all_files.append((rel_p, size))
+                    with open(full_p, "rb") as f:
+                        while chunk := f.read(65536):
+                            h.update(chunk)
+                    f_hash = h.hexdigest()
                 except Exception:
-                    continue
+                    f_hash = "0" * 64
 
-        all_files.sort(key=lambda x: x[0])
-
-        extracted_entries = []
-        for rel_p, size in all_files:
-            full_p = dir_path / rel_p
-            h = hashlib.sha256()
-            try:
-                with open(full_p, "rb") as f:
-                    while chunk := f.read(65536):
-                        h.update(chunk)
-                f_hash = h.hexdigest()
-            except Exception:
-                f_hash = "0" * 64
-
-            ext = full_p.suffix.lower()
-            extracted_entries.append(
-                ExtractedFileEntry(
-                    relative_path=rel_p,
-                    size_bytes=size,
-                    sha256=f_hash,
-                    file_extension=ext,
-                    is_supported=True,
+                ext = full_p.suffix.lower()
+                extracted_entries.append(
+                    ExtractedFileEntry(
+                        relative_path=rel_p,
+                        size_bytes=size,
+                        sha256=f_hash,
+                        file_extension=ext,
+                        is_supported=True,
+                    )
                 )
+
+            manifest = ScanManifest(
+                scan_id=scan_id,
+                archive_name=name,
+                archive_sha256="directory-scan-local",
+                archive_size_bytes=sum(s for _, s in all_files),
+                archive_type=ArchiveType.UNKNOWN,
+                declared_scope="LOCAL_DIRECTORY",
+                tenant_id="default-tenant",
+                status=ScanStatus.COMPLETE,
+                intake_engine_version=INTAKE_ENGINE_VERSION,
+                collector_version=COLLECTOR_VERSION,
+                ruleset_version=RULESET_VERSION,
+                total_files_in_archive=len(all_files),
+                extracted_file_count=len(all_files),
+                total_uncompressed_bytes=sum(s for _, s in all_files),
+                files=extracted_entries,
             )
 
-        manifest = ScanManifest(
-            scan_id=scan_id,
-            archive_name=name,
-            archive_sha256="directory-scan-local",
-            archive_size_bytes=sum(s for _, s in all_files),
-            archive_type=ArchiveType.UNKNOWN,
-            declared_scope="LOCAL_DIRECTORY",
-            tenant_id="default-tenant",
-            status=ScanStatus.COMPLETE,
-            intake_engine_version=INTAKE_ENGINE_VERSION,
-            collector_version=COLLECTOR_VERSION,
-            ruleset_version=RULESET_VERSION,
-            total_files_in_archive=len(all_files),
-            extracted_file_count=len(all_files),
-            total_uncompressed_bytes=sum(s for _, s in all_files),
-            files=extracted_entries,
-        )
-
-        # 2. Run discovery engine
-        discovery_summary = self.discovery_engine.run_discovery(
-            sandbox_dir=dir_path,
-            manifest=manifest,
-        )
+            # 2. Run discovery engine
+            discovery_summary = self.discovery_engine.run_discovery(
+                sandbox_dir=dir_path,
+                manifest=manifest,
+                output_dir=output_dir,
+            )
         observations = discovery_summary.observations
 
         # 3. Compute truthful coverage accounting
@@ -377,6 +437,7 @@ class ScanService:
         )
 
         self.store.save(record)
+        shutil.rmtree(output_dir, ignore_errors=True)
         return record
 
     def run_scan_on_archive(

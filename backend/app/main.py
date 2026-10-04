@@ -79,7 +79,7 @@ def get_health():
         "privacy_notice": {
             "processing": "LOCAL_CPU_ONLY",
             "telemetry_egress": "DISABLED",
-            "retention": "EPHEMERAL_DELETED_ON_COMPLETION",
+            "retention": "PERSISTED_LOCALLY_IN_ASTRA_STORE",
             "secrets_handling": "AUTOMATIC_PRIVATE_KEY_REDACTION",
         },
         "timestamp": datetime.now(timezone.utc).isoformat(),

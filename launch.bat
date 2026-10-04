@@ -112,8 +112,7 @@ if exist "frontend\package.json" (
         echo  ===================================================================
         echo   Starting ASTRA Dashboard Frontend [port 5173]...
         echo  ===================================================================
-        echo VITE_API_BASE_URL=http://127.0.0.1:%BACKEND_PORT%> "frontend\.env.local"
-        start "HEXARK-Frontend" cmd /k "title HEXARK-Frontend && cd /d "%~dp0frontend" && call npm run dev"
+        start "HEXARK-Frontend" cmd /k "title HEXARK-Frontend && cd /d "%~dp0frontend" && set VITE_API_BASE_URL=http://127.0.0.1:%BACKEND_PORT%&& call npm run dev"
 
         echo  [*] Waiting for frontend to be ready at http://127.0.0.1:5173 ...
         python scripts\launcher_utils.py --wait-url "http://127.0.0.1:5173" 30 >nul 2>&1
@@ -160,6 +159,5 @@ pause >nul
 echo.
 echo  [*] Shutting down servers...
 python scripts\launcher_utils.py --free-ports 8000 8001 5173 >nul 2>&1
-if exist "frontend\.env.local" del /f /q "frontend\.env.local" >nul 2>&1
 echo  [OK] All servers closed.
 echo.

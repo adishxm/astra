@@ -39,6 +39,7 @@ class DiscoveryEngine:
         self,
         sandbox_dir: Path,
         manifest: ScanManifest,
+        output_dir: Optional[Path] = None,
     ) -> DiscoverySummary:
         """Run all detectors against all files listed in the scan manifest."""
         start_time = time.perf_counter()
@@ -190,8 +191,9 @@ class DiscoveryEngine:
             duration_ms=duration_ms,
         )
 
-        # Persist observations inside sandbox for Worker 02
-        obs_file = sandbox_dir / "observations.json"
+        # Persist observations for Worker 02
+        out_dir = output_dir if output_dir else sandbox_dir
+        obs_file = out_dir / "observations.json"
         try:
             with open(obs_file, "w", encoding="utf-8") as f:
                 json.dump(summary.model_dump(mode="json"), f, indent=2, default=str)

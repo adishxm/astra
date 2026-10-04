@@ -1,4 +1,13 @@
-# ASTRA - Enterprise Cryptographic Discovery & Analysis Tool (SIH26164 ECDAT)
+# Stage 1: Build Frontend
+FROM node:20-slim AS frontend-build
+WORKDIR /app
+COPY frontend/package*.json ./frontend/
+WORKDIR /app/frontend
+RUN npm ci
+COPY frontend/ ./
+RUN npm run build
+
+# Stage 2: Backend & Runtime
 FROM python:3.10-slim
 
 WORKDIR /app
@@ -18,6 +27,9 @@ RUN pip install --no-cache-dir --upgrade pip && \
 # Copy backend source code and config
 COPY backend/ ./backend/
 COPY pytest.ini pyproject.toml ./
+
+# Copy compiled frontend
+COPY --from=frontend-build /app/frontend/dist ./frontend/dist
 
 ENV PYTHONPATH=/app/backend
 ENV PYTHONUNBUFFERED=1

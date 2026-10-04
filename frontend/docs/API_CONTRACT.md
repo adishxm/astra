@@ -38,7 +38,7 @@ This document defines the formal, verified contract between the ASTRA FastAPI ba
 | `profile` | string | No | `"AIR_GAPPED_SOVEREIGN_ENTERPRISE"` | Header sovereign mode badge |
 | `hosted_mode` | boolean | No | `false` | Upload / Directory scan feature toggles |
 | `directory_scan_permitted` | boolean | No | `true` | Settings / Scan UI options |
-| `privacy_notice` | object | No | `{"processing": "LOCAL_CPU_ONLY", "telemetry_egress": "DISABLED", "retention": "EPHEMERAL_DELETED_ON_COMPLETION", "secrets_handling": "AUTOMATIC_PRIVATE_KEY_REDACTION"}` | Privacy modal / Tooltip |
+| `privacy_notice` | object | No | `{"processing": "LOCAL_CPU_ONLY", "telemetry_egress": "DISABLED", "retention": "PERSISTED_LOCALLY_IN_ASTRA_STORE", "secrets_handling": "AUTOMATIC_PRIVATE_KEY_REDACTION"}` | Privacy modal / Tooltip |
 | `timestamp` | string (ISO) | No | `"2026-10-03T16:56:58.337072+00:00"` | Live heartbeat indicator |
 | `pqc_standards` | array[string] | No | `["FIPS 203 (ML-KEM)", "FIPS 204 (ML-DSA)", "FIPS 205 (SLH-DSA)"]` | Dashboard standards footer |
 
