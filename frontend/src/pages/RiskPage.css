@@ -1,0 +1,210 @@
+/* RiskPage.css */
+
+.risk-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  padding: var(--space-xl);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.risk-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-lg);
+}
+
+.risk-page-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.risk-page-meta-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--text-dim);
+}
+
+.risk-page-title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--text-main);
+  letter-spacing: -0.02em;
+}
+
+.risk-page-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  max-width: 650px;
+}
+
+.risk-header-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.scan-selector-box {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.scan-selector-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.scan-picker-select {
+  padding: var(--space-xs) var(--space-md);
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: var(--font-size-xs);
+  cursor: pointer;
+}
+
+.scan-picker-select:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+/* Simulation Controls Card */
+.simulation-controls-card {
+  padding: var(--space-lg);
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  animation: fadeIn var(--transition-normal);
+}
+
+.simulation-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  border-bottom: 1px solid var(--border-subtle);
+  padding-bottom: var(--space-sm);
+}
+
+.simulation-title-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.sim-icon {
+  color: var(--primary);
+}
+
+.sim-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.sim-disclaimer {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.sim-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.sim-inputs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-lg);
+}
+
+.sim-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.sim-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}
+
+.sim-label strong {
+  color: var(--text-main);
+  font-family: var(--font-mono);
+}
+
+.sim-range-input {
+  width: 100%;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.sim-hint {
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.sim-actions-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding-top: var(--space-xs);
+}
+
+.risk-loading-area {
+  padding: var(--space-3xl) 0;
+  display: flex;
+  justify-content: center;
+}
+
+.risk-content-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.risk-main-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .risk-main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .risk-page {
+    padding: var(--space-md);
+  }
+  .risk-page-title {
+    font-size: var(--font-size-xl);
+  }
+}

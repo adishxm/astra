@@ -1,0 +1,79 @@
+{
+  "scan_id": "scan-cf529d73",
+  "total_files_in_archive": 7,
+  "total_assessed_files": 4,
+  "total_unsupported_files": 3,
+  "total_skipped_files": 0,
+  "total_failed_files": 0,
+  "total_observations_found": 16,
+  "overall_coverage_percentage": 57.14,
+  "is_partial_scan": false,
+  "scan_status_label": "COMPLETE_WITH_COVERAGE_ACCOUNTING",
+  "surface_breakdown": {
+    "SOURCE_CODE": {
+      "surface": "SOURCE_CODE",
+      "total_files": 1,
+      "assessed_files": 1,
+      "files_with_findings": 1,
+      "files_with_no_findings": 0,
+      "unsupported_files": 0,
+      "failed_files": 0,
+      "coverage_percentage": 100.0
+    },
+    "PACKAGE_MANIFEST": {
+      "surface": "PACKAGE_MANIFEST",
+      "total_files": 1,
+      "assessed_files": 1,
+      "files_with_findings": 1,
+      "files_with_no_findings": 0,
+      "unsupported_files": 0,
+      "failed_files": 0,
+      "coverage_percentage": 100.0
+    },
+    "CONFIGURATION": {
+      "surface": "CONFIGURATION",
+      "total_files": 1,
+      "assessed_files": 1,
+      "files_with_findings": 1,
+      "files_with_no_findings": 0,
+      "unsupported_files": 0,
+      "failed_files": 0,
+      "coverage_percentage": 100.0
+    },
+    "CERTIFICATE_STORE": {
+      "surface": "CERTIFICATE_STORE",
+      "total_files": 1,
+      "assessed_files": 1,
+      "files_with_findings": 1,
+      "files_with_no_findings": 0,
+      "unsupported_files": 0,
+      "failed_files": 0,
+      "coverage_percentage": 100.0
+    },
+    "UNSUPPORTED_SURFACE": {
+      "surface": "UNSUPPORTED_SURFACE",
+      "total_files": 3,
+      "assessed_files": 0,
+      "files_with_findings": 0,
+      "files_with_no_findings": 0,
+      "unsupported_files": 3,
+      "failed_files": 0,
+      "coverage_percentage": 0.0
+    }
+  },
+  "unsupported_extensions": [
+    ".json",
+    ".md",
+    ".wav"
+  ],
+  "collector_health": {
+    "detector-source-code-v1": "OK",
+    "detector-manifest-v1": "OK",
+    "detector-config-v1": "OK",
+    "detector-certificate-v1": "OK",
+    "binary_crypto_detector_static_v1": "OK",
+    "container_crypto_detector_v1": "OK",
+    "network_endpoint_detector_v1": "OK"
+  },
+  "evaluated_at": "2026-10-03T16:58:45.448805+00:00"
+}

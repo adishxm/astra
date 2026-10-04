@@ -1,0 +1,17 @@
+/* Tooltip Component Styles */
+.tooltip {
+  position: fixed;
+  z-index: 1100;
+  padding: var(--space-xs) var(--space-sm);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-elevated);
+  pointer-events: none;
+  white-space: nowrap;
+  animation: fadeIn var(--transition-fast);
+}

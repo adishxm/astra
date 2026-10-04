@@ -1,0 +1,69 @@
+/* AppLayout Component Styles */
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  position: relative;
+}
+
+/* Accessibility: Skip to Main Content Link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: var(--space-md);
+  background-color: var(--primary);
+  color: var(--text-main);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 10000;
+  transition: top var(--transition-fast);
+}
+
+.skip-link:focus {
+  top: var(--space-md);
+}
+
+.app-shell__body {
+  display: flex;
+  flex: 1;
+  min-height: calc(100vh - 64px - 48px);
+}
+
+.app-shell__main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  outline: none;
+}
+
+.app-shell__alert-container {
+  padding: var(--space-md) var(--space-xl) 0 var(--space-xl);
+}
+
+.app-shell__content {
+  flex: 1;
+  padding: var(--space-xl);
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .app-shell__body {
+    flex-direction: column;
+  }
+
+  .app-shell__content {
+    padding: var(--space-md);
+  }
+
+  .app-shell__alert-container {
+    padding: var(--space-sm) var(--space-md) 0 var(--space-md);
+  }
+}

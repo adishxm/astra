@@ -1,0 +1,1176 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "ASTRA - Enterprise Cryptographic Discovery & Analysis Tool",
+    "description": "ASTRA by Team HEXARK is an open-source cryptographic discovery and CBOM prototype aligned with SIH26164 (ECDAT). Scan source, manifests, configs and certificates, evaluate Mosca PQC migration risk, and export CycloneDX 1.6 CBOM.",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/workflow/evidence/{asset_id}": {
+      "get": {
+        "summary": "Get Evidence Drilldown",
+        "description": "Evidence drill-down for a specific asset across all executed scans.",
+        "operationId": "get_evidence_drilldown_api_v1_workflow_evidence__asset_id__get",
+        "parameters": [
+          {
+            "name": "asset_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Asset Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CanonicalEvidence"
+                  },
+                  "title": "Response Get Evidence Drilldown Api V1 Workflow Evidence  Asset Id  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/audit": {
+      "post": {
+        "tags": [
+          "Worker 04"
+        ],
+        "summary": "Create Audit Record",
+        "description": "Review and audit history.",
+        "operationId": "create_audit_record_api_v1_workflow_audit_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuditRecord"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuditRecord"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/export": {
+      "get": {
+        "summary": "Get Latest Export",
+        "description": "Sanitized export of the latest scan findings.",
+        "operationId": "get_latest_export_api_v1_workflow_export_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InventoryExport"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/audit/chain/append": {
+      "post": {
+        "tags": [
+          "Worker 04"
+        ],
+        "summary": "Append Chained Audit",
+        "description": "Append a new tamper-evident event to the running audit hash chain.",
+        "operationId": "append_chained_audit_api_v1_workflow_audit_chain_append_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_append_chained_audit_api_v1_workflow_audit_chain_append_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChainedAuditEvent"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/audit/chain/verify": {
+      "get": {
+        "tags": [
+          "Worker 04"
+        ],
+        "summary": "Verify Audit Chain",
+        "description": "Verify integrity of the tamper-evident audit log.",
+        "operationId": "verify_audit_chain_api_v1_workflow_audit_chain_verify_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/offline/bundle/verify": {
+      "post": {
+        "tags": [
+          "Worker 04"
+        ],
+        "summary": "Verify Offline Bundle",
+        "description": "Verify integrity of an offline air-gapped rule/intel update package.",
+        "operationId": "verify_offline_bundle_api_v1_workflow_offline_bundle_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Payload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/workflow/health/production": {
+      "get": {
+        "tags": [
+          "Worker 04"
+        ],
+        "summary": "Get Production Health",
+        "description": "Evaluate production readiness and air-gapped security profile.",
+        "operationId": "get_production_health_api_v1_workflow_health_production_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "summary": "Get Health",
+        "description": "System health check and operational status.",
+        "operationId": "get_health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Get Health",
+        "description": "System health check and operational status.",
+        "operationId": "get_health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scans/upload": {
+      "post": {
+        "summary": "Upload And Scan",
+        "description": "Upload an authorized repository archive (.zip, .tar.gz) and execute complete scan pipeline.",
+        "operationId": "upload_and_scan_api_v1_scans_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_and_scan_api_v1_scans_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scans/directory": {
+      "post": {
+        "summary": "Scan Directory",
+        "description": "Trigger a cryptographic discovery scan on a local directory.",
+        "operationId": "scan_directory_api_v1_scans_directory_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "additionalProperties": true,
+                "type": "object",
+                "title": "Payload"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scans": {
+      "get": {
+        "summary": "List Scans",
+        "description": "List all previously executed scans.",
+        "operationId": "list_scans_api_v1_scans_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scans/{scan_id}": {
+      "get": {
+        "summary": "Get Scan",
+        "description": "Retrieve complete scan record by ID.",
+        "operationId": "get_scan_api_v1_scans__scan_id__get",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Scan Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scans/{scan_id}/findings": {
+      "get": {
+        "summary": "Get Scan Findings",
+        "description": "Retrieve canonical assets and observations for a scan.",
+        "operationId": "get_scan_findings_api_v1_scans__scan_id__findings_get",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Scan Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scans/{scan_id}/coverage": {
+      "get": {
+        "summary": "Get Scan Coverage",
+        "description": "Retrieve truthful coverage report for a scan.",
+        "operationId": "get_scan_coverage_api_v1_scans__scan_id__coverage_get",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Scan Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scans/{scan_id}/risk": {
+      "get": {
+        "summary": "Get Scan Risk",
+        "description": "Retrieve Mosca risk calculations or dynamically re-evaluate under custom scenario assumptions.",
+        "operationId": "get_scan_risk_api_v1_scans__scan_id__risk_get",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Scan Id"
+            }
+          },
+          {
+            "name": "horizon",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Quantum threat horizon Z in years (scenario assumption)",
+              "title": "Horizon"
+            },
+            "description": "Quantum threat horizon Z in years (scenario assumption)"
+          },
+          {
+            "name": "shelf_life",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Data secrecy shelf-life X in years",
+              "title": "Shelf Life"
+            },
+            "description": "Data secrecy shelf-life X in years"
+          },
+          {
+            "name": "migration",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Migration duration Y in years",
+              "title": "Migration"
+            },
+            "description": "Migration duration Y in years"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scans/{scan_id}/export": {
+      "get": {
+        "summary": "Get Scan Export",
+        "description": "Export CycloneDX 1.6 Cryptographic Bill of Materials (CBOM) for a scan.",
+        "operationId": "get_scan_export_api_v1_scans__scan_id__export_get",
+        "parameters": [
+          {
+            "name": "scan_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Scan Id"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "cyclonedx",
+              "title": "Format"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "summary": "Serve Dashboard",
+        "description": "Serve the interactive ASTRA Web Dashboard.",
+        "operationId": "serve_dashboard__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AssetIdentity": {
+        "properties": {
+          "asset_id": {
+            "type": "string",
+            "title": "Asset Id"
+          },
+          "primary_name": {
+            "type": "string",
+            "title": "Primary Name"
+          },
+          "observations": {
+            "items": {
+              "$ref": "#/components/schemas/CanonicalEvidence"
+            },
+            "type": "array",
+            "title": "Observations"
+          },
+          "is_uncertain": {
+            "type": "boolean",
+            "title": "Is Uncertain",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "asset_id",
+          "primary_name"
+        ],
+        "title": "AssetIdentity",
+        "description": "Identity and deduplication strategy."
+      },
+      "AuditRecord": {
+        "properties": {
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          },
+          "actor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Timestamp"
+          },
+          "previous_value": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Previous Value"
+          },
+          "new_value": {
+            "type": "string",
+            "title": "New Value"
+          },
+          "linked_evidence": {
+            "type": "string",
+            "title": "Linked Evidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "reason",
+          "previous_value",
+          "new_value",
+          "linked_evidence"
+        ],
+        "title": "AuditRecord",
+        "description": "Worker 04 review/audit workflow."
+      },
+      "Body_append_chained_audit_api_v1_workflow_audit_chain_append_post": {
+        "properties": {
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "actor": {
+            "type": "string",
+            "title": "Actor"
+          },
+          "asset_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asset Id"
+          },
+          "details": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Details"
+          }
+        },
+        "type": "object",
+        "required": [
+          "action",
+          "actor"
+        ],
+        "title": "Body_append_chained_audit_api_v1_workflow_audit_chain_append_post"
+      },
+      "Body_upload_and_scan_api_v1_scans_upload_post": {
+        "properties": {
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "file"
+        ],
+        "title": "Body_upload_and_scan_api_v1_scans_upload_post"
+      },
+      "CanonicalEvidence": {
+        "properties": {
+          "canonical_id": {
+            "type": "string",
+            "title": "Canonical Id",
+            "description": "Stable observation/claim ID"
+          },
+          "asset_id": {
+            "type": "string",
+            "title": "Asset Id",
+            "description": "Component identity"
+          },
+          "claim_type": {
+            "$ref": "#/components/schemas/ClaimType"
+          },
+          "source_kind": {
+            "$ref": "#/components/schemas/SourceKind"
+          },
+          "algorithm": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Algorithm"
+          },
+          "protocol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Protocol"
+          },
+          "purpose": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Purpose"
+          },
+          "key_size_bits": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key Size Bits"
+          },
+          "curve_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Curve Name"
+          },
+          "evidence_digest": {
+            "type": "string",
+            "title": "Evidence Digest"
+          },
+          "sanitized_excerpt": {
+            "type": "string",
+            "title": "Sanitized Excerpt"
+          },
+          "redacted": {
+            "type": "boolean",
+            "title": "Redacted"
+          },
+          "detector_id": {
+            "type": "string",
+            "title": "Detector Id"
+          },
+          "ruleset_version": {
+            "type": "string",
+            "title": "Ruleset Version"
+          },
+          "confidence": {
+            "$ref": "#/components/schemas/ConfidenceBand"
+          },
+          "confidence_rationale": {
+            "type": "string",
+            "title": "Confidence Rationale"
+          },
+          "state": {
+            "$ref": "#/components/schemas/EvidenceState"
+          },
+          "observed_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Observed At"
+          },
+          "relative_path": {
+            "type": "string",
+            "title": "Relative Path"
+          },
+          "start_line": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Start Line"
+          },
+          "end_line": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Line"
+          },
+          "raw_parameters": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Raw Parameters"
+          }
+        },
+        "type": "object",
+        "required": [
+          "canonical_id",
+          "asset_id",
+          "claim_type",
+          "source_kind",
+          "evidence_digest",
+          "sanitized_excerpt",
+          "redacted",
+          "detector_id",
+          "ruleset_version",
+          "confidence",
+          "confidence_rationale",
+          "state",
+          "observed_at",
+          "relative_path"
+        ],
+        "title": "CanonicalEvidence",
+        "description": "Canonical observation/evidence model."
+      },
+      "ChainedAuditEvent": {
+        "properties": {
+          "event_id": {
+            "type": "string",
+            "title": "Event Id"
+          },
+          "sequence_num": {
+            "type": "integer",
+            "title": "Sequence Num"
+          },
+          "timestamp": {
+            "type": "string",
+            "title": "Timestamp"
+          },
+          "action": {
+            "type": "string",
+            "title": "Action"
+          },
+          "actor": {
+            "type": "string",
+            "title": "Actor"
+          },
+          "asset_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asset Id"
+          },
+          "details": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Details"
+          },
+          "prev_hash": {
+            "type": "string",
+            "title": "Prev Hash"
+          },
+          "event_hash": {
+            "type": "string",
+            "title": "Event Hash"
+          }
+        },
+        "type": "object",
+        "required": [
+          "event_id",
+          "sequence_num",
+          "action",
+          "actor",
+          "prev_hash",
+          "event_hash"
+        ],
+        "title": "ChainedAuditEvent",
+        "description": "Cryptographically chained audit event conforming to append-only tamper-evident logs."
+      },
+      "ClaimType": {
+        "type": "string",
+        "enum": [
+          "ALGORITHM_USE",
+          "DEPENDENCY_REFERENCE",
+          "CONFIG_PARAMETER",
+          "CERTIFICATE_METADATA",
+          "KEY_SPECIFICATION",
+          "BINARY_SYMBOL",
+          "CONTAINER_PACKAGE",
+          "NETWORK_ENDPOINT"
+        ],
+        "title": "ClaimType",
+        "description": "Categorization of cryptographic claim."
+      },
+      "ConfidenceBand": {
+        "type": "string",
+        "enum": [
+          "CONFIRMED",
+          "HIGH",
+          "MEDIUM",
+          "LOW",
+          "HEURISTIC"
+        ],
+        "title": "ConfidenceBand",
+        "description": "Confidence calibration for discovery."
+      },
+      "EvidenceState": {
+        "type": "string",
+        "enum": [
+          "OBSERVED",
+          "INFERRED",
+          "DECLARED",
+          "VERIFIED",
+          "CONFLICTING",
+          "UNKNOWN",
+          "UNSUPPORTED",
+          "FAILED"
+        ],
+        "title": "EvidenceState",
+        "description": "Truthful state of evidence."
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "InventoryExport": {
+        "properties": {
+          "profile": {
+            "type": "string",
+            "title": "Profile",
+            "default": "Astra Project Export Draft"
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "default": "1.0.0"
+          },
+          "assets": {
+            "items": {
+              "$ref": "#/components/schemas/AssetIdentity"
+            },
+            "type": "array",
+            "title": "Assets"
+          },
+          "relationships": {
+            "items": {
+              "$ref": "#/components/schemas/Relationship"
+            },
+            "type": "array",
+            "title": "Relationships"
+          },
+          "audit_trail": {
+            "items": {
+              "$ref": "#/components/schemas/AuditRecord"
+            },
+            "type": "array",
+            "title": "Audit Trail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "assets",
+          "relationships",
+          "audit_trail"
+        ],
+        "title": "InventoryExport",
+        "description": "Versioned, privacy-safe export."
+      },
+      "Relationship": {
+        "properties": {
+          "source_asset_id": {
+            "type": "string",
+            "title": "Source Asset Id"
+          },
+          "target_asset_id": {
+            "type": "string",
+            "title": "Target Asset Id"
+          },
+          "relationship_type": {
+            "type": "string",
+            "title": "Relationship Type"
+          },
+          "provenance": {
+            "type": "string",
+            "title": "Provenance"
+          },
+          "uncertainty": {
+            "type": "boolean",
+            "title": "Uncertainty"
+          }
+        },
+        "type": "object",
+        "required": [
+          "source_asset_id",
+          "target_asset_id",
+          "relationship_type",
+          "provenance",
+          "uncertainty"
+        ],
+        "title": "Relationship"
+      },
+      "SourceKind": {
+        "type": "string",
+        "enum": [
+          "SOURCE_CODE",
+          "MANIFEST",
+          "CONFIG",
+          "CERTIFICATE",
+          "BINARY",
+          "CONTAINER",
+          "NETWORK"
+        ],
+        "title": "SourceKind",
+        "description": "Origin kind of the discovery."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
+  }
+}

@@ -1,0 +1,268 @@
+/* RiskSummary.css */
+
+.risk-summary-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.risk-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--space-md);
+}
+
+.risk-metric-card {
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.risk-metric-card:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.risk-metric-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.risk-metric-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.risk-metric-label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.risk-metric-number {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-family: var(--font-mono);
+  color: var(--text-main);
+}
+
+.risk-metric-subtext {
+  font-size: var(--font-size-xs);
+  color: var(--text-dim);
+}
+
+.risk-icon-primary {
+  color: var(--primary);
+}
+
+.risk-color-critical {
+  color: var(--color-critical);
+}
+
+.risk-color-high {
+  color: var(--color-high);
+}
+
+.risk-color-medium {
+  color: var(--color-medium);
+}
+
+.risk-color-low {
+  color: var(--color-low);
+}
+
+.risk-color-unassessed {
+  color: var(--text-muted);
+}
+
+.risk-metric-card--critical {
+  border-left: 3px solid var(--color-critical);
+}
+
+.risk-metric-card--high {
+  border-left: 3px solid var(--color-high);
+}
+
+.risk-metric-card--medium {
+  border-left: 3px solid var(--color-medium);
+}
+
+.risk-metric-card--low {
+  border-left: 3px solid var(--color-low);
+}
+
+.risk-metric-card--unassessed {
+  border-left: 3px solid var(--text-dim);
+}
+
+/* Mosca Theorem Banner */
+.mosca-banner {
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.mosca-banner--violation {
+  border-color: rgba(244, 63, 94, 0.4);
+  background: linear-gradient(135deg, rgba(76, 5, 25, 0.3) 0%, rgba(30, 41, 59, 0.8) 100%);
+}
+
+.mosca-banner--compliant {
+  border-color: rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, rgba(6, 78, 59, 0.2) 0%, rgba(30, 41, 59, 0.8) 100%);
+}
+
+.mosca-banner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.mosca-banner-title-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.mosca-banner-icon {
+  color: var(--text-muted);
+}
+
+.mosca-banner-title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.mosca-slack-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 4px 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-subtle);
+  font-size: var(--font-size-xs);
+}
+
+.mosca-slack-label {
+  color: var(--text-muted);
+}
+
+.mosca-slack-value {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.mosca-slack-negative {
+  color: var(--color-critical);
+}
+
+.mosca-slack-positive {
+  color: var(--color-low);
+}
+
+.mosca-parameters-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: var(--radius-md);
+}
+
+.mosca-param-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.param-label {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.param-value {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: var(--text-main);
+}
+
+.param-value--danger {
+  color: var(--color-critical);
+}
+
+.param-operator {
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  color: var(--text-dim);
+}
+
+.mosca-warning-text {
+  font-size: var(--font-size-xs);
+  line-height: 1.5;
+  color: #fca5a5;
+  background: rgba(76, 5, 25, 0.4);
+  border: 1px solid rgba(244, 63, 94, 0.3);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+}
+
+.mosca-assumptions-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-subtle);
+  padding-top: var(--space-sm);
+}
+
+.caveat-text {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  max-width: 80%;
+  font-style: italic;
+}
+
+.ruleset-tag {
+  font-family: var(--font-mono);
+  color: var(--text-dim);
+  font-size: 11px;
+}
+
+@media (max-width: 768px) {
+  .mosca-parameters-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+  .param-operator {
+    display: none;
+  }
+  .caveat-text {
+    max-width: 100%;
+  }
+}

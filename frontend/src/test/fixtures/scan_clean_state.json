@@ -1,0 +1,162 @@
+{
+  "scan_id": "scan-7fae0e1b",
+  "status": "completed",
+  "target_name": "clean_state.zip",
+  "created_at": "2026-10-03T16:58:45.523322+00:00",
+  "manifest": {
+    "scan_id": "8802749b-4d07-445b-ba16-d2db7c856250",
+    "archive_name": "clean_state.zip",
+    "archive_sha256": "a4f4e3c56867318d31665a8eb8da720400f932e9bbda3f0b9ae26b1f434ce912",
+    "archive_size_bytes": 363,
+    "archive_type": "ZIP",
+    "declared_scope": "clean_state.zip",
+    "tenant_id": "default-tenant",
+    "status": "COMPLETE",
+    "rejection_code": null,
+    "rejection_reason": null,
+    "started_at": "2026-10-03T16:58:45.502836+00:00",
+    "completed_at": "2026-10-03T16:58:45.502836+00:00",
+    "intake_engine_version": "1.0.0",
+    "collector_version": "0.1.0",
+    "ruleset_version": "2026.10-nist-pqc",
+    "total_files_in_archive": 2,
+    "extracted_file_count": 2,
+    "skipped_file_count": 0,
+    "total_uncompressed_bytes": 177,
+    "compression_ratio": 0.49,
+    "sandbox_directory": "C:\\Users\\RUPANJAN\\AppData\\Local\\Temp\\astra_sandboxes\\scan_8802749b-4d07-445b-ba16-d2db7c856250",
+    "files": [
+      {
+        "relative_path": "main.py",
+        "size_bytes": 98,
+        "sha256": "3b24018373f4dc0c394a89d0cff59625a79f2889b87d82b69fb4475d9b2ebc45",
+        "file_extension": ".py",
+        "is_supported": true,
+        "skip_reason": null
+      },
+      {
+        "relative_path": "README.md",
+        "size_bytes": 79,
+        "sha256": "cbb5e84fb4b5d79c593bb11dd9586a55ce4a6872ae12a5cb1f8674560964d048",
+        "file_extension": ".md",
+        "is_supported": false,
+        "skip_reason": null
+      }
+    ],
+    "collector_health": {}
+  },
+  "coverage": {
+    "scan_id": "scan-7fae0e1b",
+    "total_files_in_archive": 3,
+    "total_assessed_files": 1,
+    "total_unsupported_files": 2,
+    "total_skipped_files": 0,
+    "total_failed_files": 0,
+    "total_observations_found": 0,
+    "overall_coverage_percentage": 33.33,
+    "is_partial_scan": false,
+    "scan_status_label": "NO_FINDINGS_IN_SUPPORTED_SCOPE",
+    "surface_breakdown": {
+      "SOURCE_CODE": {
+        "surface": "SOURCE_CODE",
+        "total_files": 1,
+        "assessed_files": 1,
+        "files_with_findings": 0,
+        "files_with_no_findings": 1,
+        "unsupported_files": 0,
+        "failed_files": 0,
+        "coverage_percentage": 100.0
+      },
+      "PACKAGE_MANIFEST": {
+        "surface": "PACKAGE_MANIFEST",
+        "total_files": 0,
+        "assessed_files": 0,
+        "files_with_findings": 0,
+        "files_with_no_findings": 0,
+        "unsupported_files": 0,
+        "failed_files": 0,
+        "coverage_percentage": 0.0
+      },
+      "CONFIGURATION": {
+        "surface": "CONFIGURATION",
+        "total_files": 0,
+        "assessed_files": 0,
+        "files_with_findings": 0,
+        "files_with_no_findings": 0,
+        "unsupported_files": 0,
+        "failed_files": 0,
+        "coverage_percentage": 0.0
+      },
+      "CERTIFICATE_STORE": {
+        "surface": "CERTIFICATE_STORE",
+        "total_files": 0,
+        "assessed_files": 0,
+        "files_with_findings": 0,
+        "files_with_no_findings": 0,
+        "unsupported_files": 0,
+        "failed_files": 0,
+        "coverage_percentage": 0.0
+      },
+      "UNSUPPORTED_SURFACE": {
+        "surface": "UNSUPPORTED_SURFACE",
+        "total_files": 2,
+        "assessed_files": 0,
+        "files_with_findings": 0,
+        "files_with_no_findings": 0,
+        "unsupported_files": 2,
+        "failed_files": 0,
+        "coverage_percentage": 0.0
+      }
+    },
+    "unsupported_extensions": [
+      ".json",
+      ".md"
+    ],
+    "collector_health": {
+      "detector-source-code-v1": "OK",
+      "detector-manifest-v1": "OK",
+      "detector-config-v1": "OK",
+      "detector-certificate-v1": "OK",
+      "binary_crypto_detector_static_v1": "OK",
+      "container_crypto_detector_v1": "OK",
+      "network_endpoint_detector_v1": "OK"
+    },
+    "evaluated_at": "2026-10-03T16:58:45.523322+00:00"
+  },
+  "asset_count": 0,
+  "observations_count": 0,
+  "cryptographic_dna_hash": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "summary": {
+    "total_files": 2,
+    "assessed_files": 1,
+    "coverage_percentage": 33.33,
+    "clean_state_label": "NO_FINDINGS_IN_SUPPORTED_SCOPE",
+    "critical_urgency_count": 0,
+    "high_urgency_count": 0,
+    "medium_urgency_count": 0,
+    "low_urgency_count": 0
+  },
+  "canonical_assets": [],
+  "risk_evaluations": [],
+  "backlog_items": [],
+  "cbom_data": {
+    "bomFormat": "CycloneDX",
+    "specVersion": "1.6",
+    "serialNumber": "urn:uuid:scan-7fae0e1b",
+    "version": 1,
+    "metadata": {
+      "timestamp": "2026-10-03T16:58:45.523322+00:00",
+      "tools": [
+        {
+          "name": "ASTRA",
+          "version": "1.0.0"
+        }
+      ],
+      "component": {
+        "type": "application",
+        "name": "clean_state.zip"
+      }
+    },
+    "components": []
+  }
+}

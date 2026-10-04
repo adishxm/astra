@@ -1,0 +1,209 @@
+/* ScanUpload Component Styles */
+.scan-upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.scan-upload__input-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.scan-upload__dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-2xl) var(--space-xl);
+  border: 2px dashed var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), box-shadow var(--transition-fast);
+  outline: none;
+}
+
+.scan-upload__dropzone:hover:not(.scan-upload__dropzone--disabled) {
+  border-color: var(--primary);
+  background-color: var(--bg-card-hover);
+}
+
+.scan-upload__dropzone:focus-visible {
+  border-color: var(--primary);
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.scan-upload__dropzone--dragover {
+  border-color: var(--primary);
+  background-color: var(--primary-glow);
+  box-shadow: var(--shadow-glow);
+}
+
+.scan-upload__dropzone--has-file {
+  border-style: solid;
+  border-color: var(--primary);
+  background-color: var(--bg-surface);
+}
+
+.scan-upload__dropzone--disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.scan-upload__icon {
+  color: var(--primary);
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.scan-upload__text-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.scan-upload__prompt {
+  font-size: 1rem;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.scan-upload__subtext {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.scan-upload__filename {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.scan-upload__filesize {
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Progress Section */
+.scan-upload__progress-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  animation: fadeIn var(--transition-fast);
+}
+
+.scan-upload__progress-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.875rem;
+  color: var(--text-main);
+  font-weight: 500;
+}
+
+.scan-upload__progress-percent {
+  font-family: var(--font-mono);
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.scan-upload__progress-bar-track {
+  height: 8px;
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.scan-upload__progress-bar-fill {
+  height: 100%;
+  background-color: var(--primary);
+  box-shadow: 0 0 10px var(--primary-glow);
+  transition: width 200ms ease;
+}
+
+/* Analyzing Section */
+.scan-upload__analyzing-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: var(--space-sm);
+  animation: fadeIn var(--transition-fast);
+}
+
+.scan-upload__analyzing-hint {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* Success Section */
+.scan-upload__success-panel {
+  background: var(--badge-safe-bg);
+  border: 1px solid var(--badge-safe-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  animation: fadeIn var(--transition-normal);
+}
+
+.scan-upload__success-header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+}
+
+.scan-upload__success-icon {
+  color: var(--emerald);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.scan-upload__success-title {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--badge-safe-text);
+  margin-bottom: var(--space-xs);
+}
+
+.scan-upload__success-meta {
+  font-size: 0.875rem;
+  color: var(--text-main);
+  margin: 0;
+}
+
+/* Action buttons */
+.scan-upload__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin-top: var(--space-xs);
+}

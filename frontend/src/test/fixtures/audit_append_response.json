@@ -1,0 +1,14 @@
+{
+  "event_id": "ev-000001",
+  "sequence_num": 1,
+  "timestamp": "2026-10-03T16:58:45.619787+00:00",
+  "action": "SCAN_INITIATED",
+  "actor": "secops_lead",
+  "asset_id": "rsa-2048-crypto_service.py-22",
+  "details": {
+    "scope": "synthetic_sample",
+    "environment": "staging"
+  },
+  "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "event_hash": "84cf194d9c389e75f7e9a1381e48013d29d5e302d7113c34021eb42ad2f6c8d2"
+}

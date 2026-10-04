@@ -1,0 +1,21 @@
+{
+  "status": "pass",
+  "service": "ASTRA Cryptographic Engine",
+  "version": "1.0.0",
+  "team": "HEXARK",
+  "profile": "AIR_GAPPED_SOVEREIGN_ENTERPRISE",
+  "hosted_mode": false,
+  "directory_scan_permitted": true,
+  "privacy_notice": {
+    "processing": "LOCAL_CPU_ONLY",
+    "telemetry_egress": "DISABLED",
+    "retention": "EPHEMERAL_DELETED_ON_COMPLETION",
+    "secrets_handling": "AUTOMATIC_PRIVATE_KEY_REDACTION"
+  },
+  "timestamp": "2026-10-03T16:58:45.401363+00:00",
+  "pqc_standards": [
+    "FIPS 203 (ML-KEM)",
+    "FIPS 204 (ML-DSA)",
+    "FIPS 205 (SLH-DSA)"
+  ]
+}

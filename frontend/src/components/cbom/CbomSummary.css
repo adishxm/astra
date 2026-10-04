@@ -1,0 +1,157 @@
+/* CbomSummary.css */
+
+.cbom-summary-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.cbom-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--space-md);
+}
+
+.cbom-metric-card {
+  padding: var(--space-md) var(--space-lg);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.cbom-metric-card:hover {
+  border-color: rgba(99, 102, 241, 0.4);
+}
+
+.cbom-metric-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.cbom-metric-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.cbom-metric-label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+}
+
+.cbom-metric-number {
+  font-size: 2rem;
+  font-weight: 700;
+  line-height: 1.1;
+  font-family: var(--font-mono);
+  color: var(--text-main);
+}
+
+.cbom-spec-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--emerald);
+  font-family: var(--font-mono);
+  line-height: 1.2;
+}
+
+.cbom-metric-subtext {
+  font-size: var(--font-size-xs);
+  color: var(--text-dim);
+}
+
+.cbom-icon-primary {
+  color: var(--primary);
+}
+
+.cbom-color-cyan {
+  color: var(--cyan);
+}
+
+.cbom-color-purple {
+  color: var(--purple);
+}
+
+.cbom-color-emerald {
+  color: var(--emerald);
+}
+
+.cbom-surface-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+  padding: var(--space-sm) var(--space-lg);
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+}
+
+.cbom-surfaces-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.cbom-surface-label {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.cbom-surface-pills {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.surface-pill {
+  font-size: var(--font-size-xs);
+  padding: 3px 10px;
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-full);
+  color: var(--text-main);
+}
+
+.surface-pill strong {
+  color: var(--primary);
+  font-family: var(--font-mono);
+}
+
+.cbom-truthfulness-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: var(--radius-md);
+}
+
+.cbom-banner-info-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.cbom-banner-text {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.cbom-banner-text strong {
+  color: var(--text-main);
+}

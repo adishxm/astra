@@ -1,0 +1,121 @@
+/* Migration Page Styles */
+
+.migration-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+  padding: var(--space-xl);
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.migration-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-lg);
+  flex-wrap: wrap;
+}
+
+.migration-page-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.migration-page-meta-breadcrumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--font-size-xs);
+  color: var(--text-dim);
+}
+
+.migration-page-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.migration-page-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin: 0;
+}
+
+.migration-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}
+
+.migration-scan-selector-box {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 4px var(--space-sm);
+}
+
+.migration-scan-picker-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-dim);
+  font-weight: 500;
+}
+
+.migration-scan-picker-select {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  font-size: var(--font-size-xs);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  outline: none;
+}
+
+.migration-loading-area {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 350px;
+}
+
+.migration-content-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xl);
+}
+
+.migration-table-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.migration-section-header-row {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.migration-section-heading {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.migration-section-subtext {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+}

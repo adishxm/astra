@@ -1,0 +1,83 @@
+/* Badge Component Styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 2px var(--space-sm);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1.35;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  user-select: none;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.badge__icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.badge__text {
+  display: inline-block;
+}
+
+/* Quantum Safety & Status Variants */
+.badge--safe,
+.badge--pass {
+  background-color: var(--badge-safe-bg);
+  color: var(--badge-safe-text);
+  border-color: var(--badge-safe-border);
+}
+
+.badge--vulnerable,
+.badge--fail {
+  background-color: var(--badge-vulnerable-bg);
+  color: var(--badge-vulnerable-text);
+  border-color: var(--badge-vulnerable-border);
+}
+
+/* Unknown variant — Neutral/Muted, NEVER green */
+.badge--unknown {
+  background-color: var(--badge-unknown-bg);
+  color: var(--badge-unknown-text);
+  border-color: var(--badge-unknown-border);
+}
+
+/* Urgency Tiers */
+.badge--critical {
+  background-color: var(--badge-critical-bg);
+  color: var(--badge-critical-text);
+  border-color: var(--badge-critical-border);
+}
+
+.badge--critical.badge--pulse {
+  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.badge--high {
+  background-color: var(--badge-high-bg);
+  color: var(--badge-high-text);
+  border-color: var(--badge-high-border);
+}
+
+.badge--medium {
+  background-color: var(--badge-medium-bg);
+  color: var(--badge-medium-text);
+  border-color: var(--badge-medium-border);
+}
+
+.badge--low {
+  background-color: var(--badge-low-bg);
+  color: var(--badge-low-text);
+  border-color: var(--badge-low-border);
+}
+
+.badge--info {
+  background-color: var(--badge-info-bg);
+  color: var(--badge-info-text);
+  border-color: var(--badge-info-border);
+}

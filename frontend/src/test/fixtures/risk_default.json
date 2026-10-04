@@ -1,0 +1,849 @@
+{
+  "scan_id": "scan-cf529d73",
+  "risk_evaluations": [
+    {
+      "asset_id": "rsa-2048-crypto_service.py-22",
+      "algorithm": "RSA-2048",
+      "purpose": "ASYMMETRIC",
+      "risk_score": 64.31,
+      "urgency": "MEDIUM",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 43.5,
+        "mosca_horizon_urgency": 23.8,
+        "operational_exposure": 18.7,
+        "business_criticality": 14.0
+      },
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "rsa-crypto_service.py-22",
+      "algorithm": "RSA",
+      "purpose": "ASYMMETRIC",
+      "risk_score": 66.31,
+      "urgency": "HIGH",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 45.2,
+        "mosca_horizon_urgency": 23.1,
+        "operational_exposure": 18.1,
+        "business_criticality": 13.6
+      },
+      "reason_codes": [
+        "RC_HIGH_COMPOSITE_RISK"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "aes-256-crypto_service.py-28",
+      "algorithm": "AES-256",
+      "purpose": "ENCRYPTION",
+      "risk_score": 27.0,
+      "urgency": "LOW",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 22.2,
+        "mosca_horizon_urgency": 0.0,
+        "operational_exposure": 44.4,
+        "business_criticality": 33.3
+      },
+      "reason_codes": [
+        "RC_LOW_RISK_CLASSICAL"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "aes-crypto_service.py-28",
+      "algorithm": "AES",
+      "purpose": "ENCRYPTION",
+      "risk_score": 27.0,
+      "urgency": "LOW",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 22.2,
+        "mosca_horizon_urgency": 0.0,
+        "operational_exposure": 44.4,
+        "business_criticality": 33.3
+      },
+      "reason_codes": [
+        "RC_LOW_RISK_CLASSICAL"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "ml-kem-crypto_service.py-34",
+      "algorithm": "ML-KEM",
+      "purpose": "KEY_EXCHANGE",
+      "risk_score": 23.0,
+      "urgency": "LOW",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 8.7,
+        "mosca_horizon_urgency": 0.0,
+        "operational_exposure": 52.2,
+        "business_criticality": 39.1
+      },
+      "reason_codes": [
+        "RC_LOW_RISK_CLASSICAL"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "md5-crypto_service.py-42",
+      "algorithm": "MD5",
+      "purpose": "HASHING",
+      "risk_score": 76.31,
+      "urgency": "CRITICAL",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 52.4,
+        "mosca_horizon_urgency": 20.1,
+        "operational_exposure": 15.7,
+        "business_criticality": 11.8
+      },
+      "reason_codes": [
+        "RC_ALGORITHM_BROKEN_LEGACY"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "config-tlsv1.3-nginx.conf-15",
+      "algorithm": "TLSv1.3",
+      "purpose": "PROTOCOL",
+      "risk_score": 41.0,
+      "urgency": "MEDIUM",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 48.8,
+        "mosca_horizon_urgency": 0.0,
+        "operational_exposure": 29.3,
+        "business_criticality": 22.0
+      },
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "config-tlsv1.2-nginx.conf-15",
+      "algorithm": "TLSv1.2",
+      "purpose": "PROTOCOL",
+      "risk_score": 41.0,
+      "urgency": "MEDIUM",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 48.8,
+        "mosca_horizon_urgency": 0.0,
+        "operational_exposure": 29.3,
+        "business_criticality": 22.0
+      },
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "config-tlsv1.0-nginx.conf-15",
+      "algorithm": "TLSv1.0",
+      "purpose": "PROTOCOL",
+      "risk_score": 41.0,
+      "urgency": "MEDIUM",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 48.8,
+        "mosca_horizon_urgency": 0.0,
+        "operational_exposure": 29.3,
+        "business_criticality": 22.0
+      },
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "config-ecdhe-aes256-gcm-nginx.conf-16",
+      "algorithm": "ECDHE-AES256-GCM",
+      "purpose": "CIPHER_SUITE",
+      "risk_score": 41.0,
+      "urgency": "MEDIUM",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 48.8,
+        "mosca_horizon_urgency": 0.0,
+        "operational_exposure": 29.3,
+        "business_criticality": 22.0
+      },
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "config-ecdhe-aes128-gcm-nginx.conf-16",
+      "algorithm": "ECDHE-AES128-GCM",
+      "purpose": "CIPHER_SUITE",
+      "risk_score": 41.0,
+      "urgency": "MEDIUM",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 48.8,
+        "mosca_horizon_urgency": 0.0,
+        "operational_exposure": 29.3,
+        "business_criticality": 22.0
+      },
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "manifest-crypto-js-package.json",
+      "algorithm": "crypto-js",
+      "purpose": "CRYPTOGRAPHIC_LIBRARY",
+      "risk_score": 41.0,
+      "urgency": "MEDIUM",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 48.8,
+        "mosca_horizon_urgency": 0.0,
+        "operational_exposure": 29.3,
+        "business_criticality": 22.0
+      },
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "manifest-tweetnacl-package.json",
+      "algorithm": "tweetnacl",
+      "purpose": "CRYPTOGRAPHIC_LIBRARY",
+      "risk_score": 41.0,
+      "urgency": "MEDIUM",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 48.8,
+        "mosca_horizon_urgency": 0.0,
+        "operational_exposure": 29.3,
+        "business_criticality": 22.0
+      },
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "manifest-crypto-js-package.json-6",
+      "algorithm": "crypto-js",
+      "purpose": "CRYPTOGRAPHIC_LIBRARY",
+      "risk_score": 41.0,
+      "urgency": "MEDIUM",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 48.8,
+        "mosca_horizon_urgency": 0.0,
+        "operational_exposure": 29.3,
+        "business_criticality": 22.0
+      },
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "manifest-tweetnacl-package.json-7",
+      "algorithm": "tweetnacl",
+      "purpose": "CRYPTOGRAPHIC_LIBRARY",
+      "risk_score": 41.0,
+      "urgency": "MEDIUM",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 48.8,
+        "mosca_horizon_urgency": 0.0,
+        "operational_exposure": 29.3,
+        "business_criticality": 22.0
+      },
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    },
+    {
+      "asset_id": "cert-rsa-2048-sample_certificate.pem",
+      "algorithm": "RSA-2048",
+      "purpose": "IDENTITY_AND_AUTHENTICATION",
+      "risk_score": 64.31,
+      "urgency": "MEDIUM",
+      "mosca_condition_violated": false,
+      "mosca_slack_years": 1.0,
+      "is_scenario_assumption": true,
+      "factor_contributions": {
+        "algorithm_vulnerability": 43.5,
+        "mosca_horizon_urgency": 23.8,
+        "operational_exposure": 18.7,
+        "business_criticality": 14.0
+      },
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ],
+      "assumptions_applied": {
+        "scenario_id": "standard-2034-horizon",
+        "quantum_threat_horizon_years": 8.0,
+        "data_shelf_life_years": 5.0,
+        "migration_duration_years": 2.0,
+        "context_source": "DEFAULT_ASSUMPTION",
+        "ruleset_version": "2026.10-nist-pqc",
+        "scenario_caveat": "Mosca urgency reflects scenario simulation assumptions (X + Y > Z) and baseline defaults until enriched by asset owner."
+      },
+      "evaluated_at": "2026-10-03T16:58:45.449871+00:00"
+    }
+  ],
+  "backlog_items": [
+    {
+      "task_id": "mig-2e42289f",
+      "asset_id": "md5-crypto_service.py-42",
+      "relative_path": "crypto_service.py",
+      "start_line": 42,
+      "current_algorithm": "MD5",
+      "purpose": "HASHING",
+      "priority": "CRITICAL",
+      "composite_risk_score": 76.31,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "SHA-256 (NIST FIPS 180-4) or SHA3-256 (NIST FIPS 202)",
+      "target_hybrid_algorithm": null,
+      "dated_standard_ref": "NIST FIPS 180-4 / FIPS 202",
+      "compatibility_gaps": [
+        "Digest size increases from 128 bits to 256 bits; database schema adjustment required"
+      ],
+      "recommended_action": "Migrate all MD5 hash and HMAC usages to SHA-256 or SHA3-256",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_ALGORITHM_BROKEN_LEGACY"
+      ]
+    },
+    {
+      "task_id": "mig-7a1c489a",
+      "asset_id": "rsa-crypto_service.py-22",
+      "relative_path": "crypto_service.py",
+      "start_line": 22,
+      "current_algorithm": "RSA",
+      "purpose": "ASYMMETRIC",
+      "priority": "HIGH",
+      "composite_risk_score": 66.31,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "ML-KEM-768 (KEX) or ML-DSA-65 (Signatures)",
+      "target_hybrid_algorithm": "Hybrid X25519 + ML-KEM-768 (IETF draft-ietf-tls-hybrid-design)",
+      "dated_standard_ref": "NIST FIPS 203 (ML-KEM) & NIST FIPS 204 (ML-DSA) (Aug 2024)",
+      "compatibility_gaps": [
+        "Public key size expands: ML-KEM-768 public key is 1,184 bytes (vs RSA-2048 256 bytes)",
+        "Ciphertext size expands: ML-KEM-768 ciphertext is 1,088 bytes",
+        "TLS ClientHello may exceed single-packet MTU (1,500 bytes), causing TCP fragmentation"
+      ],
+      "recommended_action": "Plan upgrade to ML-KEM-768 for encryption/KEX and ML-DSA-65 for digital signatures",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_HIGH_COMPOSITE_RISK"
+      ]
+    },
+    {
+      "task_id": "mig-0b776dd9",
+      "asset_id": "rsa-2048-crypto_service.py-22",
+      "relative_path": "crypto_service.py",
+      "start_line": 22,
+      "current_algorithm": "RSA-2048",
+      "purpose": "ASYMMETRIC",
+      "priority": "MEDIUM",
+      "composite_risk_score": 64.31,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "ML-KEM-768 (KEX) / ML-DSA-65 (Signatures)",
+      "target_hybrid_algorithm": "Hybrid X25519 + ML-KEM-768",
+      "dated_standard_ref": "NIST FIPS 203 & 204 (Aug 2024)",
+      "compatibility_gaps": [
+        "Public key expands from 256B to 1,184B; signature expands to 3,309B"
+      ],
+      "recommended_action": "Transition to hybrid KEX or NIST ML-KEM-768",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ]
+    },
+    {
+      "task_id": "mig-fdd8d0c2",
+      "asset_id": "cert-rsa-2048-sample_certificate.pem",
+      "relative_path": "sample_certificate.pem",
+      "start_line": 1,
+      "current_algorithm": "RSA-2048",
+      "purpose": "IDENTITY_AND_AUTHENTICATION",
+      "priority": "MEDIUM",
+      "composite_risk_score": 64.31,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "ML-KEM-768 (KEX) / ML-DSA-65 (Signatures)",
+      "target_hybrid_algorithm": "Hybrid X25519 + ML-KEM-768",
+      "dated_standard_ref": "NIST FIPS 203 & 204 (Aug 2024)",
+      "compatibility_gaps": [
+        "Public key expands from 256B to 1,184B; signature expands to 3,309B"
+      ],
+      "recommended_action": "Transition to hybrid KEX or NIST ML-KEM-768",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ]
+    },
+    {
+      "task_id": "mig-d159195a",
+      "asset_id": "config-tlsv1.3-nginx.conf-15",
+      "relative_path": "nginx.conf",
+      "start_line": 15,
+      "current_algorithm": "TLSv1.3",
+      "purpose": "PROTOCOL",
+      "priority": "MEDIUM",
+      "composite_risk_score": 41.0,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "N/A - Review with Cryptographer",
+      "target_hybrid_algorithm": null,
+      "dated_standard_ref": "ASTRA Unknown Profile Fallback",
+      "compatibility_gaps": [],
+      "recommended_action": "Conduct cryptographic review",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ]
+    },
+    {
+      "task_id": "mig-e27e6551",
+      "asset_id": "config-tlsv1.2-nginx.conf-15",
+      "relative_path": "nginx.conf",
+      "start_line": 15,
+      "current_algorithm": "TLSv1.2",
+      "purpose": "PROTOCOL",
+      "priority": "MEDIUM",
+      "composite_risk_score": 41.0,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "N/A - Review with Cryptographer",
+      "target_hybrid_algorithm": null,
+      "dated_standard_ref": "ASTRA Unknown Profile Fallback",
+      "compatibility_gaps": [],
+      "recommended_action": "Conduct cryptographic review",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ]
+    },
+    {
+      "task_id": "mig-28a9698e",
+      "asset_id": "config-tlsv1.0-nginx.conf-15",
+      "relative_path": "nginx.conf",
+      "start_line": 15,
+      "current_algorithm": "TLSv1.0",
+      "purpose": "PROTOCOL",
+      "priority": "MEDIUM",
+      "composite_risk_score": 41.0,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "N/A - Review with Cryptographer",
+      "target_hybrid_algorithm": null,
+      "dated_standard_ref": "ASTRA Unknown Profile Fallback",
+      "compatibility_gaps": [],
+      "recommended_action": "Conduct cryptographic review",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ]
+    },
+    {
+      "task_id": "mig-060c727e",
+      "asset_id": "config-ecdhe-aes256-gcm-nginx.conf-16",
+      "relative_path": "nginx.conf",
+      "start_line": 16,
+      "current_algorithm": "ECDHE-AES256-GCM",
+      "purpose": "CIPHER_SUITE",
+      "priority": "MEDIUM",
+      "composite_risk_score": 41.0,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "N/A - Review with Cryptographer",
+      "target_hybrid_algorithm": null,
+      "dated_standard_ref": "ASTRA Unknown Profile Fallback",
+      "compatibility_gaps": [],
+      "recommended_action": "Conduct cryptographic review",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ]
+    },
+    {
+      "task_id": "mig-04ec56f4",
+      "asset_id": "config-ecdhe-aes128-gcm-nginx.conf-16",
+      "relative_path": "nginx.conf",
+      "start_line": 16,
+      "current_algorithm": "ECDHE-AES128-GCM",
+      "purpose": "CIPHER_SUITE",
+      "priority": "MEDIUM",
+      "composite_risk_score": 41.0,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "N/A - Review with Cryptographer",
+      "target_hybrid_algorithm": null,
+      "dated_standard_ref": "ASTRA Unknown Profile Fallback",
+      "compatibility_gaps": [],
+      "recommended_action": "Conduct cryptographic review",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ]
+    },
+    {
+      "task_id": "mig-355f0d1f",
+      "asset_id": "manifest-crypto-js-package.json",
+      "relative_path": "package.json",
+      "start_line": null,
+      "current_algorithm": "crypto-js",
+      "purpose": "CRYPTOGRAPHIC_LIBRARY",
+      "priority": "MEDIUM",
+      "composite_risk_score": 41.0,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "N/A - Review with Cryptographer",
+      "target_hybrid_algorithm": null,
+      "dated_standard_ref": "ASTRA Unknown Profile Fallback",
+      "compatibility_gaps": [],
+      "recommended_action": "Conduct cryptographic review",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ]
+    },
+    {
+      "task_id": "mig-ebf988bc",
+      "asset_id": "manifest-tweetnacl-package.json",
+      "relative_path": "package.json",
+      "start_line": null,
+      "current_algorithm": "tweetnacl",
+      "purpose": "CRYPTOGRAPHIC_LIBRARY",
+      "priority": "MEDIUM",
+      "composite_risk_score": 41.0,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "N/A - Review with Cryptographer",
+      "target_hybrid_algorithm": null,
+      "dated_standard_ref": "ASTRA Unknown Profile Fallback",
+      "compatibility_gaps": [],
+      "recommended_action": "Conduct cryptographic review",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ]
+    },
+    {
+      "task_id": "mig-efc519a2",
+      "asset_id": "manifest-crypto-js-package.json-6",
+      "relative_path": "package.json",
+      "start_line": 6,
+      "current_algorithm": "crypto-js",
+      "purpose": "CRYPTOGRAPHIC_LIBRARY",
+      "priority": "MEDIUM",
+      "composite_risk_score": 41.0,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "N/A - Review with Cryptographer",
+      "target_hybrid_algorithm": null,
+      "dated_standard_ref": "ASTRA Unknown Profile Fallback",
+      "compatibility_gaps": [],
+      "recommended_action": "Conduct cryptographic review",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ]
+    },
+    {
+      "task_id": "mig-5bd1b2e9",
+      "asset_id": "manifest-tweetnacl-package.json-7",
+      "relative_path": "package.json",
+      "start_line": 7,
+      "current_algorithm": "tweetnacl",
+      "purpose": "CRYPTOGRAPHIC_LIBRARY",
+      "priority": "MEDIUM",
+      "composite_risk_score": 41.0,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "N/A - Review with Cryptographer",
+      "target_hybrid_algorithm": null,
+      "dated_standard_ref": "ASTRA Unknown Profile Fallback",
+      "compatibility_gaps": [],
+      "recommended_action": "Conduct cryptographic review",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_MODERATE_MIGRATION_PRIORITY"
+      ]
+    },
+    {
+      "task_id": "mig-547224d3",
+      "asset_id": "aes-256-crypto_service.py-28",
+      "relative_path": "crypto_service.py",
+      "start_line": 28,
+      "current_algorithm": "AES-256",
+      "purpose": "ENCRYPTION",
+      "priority": "LOW",
+      "composite_risk_score": 27.0,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "N/A - Review with Cryptographer",
+      "target_hybrid_algorithm": null,
+      "dated_standard_ref": "NIST IR 8547 (Aug 2024)",
+      "compatibility_gaps": [],
+      "recommended_action": "Conduct cryptographic review",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_LOW_RISK_CLASSICAL"
+      ]
+    },
+    {
+      "task_id": "mig-baa1cf10",
+      "asset_id": "aes-crypto_service.py-28",
+      "relative_path": "crypto_service.py",
+      "start_line": 28,
+      "current_algorithm": "AES",
+      "purpose": "ENCRYPTION",
+      "priority": "LOW",
+      "composite_risk_score": 27.0,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "N/A - Review with Cryptographer",
+      "target_hybrid_algorithm": null,
+      "dated_standard_ref": "NIST IR 8547 (Aug 2024)",
+      "compatibility_gaps": [],
+      "recommended_action": "Conduct cryptographic review",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_LOW_RISK_CLASSICAL"
+      ]
+    },
+    {
+      "task_id": "mig-2e9553e4",
+      "asset_id": "ml-kem-crypto_service.py-34",
+      "relative_path": "crypto_service.py",
+      "start_line": 34,
+      "current_algorithm": "ML-KEM",
+      "purpose": "KEY_EXCHANGE",
+      "priority": "LOW",
+      "composite_risk_score": 23.0,
+      "mosca_deadline_passed": false,
+      "target_pqc_algorithm": "N/A - Review with Cryptographer",
+      "target_hybrid_algorithm": null,
+      "dated_standard_ref": "NIST FIPS 203 (Aug 2024)",
+      "compatibility_gaps": [],
+      "recommended_action": "Conduct cryptographic review",
+      "review_owner": "Security Architecture & Crypto Team",
+      "status": "OPEN",
+      "recommendation_type": "CANDIDATE_OPTION_FOR_HUMAN_REVIEW",
+      "operational_benchmarking_caveat": "Advisory candidate mapping from NIST standards. Requires deployment-specific benchmarking for latency/cost/bandwidth fit before migration.",
+      "reason_codes": [
+        "RC_LOW_RISK_CLASSICAL"
+      ]
+    }
+  ]
+}

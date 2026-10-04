@@ -1,0 +1,66 @@
+/* ErrorBanner Component Styles */
+.error-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background-color: var(--badge-critical-bg);
+  border: 1px solid var(--badge-critical-border);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  animation: fadeIn var(--transition-normal);
+}
+
+.error-banner__icon {
+  color: var(--rose);
+  display: flex;
+  align-items: center;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.error-banner__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.error-banner__title {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--badge-critical-text);
+  margin-bottom: 2px;
+}
+
+.error-banner__message {
+  font-size: 0.875rem;
+  color: var(--text-main);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.error-banner__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+  margin-left: var(--space-sm);
+}
+
+.error-banner__dismiss {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: var(--space-xs);
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.error-banner__dismiss:hover {
+  color: var(--text-main);
+  background-color: rgba(255, 255, 255, 0.1);
+}

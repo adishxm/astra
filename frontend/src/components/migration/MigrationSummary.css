@@ -1,0 +1,121 @@
+/* Migration Summary Styles */
+
+.migration-summary-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  width: 100%;
+}
+
+.migration-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--space-md);
+}
+
+.migration-metric-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.migration-metric-card:hover {
+  border-color: rgba(99, 102, 241, 0.3);
+  transform: translateY(-2px);
+}
+
+.migration-metric-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.migration-metric-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.migration-metric-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+  margin-bottom: var(--space-xs);
+}
+
+.migration-metric-number {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.1;
+  font-family: var(--font-sans);
+}
+
+.migration-metric-subtext {
+  font-size: var(--font-size-xs);
+  color: var(--text-dim);
+  margin-top: var(--space-xs);
+}
+
+.migration-color-rose {
+  color: var(--rose);
+}
+
+.migration-color-cyan {
+  color: var(--cyan);
+}
+
+.migration-color-emerald {
+  color: var(--emerald);
+}
+
+.migration-icon-primary {
+  color: var(--primary);
+}
+
+.migration-metric-icon-box {
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.migration-status-mini-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-wrap: wrap;
+  margin-top: var(--space-xs);
+}
+
+/* Truthfulness Banner */
+.migration-remediation-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  border-radius: var(--radius-md);
+}
+
+.migration-banner-icon {
+  color: var(--primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.migration-banner-content {
+  font-size: var(--font-size-xs);
+  color: var(--text-main);
+  line-height: 1.6;
+}
+
+.migration-banner-content strong {
+  color: var(--text-main);
+}
