@@ -60,6 +60,9 @@ class ContainerCryptoDetector:
     """Deterministic container layer and Dockerfile analyzer conforming to Worker 01 PROD-01."""
 
     DETECTOR_ID = "container_crypto_detector_v1"
+    MAX_BLOB_SIZE_BYTES = 100 * 1024 * 1024  # 100 MB
+    MAX_DECOMPRESSED_LAYER_BYTES = 250 * 1024 * 1024  # 250 MB
+    MAX_LAYER_ENTRIES = 50000
 
     def __init__(self):
         self._processed_blob_hashes = set()
@@ -488,17 +491,15 @@ class ContainerCryptoDetector:
         if not tf:
             return []
 
-        MAX_MEMBERS = 50000
-        MAX_TOTAL_SIZE = 250 * 1024 * 1024  # 250 MB
         total_decompressed = 0
         seen_pkgs = set()
 
         try:
             for count, member in enumerate(tf):
-                if count > MAX_MEMBERS:
+                if count > self.MAX_LAYER_ENTRIES:
                     break
                 total_decompressed += member.size
-                if total_decompressed > MAX_TOTAL_SIZE:
+                if total_decompressed > self.MAX_DECOMPRESSED_LAYER_BYTES:
                     break
                 # Directory traversal defense
                 if ".." in member.name or member.name.startswith("/"):

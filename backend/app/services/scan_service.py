@@ -387,19 +387,23 @@ class ScanService:
 
         # 7. Generate CycloneDX 1.6 CBOM
         components = []
-        seen_comps = set()
+        seen_refs = set()
         root_ref = f"urn:astra:app:{re.sub(r'[^a-zA-Z0-9_-]', '-', name.lower())}"
 
         for asset in canonical_assets:
             for obs in asset.observations:
                 algo = obs.algorithm or "UNKNOWN"
+                slug_algo = re.sub(r'[^a-zA-Z0-9_-]', '-', algo.lower())
                 comp_name = f"{algo}-{asset.asset_id[:8]}"
                 
-                # Ensure uniqueItems for CBOM components array
-                if comp_name in seen_comps:
-                    continue
-                seen_comps.add(comp_name)
-                comp_ref = f"urn:astra:crypto:{asset.asset_id[:8]}"
+                # Ensure unique bom-ref for CBOM components
+                base_ref = f"urn:astra:crypto:{slug_algo}-{asset.asset_id[:8]}"
+                comp_ref = base_ref
+                counter = 1
+                while comp_ref in seen_refs:
+                    comp_ref = f"{base_ref}-{counter}"
+                    counter += 1
+                seen_refs.add(comp_ref)
                 
                 comp = {
                     "type": "cryptographic-asset",
@@ -416,15 +420,16 @@ class ScanService:
                 }
                 components.append(comp)
 
+        dep_refs = [c["bom-ref"] for c in components if "bom-ref" in c]
+        unique_dep_refs = list(dict.fromkeys(dep_refs))
         dependencies = [
             {
                 "ref": root_ref,
-                "dependsOn": [c["bom-ref"] for c in components if "bom-ref" in c],
+                "dependsOn": unique_dep_refs,
             }
         ]
-        for c in components:
-            if "bom-ref" in c:
-                dependencies.append({"ref": c["bom-ref"], "dependsOn": []})
+        for ref in unique_dep_refs:
+            dependencies.append({"ref": ref, "dependsOn": []})
 
         cbom_data = {
             "bomFormat": "CycloneDX",
