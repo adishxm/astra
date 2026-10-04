@@ -9,6 +9,7 @@ Temporal DNA Fingerprinting -> CycloneDX 1.6 CBOM Export -> Storage.
 import hashlib
 import json
 import os
+import re
 import shutil
 import uuid
 from datetime import datetime, timezone
@@ -387,6 +388,8 @@ class ScanService:
         # 7. Generate CycloneDX 1.6 CBOM
         components = []
         seen_comps = set()
+        root_ref = f"urn:astra:app:{re.sub(r'[^a-zA-Z0-9_-]', '-', name.lower())}"
+
         for asset in canonical_assets:
             for obs in asset.observations:
                 algo = obs.algorithm or "UNKNOWN"
@@ -396,9 +399,11 @@ class ScanService:
                 if comp_name in seen_comps:
                     continue
                 seen_comps.add(comp_name)
+                comp_ref = f"urn:astra:crypto:{asset.asset_id[:8]}"
                 
                 comp = {
                     "type": "cryptographic-asset",
+                    "bom-ref": comp_ref,
                     "name": comp_name,
                     "cryptoProperties": {
                         "assetType": "algorithm",
@@ -411,6 +416,16 @@ class ScanService:
                 }
                 components.append(comp)
 
+        dependencies = [
+            {
+                "ref": root_ref,
+                "dependsOn": [c["bom-ref"] for c in components if "bom-ref" in c],
+            }
+        ]
+        for c in components:
+            if "bom-ref" in c:
+                dependencies.append({"ref": c["bom-ref"], "dependsOn": []})
+
         cbom_data = {
             "bomFormat": "CycloneDX",
             "specVersion": "1.6",
@@ -422,9 +437,11 @@ class ScanService:
                 "component": {
                     "type": "application",
                     "name": name,
+                    "bom-ref": root_ref,
                 },
             },
             "components": components,
+            "dependencies": dependencies,
         }
 
         # Validate CBOM conformity

@@ -32,9 +32,13 @@ CONTAINER_CRYPTO_PACKAGES: Dict[str, Tuple[str, str, ConfidenceBand]] = {
     "libssl-dev": ("OpenSSL-Dev", "DEVELOPMENT_CRYPTO_HEADERS", ConfidenceBand.HIGH),
     "libssl3": ("OpenSSL-3.x", "SYSTEM_CRYPTO_SUITE", ConfidenceBand.HIGH),
     "libssl1.1": ("OpenSSL-1.1", "LEGACY_CRYPTO_SUITE", ConfidenceBand.HIGH),
+    "libssl": ("OpenSSL", "SYSTEM_CRYPTO_SUITE", ConfidenceBand.CONFIRMED),
+    "libcrypto": ("OpenSSL-libcrypto", "SYSTEM_CRYPTO_SUITE", ConfidenceBand.CONFIRMED),
     "gnutls-bin": ("GnuTLS", "SYSTEM_CRYPTO_SUITE", ConfidenceBand.HIGH),
     "libgnutls30": ("GnuTLS", "SYSTEM_CRYPTO_SUITE", ConfidenceBand.HIGH),
+    "libgnutls": ("GnuTLS", "SYSTEM_CRYPTO_SUITE", ConfidenceBand.CONFIRMED),
     "wolfssl": ("WolfSSL", "EMBEDDED_CRYPTO_SUITE", ConfidenceBand.HIGH),
+    "libwolfssl": ("WolfSSL", "EMBEDDED_CRYPTO_SUITE", ConfidenceBand.CONFIRMED),
     "liboqs": ("liboqs", "PQC_ALGORITHMS", ConfidenceBand.CONFIRMED),
     "liboqs-dev": ("liboqs-Dev", "PQC_ALGORITHMS", ConfidenceBand.CONFIRMED),
     "ca-certificates": ("X.509-Root-Trust-Store", "PKI_TRUST_STORE", ConfidenceBand.HIGH),
@@ -57,6 +61,32 @@ class ContainerCryptoDetector:
 
     DETECTOR_ID = "container_crypto_detector_v1"
 
+    def __init__(self):
+        self._processed_blob_hashes = set()
+
+    @staticmethod
+    def _is_gzip(file_path: Path) -> bool:
+        """Check if file has gzip magic bytes (\x1f\x8b)."""
+        try:
+            with open(file_path, "rb") as f:
+                return f.read(2) == b"\x1f\x8b"
+        except Exception:
+            return False
+
+    def _open_tar_safely(self, file_path: Path):
+        """Safely open an uncompressed or gzip tar archive."""
+        if self._is_gzip(file_path):
+            try:
+                return tarfile.open(file_path, "r:gz")
+            except Exception:
+                return None
+        elif tarfile.is_tarfile(file_path):
+            try:
+                return tarfile.open(file_path, "r:*")
+            except Exception:
+                return None
+        return None
+
     def can_analyze(self, file_path: Path) -> bool:
         """Check if file is a Dockerfile, Containerfile, OCI layer archive, or container manifest."""
         name = file_path.name.lower()
@@ -64,7 +94,9 @@ class ContainerCryptoDetector:
             return True
         if name in {"manifest.json", "layer.json", "index.json", "oci-layout"}:
             return True
-        if name.endswith(".tar") and any(k in name for k in ("layer", "image", "oci", "container")):
+        if name.endswith(".tar") or name.endswith(".tar.gz") or name.endswith(".tgz"):
+            return True
+        if "blobs" in file_path.parts and "sha256" in file_path.parts:
             return True
         return False
 
@@ -74,18 +106,29 @@ class ContainerCryptoDetector:
         relative_path: str,
         scan_id: str,
     ) -> List[Observation]:
-        """Analyze container definitions, OCI manifests, and layer archives."""
+        """Analyze container definitions, OCI manifests, layouts, and layer archives."""
         name = file_path.name.lower()
 
-        # 1. OCI Layer Archive (.tar)
-        if name.endswith(".tar"):
-            return self._analyze_tar_layer(file_path, relative_path, scan_id)
-
-        # 2. OCI / Docker Manifest or Layout JSON
-        if name in {"manifest.json", "layer.json", "index.json", "oci-layout"}:
+        # 1. OCI Image Layout Root (index.json or oci-layout)
+        if name in {"index.json", "oci-layout"}:
+            parent = file_path.parent
+            if (parent / "blobs" / "sha256").is_dir() or (parent / "index.json").is_file():
+                return self._analyze_oci_layout(parent, relative_path, scan_id)
             return self._analyze_oci_manifest(file_path, relative_path, scan_id)
 
-        # 3. Dockerfile / Containerfile
+        # 2. Content-Addressed Blob in blobs/sha256/<hash>
+        if "blobs" in file_path.parts and "sha256" in file_path.parts:
+            return self._analyze_content_addressed_blob(file_path, relative_path, scan_id)
+
+        # 3. Layer Archive (.tar, .tar.gz, .tgz)
+        if name.endswith(".tar") or name.endswith(".tar.gz") or name.endswith(".tgz"):
+            return self._analyze_tar_layer(file_path, relative_path, scan_id)
+
+        # 4. Standalone Manifest or Layer Descriptor
+        if name in {"manifest.json", "layer.json"}:
+            return self._analyze_oci_manifest(file_path, relative_path, scan_id)
+
+        # 5. Dockerfile / Containerfile
         return self._analyze_dockerfile(file_path, relative_path, scan_id)
 
     def _analyze_dockerfile(
@@ -313,48 +356,211 @@ class ContainerCryptoDetector:
         scan_id: str,
     ) -> List[Observation]:
         """Inspect contents of an OCI container layer archive for system cryptographic libraries."""
+        return self._inspect_layer_archive(file_path, relative_path, scan_id)
+
+    def _analyze_oci_layout(
+        self,
+        layout_root: Path,
+        relative_path: str,
+        scan_id: str,
+    ) -> List[Observation]:
+        """Parse standard OCI Image Layout (index.json -> manifest blob -> layer tar+gzip blobs)."""
         observations: List[Observation] = []
-        if not tarfile.is_tarfile(file_path):
+        index_file = layout_root / "index.json"
+        if not index_file.is_file():
             return []
 
         try:
-            with tarfile.open(file_path, "r") as tf:
-                members = tf.getnames()
+            with open(index_file, "r", encoding="utf-8", errors="replace") as f:
+                index_data = json.load(f)
         except Exception:
             return []
 
-        seen_pkgs = set()
-        for member_name in members:
-            norm_name = member_name.lower().replace("\\", "/")
-            for pkg_key, (algo, purpose, conf) in CONTAINER_CRYPTO_PACKAGES.items():
-                if pkg_key in seen_pkgs:
+        blobs_dir = layout_root / "blobs" / "sha256"
+        manifests = index_data.get("manifests", [])
+        if not isinstance(manifests, list):
+            return []
+
+        for m_desc in manifests:
+            m_digest = m_desc.get("digest", "")
+            m_hash = m_digest.split(":", 1)[-1] if ":" in m_digest else m_digest
+            if not m_hash:
+                continue
+
+            manifest_blob = blobs_dir / m_hash
+            if not manifest_blob.is_file():
+                continue
+
+            self._processed_blob_hashes.add(m_hash)
+
+            try:
+                with open(manifest_blob, "r", encoding="utf-8", errors="replace") as mf:
+                    manifest_data = json.load(mf)
+            except Exception:
+                continue
+
+            # Check config or annotations for image identity
+            config_digest = manifest_data.get("config", {}).get("digest", "")
+            if config_digest:
+                self._processed_blob_hashes.add(config_digest.split(":", 1)[-1])
+
+            # Inspect each layer descriptor
+            layers = manifest_data.get("layers", [])
+            for layer_idx, layer_desc in enumerate(layers):
+                l_digest = layer_desc.get("digest", "")
+                l_hash = l_digest.split(":", 1)[-1] if ":" in l_digest else l_digest
+                if not l_hash:
                     continue
-                # Match package name or library name (e.g. libssl, wolfssl, openssl, liboqs)
-                base_pkg = pkg_key.removeprefix("lib").removesuffix("-dev").removesuffix("-bin").removesuffix("3").removesuffix("1.1")
-                if pkg_key in norm_name or (len(base_pkg) >= 3 and base_pkg in norm_name):
-                    seen_pkgs.add(pkg_key)
-                    excerpt = f"Discovered in OCI layer archive: {member_name}"
-                    observations.append(
-                        Observation(
-                            observation_id=str(uuid.uuid4()),
-                            scan_id=scan_id,
-                            candidate_asset_id=f"container:layer:binary:{pkg_key}:{hashlib.sha256(member_name.encode()).hexdigest()[:8]}",
-                            claim_type=ClaimType.CONTAINER_PACKAGE,
-                            source_kind=SourceKind.CONTAINER,
-                            algorithm=algo,
-                            purpose=purpose,
-                            relative_path=relative_path,
-                            start_line=1,
-                            end_line=1,
-                            evidence_digest=hashlib.sha256(excerpt.encode()).hexdigest(),
-                            sanitized_excerpt=excerpt,
-                            detector_id=self.DETECTOR_ID,
-                            ruleset_version=RULESET_VERSION,
-                            confidence=ConfidenceBand.CONFIRMED,
-                            confidence_rationale=f"Cryptographic library path discovered inside OCI layer archive: {member_name}",
-                            state=EvidenceState.OBSERVED,
-                            raw_parameters={"member_path": member_name, "package": pkg_key},
+
+                layer_blob = blobs_dir / l_hash
+                if not layer_blob.is_file():
+                    continue
+
+                self._processed_blob_hashes.add(l_hash)
+
+                # Defense against hostile archive bombs: verify size and sha256
+                try:
+                    blob_size = layer_blob.stat().st_size
+                    if blob_size > 100 * 1024 * 1024:  # 100 MB max layer size
+                        continue
+
+                    # Verify sha256 digest integrity
+                    with open(layer_blob, "rb") as bf:
+                        actual_digest = hashlib.sha256(bf.read()).hexdigest()
+                    if actual_digest != l_hash:
+                        continue
+                except OSError:
+                    continue
+
+                # Inspect layer tarball (uncompressed or gzip)
+                layer_rel = f"{relative_path}/blobs/sha256/{l_hash[:12]}"
+                layer_obs = self._inspect_layer_archive(
+                    layer_blob,
+                    layer_rel,
+                    scan_id,
+                    layer_hash=l_hash,
+                )
+                observations.extend(layer_obs)
+
+        return observations
+
+    def _analyze_content_addressed_blob(
+        self,
+        file_path: Path,
+        relative_path: str,
+        scan_id: str,
+    ) -> List[Observation]:
+        """Analyze a standalone content-addressed blob from blobs/sha256/<hash>."""
+        blob_hash = file_path.name
+        if blob_hash in self._processed_blob_hashes:
+            return []
+        self._processed_blob_hashes.add(blob_hash)
+
+        # Check if it's a JSON file (e.g. manifest or config)
+        if not self._is_gzip(file_path) and not tarfile.is_tarfile(file_path):
+            try:
+                with open(file_path, "r", encoding="utf-8", errors="replace") as f:
+                    content = json.load(f)
+                if isinstance(content, dict) and "schemaVersion" in content:
+                    return self._analyze_oci_manifest(file_path, relative_path, scan_id)
+            except Exception:
+                pass
+            return []
+
+        # It's an archive layer
+        return self._inspect_layer_archive(
+            file_path,
+            relative_path,
+            scan_id,
+            layer_hash=blob_hash,
+        )
+
+    def _inspect_layer_archive(
+        self,
+        file_path: Path,
+        relative_path: str,
+        scan_id: str,
+        layer_hash: Optional[str] = None,
+    ) -> List[Observation]:
+        """Safely inspect an OCI layer archive (tar or gzip) under streaming limits."""
+        observations: List[Observation] = []
+        tf = self._open_tar_safely(file_path)
+        if not tf:
+            return []
+
+        MAX_MEMBERS = 50000
+        MAX_TOTAL_SIZE = 250 * 1024 * 1024  # 250 MB
+        total_decompressed = 0
+        seen_pkgs = set()
+
+        try:
+            for count, member in enumerate(tf):
+                if count > MAX_MEMBERS:
+                    break
+                total_decompressed += member.size
+                if total_decompressed > MAX_TOTAL_SIZE:
+                    break
+                # Directory traversal defense
+                if ".." in member.name or member.name.startswith("/"):
+                    continue
+
+                norm_name = member.name.lower().replace("\\", "/")
+
+                for pkg_key, (algo, purpose, conf) in CONTAINER_CRYPTO_PACKAGES.items():
+                    if pkg_key in seen_pkgs:
+                        continue
+
+                    # Library or binary match
+                    matched = False
+                    if pkg_key in norm_name:
+                        matched = True
+                    elif pkg_key == "libssl" and ("libssl.so" in norm_name or "libssl3.so" in norm_name):
+                        matched = True
+                    elif pkg_key == "libcrypto" and "libcrypto.so" in norm_name:
+                        matched = True
+                    elif pkg_key == "libwolfssl" and "libwolfssl.so" in norm_name:
+                        matched = True
+                    elif pkg_key == "openssl" and ("/bin/openssl" in norm_name or "openssl.cnf" in norm_name):
+                        matched = True
+                    elif pkg_key == "ca-certificates" and ("ca-certificates.crt" in norm_name or "etc/ssl/certs" in norm_name):
+                        matched = True
+
+                    if matched:
+                        seen_pkgs.add(pkg_key)
+                        digest_tag = f"sha256:{layer_hash[:12]}" if layer_hash else "layer"
+                        excerpt = f"Discovered in OCI layer ({digest_tag}): {member.name}"
+                        observations.append(
+                            Observation(
+                                observation_id=str(uuid.uuid4()),
+                                scan_id=scan_id,
+                                candidate_asset_id=f"container:oci:layer:{pkg_key}:{hashlib.sha256(member.name.encode()).hexdigest()[:8]}",
+                                claim_type=ClaimType.CONTAINER_PACKAGE,
+                                source_kind=SourceKind.CONTAINER,
+                                algorithm=algo,
+                                purpose=purpose,
+                                relative_path=relative_path,
+                                start_line=1,
+                                end_line=1,
+                                evidence_digest=hashlib.sha256(excerpt.encode()).hexdigest(),
+                                sanitized_excerpt=excerpt,
+                                detector_id=self.DETECTOR_ID,
+                                ruleset_version=RULESET_VERSION,
+                                confidence=ConfidenceBand.CONFIRMED,
+                                confidence_rationale=f"Cryptographic system library path '{member.name}' confirmed inside OCI container layer",
+                                state=EvidenceState.OBSERVED,
+                                raw_parameters={
+                                    "member_path": member.name,
+                                    "package": pkg_key,
+                                    "layer_digest": f"sha256:{layer_hash}" if layer_hash else "",
+                                },
+                            )
                         )
-                    )
+        except Exception:
+            pass
+        finally:
+            try:
+                tf.close()
+            except Exception:
+                pass
 
         return observations
