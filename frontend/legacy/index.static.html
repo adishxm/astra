@@ -2117,7 +2117,7 @@ Cryptographic Components: 7</pre>
      and is used automatically when the dashboard is served by `astra serve`. */
   
   /* ── real api integration ─────────────────────────────────────── */
-  var API_BASE = (window.VITE_API_BASE_URL || 'http://127.0.0.1:8000') + '/api/v1';
+  var API_BASE = (window.VITE_API_BASE_URL || (window.location && window.location.origin && window.location.origin !== 'null' && window.location.protocol.startsWith('http') ? window.location.origin : 'http://127.0.0.1:8000')) + '/api/v1';
 
   function fetchAPI(path, options) {
     return fetch(API_BASE + path, options).then(function (res) {
@@ -2180,34 +2180,66 @@ Cryptographic Components: 7</pre>
             if (risk && risk.risk_evaluations) {
               riskEval = risk.risk_evaluations.find(function(r) { return r.asset_id === asset.asset_id; });
             }
+            var qVuln = false;
+            if (obs.is_quantum_vulnerable !== undefined) {
+              qVuln = obs.is_quantum_vulnerable;
+            } else if (riskEval) {
+              qVuln = riskEval.quantum_vulnerable || riskEval.mosca_condition_violated || false;
+            }
+            var sev = 'MEDIUM';
+            if (riskEval && riskEval.urgency) {
+              sev = typeof riskEval.urgency === 'object' ? riskEval.urgency.value : riskEval.urgency;
+            } else if (obs.severity) {
+              sev = obs.severity;
+            }
+            var pqcAlgo = (riskEval && riskEval.candidate_pqc_algorithm) || obs.candidate_pqc_algorithm || 'ML-KEM / FIPS 203';
+            var shelfLifeVal = (riskEval && riskEval.context && riskEval.context.data_shelf_life_years !== undefined) ? riskEval.context.data_shelf_life_years : 5.0;
+            var migrationVal = (riskEval && riskEval.context && riskEval.context.migration_duration_years !== undefined) ? riskEval.context.migration_duration_years : 2.0;
+
             return {
               id: asset.asset_id,
               algorithm: obs.algorithm,
               category: obs.category,
               keySize: obs.key_size_bits ? obs.key_size_bits + '-bit' : 'N/A',
               file: obs.relative_path,
-              line: obs.line_number || 1,
-              evidence: obs.evidence_snippet || obs.detector_id,
+              line: obs.start_line !== undefined ? obs.start_line : (obs.line_number || 1),
+              evidence: obs.sanitized_excerpt || obs.evidence_snippet || obs.detector_id || 'Observed cryptographic usage',
               confidence: obs.confidence || 'High',
-              quantumVulnerable: obs.is_quantum_vulnerable || false,
-              severity: obs.severity,
-              pqc: obs.candidate_pqc_algorithm || 'Retain',
-              purpose: obs.purpose || 'Unknown',
-              shelfLife: riskEval && riskEval.context ? riskEval.context.data_shelf_life_years : 7.0,
-              migration: riskEval && riskEval.context ? riskEval.context.migration_duration_years : 3.0,
+              quantumVulnerable: qVuln,
+              severity: sev,
+              pqc: pqcAlgo,
+              purpose: (riskEval && riskEval.purpose) || obs.purpose || 'Cryptographic Operation',
+              shelfLife: shelfLifeVal,
+              migration: migrationVal,
+              contextSource: (riskEval && riskEval.context && riskEval.context.context_source) || 'DEFAULT_ASSUMPTION',
               notes: ''
             };
           });
         });
       }
 
+      var covPct = 0;
+      if (scan.coverage && typeof scan.coverage.overall_coverage_percentage === 'number') {
+        covPct = scan.coverage.overall_coverage_percentage;
+      } else if (scan.summary && typeof scan.summary.coverage_percentage === 'number') {
+        covPct = scan.summary.coverage_percentage;
+      } else if (typeof scan.coverage_percentage === 'number') {
+        covPct = scan.coverage_percentage;
+      }
+
+      var filesAssessed = (scan.summary && scan.summary.assessed_files !== undefined) ? scan.summary.assessed_files :
+                          ((scan.coverage && scan.coverage.total_assessed_files !== undefined) ? scan.coverage.total_assessed_files : (scan.asset_count || 0));
+      var filesTotal = (scan.summary && scan.summary.total_files !== undefined) ? scan.summary.total_files :
+                       ((scan.coverage && scan.coverage.total_files_in_archive !== undefined) ? scan.coverage.total_files_in_archive : (scan.asset_count || 0));
+
       return {
         id: scan.scan_id,
         source: scan.target_name,
-        coverage: scan.coverage_percentage / 100,
-        filesAssessed: scan.asset_count,
-        filesTotal: scan.asset_count,
-        coverageNote: scan.summary || '',
+        coverage: covPct / 100,
+        coveragePercentage: covPct,
+        filesAssessed: filesAssessed,
+        filesTotal: filesTotal,
+        coverageNote: (scan.summary && scan.summary.clean_state_label) || '',
         assets: mappedAssets,
         auditChain: [],
         cbomJson: JSON.stringify(cbom, null, 2)

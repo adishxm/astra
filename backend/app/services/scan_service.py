@@ -238,13 +238,15 @@ class ScanService:
         directory_path: str,
         target_name: Optional[str] = None,
         scenario: Optional[RiskScenario] = None,
+        scan_id: Optional[str] = None,
+        override_manifest: Optional[ScanManifest] = None,
     ) -> ScanRecord:
         """Analyze a local directory containing source code, manifests, and configs."""
         dir_path = Path(directory_path).resolve()
         if not dir_path.exists() or not dir_path.is_dir():
             raise FileNotFoundError(f"Target directory does not exist or is not a directory: {directory_path}")
 
-        scan_id = f"scan-{str(uuid.uuid4())[:8]}"
+        scan_id = scan_id or f"scan-{str(uuid.uuid4())[:8]}"
         name = target_name or dir_path.name
         active_scenario = scenario or RiskScenario()
 
@@ -255,29 +257,35 @@ class ScanService:
         
         # 1. Collect files & build manifest
         all_files = []
-        for root, _, files in os.walk(dir_path):
+        for root, dirs, files in os.walk(dir_path):
+            dirs[:] = [d for d in dirs if not d.startswith(".") and d not in ("__pycache__", "node_modules")]
             for file in sorted(files):
-                    if file in ("observations.json", ".DS_Store", "Thumbs.db"):
-                        continue
-                    full_p = Path(root) / file
-                    
-                    if full_p.is_symlink():
-                        try:
-                            resolved_path = full_p.resolve(strict=True)
-                            if not resolved_path.is_relative_to(dir_path):
-                                continue
-                        except Exception:
-                            continue
-                    
+                if file.startswith(".") or file in ("observations.json", "scan_manifest.json", "manifest.json", ".DS_Store", "Thumbs.db"):
+                    continue
+                full_p = Path(root) / file
+                
+                if full_p.is_symlink():
                     try:
-                        rel_p = str(full_p.relative_to(dir_path)).replace("\\", "/")
-                        size = full_p.stat().st_size
-                        all_files.append((rel_p, size))
+                        resolved_path = full_p.resolve(strict=True)
+                        if not resolved_path.is_relative_to(dir_path):
+                            continue
                     except Exception:
                         continue
+                
+                try:
+                    rel_p = str(full_p.relative_to(dir_path)).replace("\\", "/")
+                    size = full_p.stat().st_size
+                    all_files.append((rel_p, size))
+                except Exception:
+                    continue
 
-            all_files.sort(key=lambda x: x[0])
+        all_files.sort(key=lambda x: x[0])
 
+        if override_manifest:
+            manifest = override_manifest
+            # Ensure the scan_id matches the unified scan_id
+            manifest.scan_id = scan_id
+        else:
             extracted_entries = []
             for rel_p, size in all_files:
                 full_p = dir_path / rel_p
@@ -319,12 +327,12 @@ class ScanService:
                 files=extracted_entries,
             )
 
-            # 2. Run discovery engine
-            discovery_summary = self.discovery_engine.run_discovery(
-                sandbox_dir=dir_path,
-                manifest=manifest,
-                output_dir=output_dir,
-            )
+        # 2. Run discovery engine
+        discovery_summary = self.discovery_engine.run_discovery(
+            sandbox_dir=dir_path,
+            manifest=manifest,
+            output_dir=output_dir,
+        )
         observations = discovery_summary.observations
 
         # 3. Compute truthful coverage accounting
@@ -465,10 +473,9 @@ class ScanService:
                 directory_path=manifest.sandbox_directory,
                 target_name=name,
                 scenario=scenario,
+                scan_id=manifest.scan_id,
+                override_manifest=manifest,
             )
-            # Update manifest with real archive details
-            record.manifest = manifest
-            self.store.save(record)
             return record
         finally:
             sandbox_mgr.cleanup_sandbox(manifest.scan_id)

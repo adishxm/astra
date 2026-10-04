@@ -42,9 +42,9 @@ class SandboxManager:
         sandbox_path.mkdir(parents=True, exist_ok=True)
         return sandbox_path
 
-    def execute_intake(self, request: IntakeRequest) -> ScanManifest:
+    def execute_intake(self, request: IntakeRequest, scan_id: Optional[str] = None) -> ScanManifest:
         """Process an archive intake request within a guarded sandbox."""
-        scan_id = str(uuid.uuid4())
+        scan_id = scan_id or f"scan-{str(uuid.uuid4())[:8]}"
         sandbox_dir = self.create_sandbox_path(scan_id)
         archive_path = Path(request.archive_path)
 
@@ -60,10 +60,13 @@ class SandboxManager:
             # Apply read-only isolation across the extracted sandbox tree
             make_tree_readonly(sandbox_dir)
 
-            # Persist scan manifest inside sandbox for downstream stages (W02, W04)
+            # Persist scan manifest inside sandbox for downstream stages and backup adjacent
             manifest_file = sandbox_dir / "scan_manifest.json"
-            # Briefly allow write for manifest file creation
             with open(manifest_file, "w", encoding="utf-8") as f:
+                json.dump(manifest.model_dump(mode="json"), f, indent=2, default=str)
+
+            backup_manifest = self.base_dir / f"scan_{scan_id}_manifest.json"
+            with open(backup_manifest, "w", encoding="utf-8") as f:
                 json.dump(manifest.model_dump(mode="json"), f, indent=2, default=str)
 
             return manifest
@@ -75,6 +78,10 @@ class SandboxManager:
 
     def cleanup_sandbox(self, scan_id: str) -> bool:
         """Purge sandbox directory for given scan ID."""
+        manifest_file = self.base_dir / f"scan_{scan_id}_manifest.json"
+        if manifest_file.exists():
+            manifest_file.unlink(missing_ok=True)
+
         sandbox_dir = self.base_dir / f"scan_{scan_id}"
         if sandbox_dir.exists():
             # In Windows, files marked read-only cannot be deleted by rmtree without an onerror handler
