@@ -1,13 +1,14 @@
-# Worker 03 status
+# Worker 03 Status: 100-Point Fresh Assessment & Roadmap Recovery
 
-**Overall:** ALL MVP PHASES (MVP-01, MVP-02, MVP-03) AND PRODUCTION PHASES (PROD-01, PROD-02) IMPLEMENTED & VALIDATED.
+**Overall Status:** ALL 5 PHASES PLANNED. Ready for pre-execution Git push.
 
-| Phase | Status | Gate/next action |
-|---|---|---|
-| MVP-01 — Context fields and transparent risk model | IMPLEMENTED & VALIDATED | 4/4 tests passed; Mosca theorem active |
-| MVP-02 — Candidate mapping and actionable migration backlog | IMPLEMENTED & VALIDATED | 3/3 tests passed; dated PQC mappings active |
-| MVP-03 — Scenario sensitivity and end-to-end decision behavior | IMPLEMENTED & VALIDATED | 2/2 tests passed; CRQC horizon slider active |
-| PROD-01 — Dependency-aware constrained migration roadmap | IMPLEMENTED & VALIDATED | 2/2 tests passed; topological scheduling, cycle detection, bottleneck ranking active |
-| PROD-02 — Security-property, trust and rollback assurance | IMPLEMENTED & VALIDATED | 2/2 tests passed; invariant preservation, downgrade immunity, rollback audit active |
+| Phase | Title | Status | Gate / Next Action |
+|---|---|---|---|
+| **Phase A** | Security Hardening: Hosted Mode Fail-Closed Auth, Endpoint Protection & Outbound Egress Guard | PLANNED | Fail closed in hosted mode; 401 on unauthenticated scan reads; rate limits; 0 outbound socket egress |
+| **Phase B** | Frontend Data Semantics: Purpose-Specific PQC Recommendations, Honest Category Mapping & Real Audit State | PLANNED | Fix `undefined` category; purpose-specific PQC mappings (no universal ML-KEM); live scan audit trail |
+| **Phase C** | Empirical Benchmark Math Repair: Finding-Level Precision, Unmatched False Positive Accounting & Holdout Integrity | PLANNED | Finding-level TP/FP/FN/TN; unmatched detections penalized as FP; negative controls; holdout set |
+| **Phase D** | Real OCI Image Layout Discovery & CycloneDX 1.6 CBOM Dependency Relationships | PLANNED | Parse `oci-layout`, `index.json`, decompress hashed gzip layer blobs safely; CBOM `dependencies` graph |
+| **Phase E** | Dynamic Evidence-Derived Rehearsal Scorecard & Truthful Documentation Closeout | PLANNED | Dynamic evidence-based scorecard in rehearsal runner; README metric synchronization; full closeout |
 
-**Total Worker 03 Test Suite:** 13 passed / 13 total (100% pass rate). Entire repository: 74/74 passing tests.
+---
+**Active Obligation:** Push all phase plans (`phase_a.md` through `phase_e.md` and `status.md`) to Git before starting Phase A implementation.
