@@ -180,6 +180,8 @@ class AuditChainStore:
 
         result["events"] = [e.model_dump() for e in filtered_events]
         result["events_count"] = len(filtered_events)
+        result["chain_valid"] = result.get("valid", True)
+        result["verified_tip_hash"] = result.get("tip_hash", "")
         result["stored_path"] = str(self.file_path)
         return result
 

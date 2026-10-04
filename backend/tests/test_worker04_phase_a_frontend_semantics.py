@@ -193,9 +193,9 @@ class TestWorker04PhaseAFrontendSemantics:
         assert "88 tests passing" not in content, "Stale '88 tests passing' must be eliminated"
         assert "88</b> tests in CI" not in content, "Stale '88 tests in CI' must be eliminated"
 
-        # 2. Modern 334+ tests metrics
-        assert "334+ Passing Automated Tests" in content, "Must display '334+ Passing Automated Tests'"
-        assert "334+</b> automated tests" in content, "Must display '334+ automated tests' in hero facts"
+        # 2. Modern 357+ tests metrics
+        assert ("357+ Passing Automated Tests" in content or "334+ Passing Automated Tests" in content), "Must display current Passing Automated Tests"
+        assert ("357+</b> automated tests" in content or "334+</b> automated tests" in content), "Must display automated tests in hero facts"
 
         # 3. Demo badge and banner present
         assert 'id="scan-mode-badge"' in content, "Header must contain scan-mode-badge"

@@ -90,7 +90,7 @@ def run_rehearsal() -> int:
     else:
         f1_errors.append(f"Synthetic sample upload failed: {res_sample.status_code}")
 
-    # Gate 1.2: Multi-surface discovery across Source, Manifest, Config, Cert, Container
+    # Gate 1.2: Multi-surface discovery across Source, Manifest, Config, Cert, Container, Cloud KMS, PKCS#11 HSM
     corpus_dir = BACKEND_DIR / "tests" / "fixtures" / "corpus"
     zip_buf_corpus = create_sample_zip(corpus_dir)
     res_corpus = client.post(
@@ -104,12 +104,16 @@ def run_rehearsal() -> int:
         if findings_res.status_code == 200:
             obs_list = findings_res.json().get("observations", [])
             surfaces = {o.get("source_kind") for o in obs_list}
-            # Verify multi-surface coverage
-            if len(surfaces) >= 3:
+            detectors = {o.get("detector_id") for o in obs_list}
+            core_surfaces = {"SOURCE_CODE", "MANIFEST", "CONFIG", "CERTIFICATE", "CONTAINER"}
+            has_core = core_surfaces.issubset(surfaces)
+            has_kms = "detector-cloud-kms-v1" in detectors
+            has_pkcs11 = "detector-pkcs11-hsm-v1" in detectors
+            if has_core and has_kms and has_pkcs11:
                 f1_earned += 10
-                print(f"  [+] Multi-Surface Engine: Verified surfaces: {surfaces} (+10 pts)")
+                print(f"  [+] Multi-Surface Engine: Verified all 5 core surfaces {core_surfaces} + Cloud KMS & PKCS#11 HSM adapters (+10 pts)")
             else:
-                f1_errors.append(f"Insufficient surfaces: {surfaces}")
+                f1_errors.append(f"Insufficient surfaces or detectors: surfaces={surfaces}, detectors={detectors}")
         else:
             f1_errors.append(f"Corpus findings retrieval failed: {findings_res.status_code}")
     else:
@@ -117,7 +121,7 @@ def run_rehearsal() -> int:
 
     scorecard.append({
         "factor": "Factor 1: Problem Fit & Breadth",
-        "description": "Multi-surface discovery & truthful 4/6 coverage denominator",
+        "description": "Multi-surface discovery (5 core surfaces + Cloud KMS & PKCS#11 HSM) & truthful 4/6 coverage denominator",
         "max": f1_max,
         "earned": f1_earned,
         "errors": f1_errors,
@@ -201,30 +205,43 @@ def run_rehearsal() -> int:
     else:
         f3_errors.append(f"Risk evaluation retrieval failed: {risk_res.status_code}")
 
-    # Gate 3.2: Truthful Category Resolution (Never undefined)
+    # Gate 3.2: Truthful Category Resolution & Frontend Byte-for-Byte Synchronization
     static_html_path = REPO_ROOT / "frontend" / "index.html"
-    if static_html_path.exists():
+    backend_html_path = BACKEND_DIR / "app" / "static" / "index.html"
+    if static_html_path.exists() and backend_html_path.exists():
         content = static_html_path.read_text(encoding="utf-8")
-        if "resolveCategory" in content and "resolveRecommendation" in content and "'undefined'" not in content:
+        backend_content = backend_html_path.read_text(encoding="utf-8")
+        sync_ok = (content == backend_content)
+        asymm_idx = content.find("purpose.indexOf('ASYMMETRIC')")
+        symm_idx = content.find("purpose.indexOf('SYMMETRIC')")
+        order_ok = (asymm_idx != -1 and symm_idx != -1 and asymm_idx < symm_idx)
+        resolvers_ok = ("resolveCategory" in content and "resolveRecommendation" in content and "'undefined'" not in content)
+        if sync_ok and order_ok and resolvers_ok:
             f3_earned += 5
-            print("  [+] Truthful Field Resolution: resolveCategory and resolveRecommendation verified in UI (+5 pts)")
+            print("  [+] Truthful Category Resolution: Verified Asymmetric evaluated before Symmetric & byte-synced static (+5 pts)")
         else:
-            f3_errors.append("Frontend missing verified category/recommendation resolver functions")
+            f3_errors.append(f"Category resolution or sync issue: sync={sync_ok}, order={order_ok}, resolvers={resolvers_ok}")
     else:
-        f3_errors.append("frontend/index.html not found")
+        f3_errors.append("frontend/index.html or backend/app/static/index.html not found")
 
-    # Gate 3.3: Dynamic Audit Record Binding
-    if static_html_path.exists():
-        content = static_html_path.read_text(encoding="utf-8")
-        if "appendAuditRecord" in content and "currentScan" in content:
+    # Gate 3.3: Server-Persisted Cryptographic Audit Chain Verification
+    audit_res = client.get("/api/v1/workflow/audit/chain/verify")
+    if audit_res.status_code == 200:
+        adata = audit_res.json()
+        valid = (adata.get("chain_valid") is True or adata.get("valid") is True)
+        tip = adata.get("verified_tip_hash") or adata.get("tip_hash") or ""
+        count = adata.get("events_count") or adata.get("event_count") or 0
+        if valid and len(tip) == 64 and count > 0:
             f3_earned += 5
-            print("  [+] Dynamic Audit Log: Active scan audit logging verified (+5 pts)")
+            print(f"  [+] Server-Persisted Audit Chain: Verified {count} SHA-256 events (tip: {tip[:16]}...) (+5 pts)")
         else:
-            f3_errors.append("Frontend missing dynamic audit append handler")
+            f3_errors.append(f"Audit chain verification invalid: {adata}")
+    else:
+        f3_errors.append(f"Audit chain verification endpoint failed: {audit_res.status_code}")
 
     scorecard.append({
         "factor": "Factor 3: Frontend Semantics",
-        "description": "Purpose-specific PQC mapping, valid categories & real audit events",
+        "description": "Purpose-specific PQC mapping, Asymmetric ordering & verified audit chain",
         "max": f3_max,
         "earned": f3_earned,
         "errors": f3_errors,
@@ -415,7 +432,8 @@ def run_rehearsal() -> int:
     print("=" * 76)
     print(f" TOTAL MEASURED SCORE: {total_earned} / {total_max} POINTS")
     if total_earned == total_max:
-        print(" RESULT: 100 / 100 FULL ROADMAP RECOVERY VERIFIED ON MEASURED TEST EVIDENCE")
+        print(" RESULT: 100 / 100 AUTOMATED QUALITY GATES PASSED ON TESTED BENCHMARK EVIDENCE")
+        print(" Note: Evaluation reflects local automated acceptance criteria on synthetic and holdout test fixtures.")
     else:
         print(" RESULT: PARTIAL SCORE — UNMET GATES DETECTED")
     print("=" * 76 + "\n")
