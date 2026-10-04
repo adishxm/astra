@@ -11,10 +11,12 @@ from typing import List, Optional
 
 from app.discovery.detectors.binary_detector import BinaryCryptoDetector
 from app.discovery.detectors.certificate_detector import CertificateCryptoDetector
+from app.discovery.detectors.cloud_kms_detector import CloudKmsDetector
 from app.discovery.detectors.config_detector import ConfigCryptoDetector
 from app.discovery.detectors.container_detector import ContainerCryptoDetector
 from app.discovery.detectors.manifest_detector import ManifestCryptoDetector
 from app.discovery.detectors.network_detector import NetworkEndpointDetector
+from app.discovery.detectors.pkcs11_detector import Pkcs11HsmDetector
 from app.discovery.detectors.source_detector import SourceCryptoDetector
 from app.discovery.models import (
     DiscoverySummary,
@@ -34,6 +36,8 @@ class DiscoveryEngine:
         self.binary_detector = BinaryCryptoDetector()
         self.container_detector = ContainerCryptoDetector()
         self.network_detector = NetworkEndpointDetector()
+        self.cloud_kms_detector = CloudKmsDetector()
+        self.pkcs11_detector = Pkcs11HsmDetector()
 
     def run_discovery(
         self,
@@ -58,6 +62,8 @@ class DiscoveryEngine:
             self.binary_detector.DETECTOR_ID: "OK",
             self.container_detector.DETECTOR_ID: "OK",
             self.network_detector.DETECTOR_ID: "OK",
+            self.cloud_kms_detector.DETECTOR_ID: "OK",
+            self.pkcs11_detector.DETECTOR_ID: "OK",
         }
 
         # Scan each file in the sandbox
@@ -170,6 +176,34 @@ class DiscoveryEngine:
                 except Exception as e:
                     failed_count += 1
                     collector_health[self.network_detector.DETECTOR_ID] = f"ERROR: {e}"
+
+            # 8. Check Cloud KMS Detector (AWS KMS, Azure Key Vault, GCP Cloud KMS)
+            if self.cloud_kms_detector.can_analyze(file_path):
+                matched_detector = True
+                try:
+                    obs = self.cloud_kms_detector.analyze_file(
+                        file_path, file_entry.relative_path, manifest.scan_id
+                    )
+                    if obs:
+                        observations.extend(obs)
+                        file_had_findings = True
+                except Exception as e:
+                    failed_count += 1
+                    collector_health[self.cloud_kms_detector.DETECTOR_ID] = f"ERROR: {e}"
+
+            # 9. Check PKCS#11 Hardware Security Module (HSM) Detector
+            if self.pkcs11_detector.can_analyze(file_path):
+                matched_detector = True
+                try:
+                    obs = self.pkcs11_detector.analyze_file(
+                        file_path, file_entry.relative_path, manifest.scan_id
+                    )
+                    if obs:
+                        observations.extend(obs)
+                        file_had_findings = True
+                except Exception as e:
+                    failed_count += 1
+                    collector_health[self.pkcs11_detector.DETECTOR_ID] = f"ERROR: {e}"
 
             if not matched_detector:
                 unsupported_count += 1
