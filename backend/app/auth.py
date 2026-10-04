@@ -9,7 +9,7 @@ Enforces:
 
 import os
 import time
-from typing import Dict, List
+from typing import Dict, List, Optional
 from fastapi import HTTPException, Request
 
 
@@ -82,4 +82,22 @@ def verify_api_key(request: Request):
     raise HTTPException(
         status_code=401,
         detail="Unauthorized: Missing or invalid API key. Supply X-ASTRA-API-KEY header or Bearer token.",
+    )
+
+
+def get_tenant_id(request: Request) -> Optional[str]:
+    """Extract tenant identifier from X-Tenant-ID header or environment."""
+    return (
+        request.headers.get("X-Tenant-ID")
+        or request.headers.get("X-TENANT-ID")
+        or os.getenv("ASTRA_DEFAULT_TENANT_ID")
+    )
+
+
+def get_user_id(request: Request) -> Optional[str]:
+    """Extract user identifier from X-User-ID header or environment."""
+    return (
+        request.headers.get("X-User-ID")
+        or request.headers.get("X-USER-ID")
+        or os.getenv("ASTRA_DEFAULT_USER_ID")
     )

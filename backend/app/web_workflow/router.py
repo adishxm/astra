@@ -1,24 +1,21 @@
-"""Worker 04 - Web Workflow API."""
+"""Worker 04 - Web Workflow API & Server-Persisted Cryptographic Audit (Phase B)."""
 
-from fastapi import APIRouter, HTTPException, Body, Depends
+from fastapi import APIRouter, HTTPException, Body, Depends, Request
 from typing import Any, Dict, List, Optional
-from app.auth import verify_api_key
+from app.auth import verify_api_key, get_tenant_id, get_user_id
 from app.inventory.models import CanonicalEvidence, AuditRecord, InventoryExport
 from app.web_workflow.hardening import (
     AirGappedBundleManager,
-    TamperEvidentAuditChainer,
     ProductionHealthEvaluator,
     ChainedAuditEvent,
 )
+from app.web_workflow.audit_store import GLOBAL_AUDIT_STORE
 
 router = APIRouter(
     prefix="/api/v1/workflow",
     tags=["Worker 04"],
     dependencies=[Depends(verify_api_key)],
 )
-
-# In-memory chain for demo and verification
-_GLOBAL_AUDIT_CHAIN: List[ChainedAuditEvent] = []
 
 
 @router.get("/evidence/{asset_id}", response_model=List[CanonicalEvidence])
@@ -42,30 +39,51 @@ def get_export():
     return InventoryExport(assets=[], relationships=[], audit_trail=[])
 
 
-# Production extension endpoints (PROD-01)
+# Production extension endpoints (PROD-01 / Phase B)
 
 
 @router.post("/audit/chain/append", response_model=ChainedAuditEvent)
 def append_chained_audit(
+    request: Request,
     action: str = Body(...),
     actor: str = Body(...),
     asset_id: Optional[str] = Body(None),
     details: Dict[str, Any] = Body(default_factory=dict),
 ):
-    """Append a new tamper-evident event to the running audit hash chain."""
-    return TamperEvidentAuditChainer.append_event(
-        chain=_GLOBAL_AUDIT_CHAIN,
+    """Append a new tamper-evident event to the persistent server audit hash chain."""
+    tenant_id = get_tenant_id(request)
+    user_id = get_user_id(request)
+    return GLOBAL_AUDIT_STORE.append_event(
         action=action,
         actor=actor,
         asset_id=asset_id,
+        tenant_id=tenant_id,
+        user_id=user_id,
         details=details,
     )
 
 
+@router.get("/audit/chain")
+def get_audit_chain(request: Request, scan_id: Optional[str] = None):
+    """Retrieve full or scan-filtered cryptographic audit trail."""
+    tenant_id = get_tenant_id(request)
+    events = GLOBAL_AUDIT_STORE.get_events(tenant_id=tenant_id, scan_id=scan_id)
+    return [e.model_dump() for e in events]
+
+
 @router.get("/audit/chain/verify")
-def verify_audit_chain():
-    """Verify integrity of the tamper-evident audit log."""
-    return TamperEvidentAuditChainer.verify_chain(_GLOBAL_AUDIT_CHAIN)
+def verify_audit_chain(request: Request, scan_id: Optional[str] = None):
+    """Verify cryptographic integrity of the persistent server audit log."""
+    tenant_id = get_tenant_id(request)
+    return GLOBAL_AUDIT_STORE.verify_chain(tenant_id=tenant_id, scan_id=scan_id)
+
+
+@router.get("/audit/events/{scan_id}")
+def get_scan_audit_events(scan_id: str, request: Request):
+    """Retrieve all authoritative audit blocks bound to a specific scan execution."""
+    tenant_id = get_tenant_id(request)
+    events = GLOBAL_AUDIT_STORE.get_events(tenant_id=tenant_id, scan_id=scan_id)
+    return [e.model_dump() for e in events]
 
 
 @router.post("/offline/bundle/verify")

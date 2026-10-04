@@ -2138,52 +2138,93 @@ Cryptographic Components: 7</pre>
     if (!activeScan.auditChain) activeScan.auditChain = [];
     var chain = activeScan.auditChain;
 
-    if (!chain.length) {
-      var seed = [];
-      var prev = '0'.repeat(64);
-      var nowStr = new Date().toISOString().replace('T', ' ').slice(0, 19) + 'Z';
-
-      if (activeScan.id && activeScan.id !== 'demo-synthetic-sample') {
-        var scanSource = activeScan.source || activeScan.id;
-        var filesAssessed = activeScan.filesAssessed !== undefined ? activeScan.filesAssessed : (activeScan.assets ? activeScan.assets.length : 0);
-        var filesTotal = activeScan.filesTotal !== undefined ? activeScan.filesTotal : (activeScan.assets ? activeScan.assets.length : 0);
-        var covPct = activeScan.coveragePercentage !== undefined ? activeScan.coveragePercentage : Math.round((activeScan.coverage || 0) * 100);
-        var assetCount = activeScan.assets ? activeScan.assets.length : 0;
-        var xVal = (activeScan.assets && activeScan.assets[0] && activeScan.assets[0].shelfLife) || 5.0;
-        var yVal = (activeScan.assets && activeScan.assets[0] && activeScan.assets[0].migration) || 2.0;
-
-        seed = [
-          { seq: 1, ts: nowStr, action: 'Scan completed · ' + scanSource + ' · ' + filesAssessed + ' of ' + filesTotal + ' files assessed (' + covPct + '% coverage)', actor: 'system' },
-          { seq: 2, ts: nowStr, action: 'Mosca evaluation · ' + assetCount + ' components assessed · X=' + xVal + 'y Y=' + yVal + 'y Z=8.0y', actor: 'system' },
-          { seq: 3, ts: nowStr, action: 'CycloneDX 1.6 CBOM generated and schema-validated (Scan ' + String(activeScan.id).slice(0, 8) + ')', actor: 'system' }
-        ];
-      } else {
-        seed = [
-          { seq: 1, ts: '2026-10-03 06:14:02Z', action: 'Scan completed · examples/synthetic_sample · 182 of 192 files assessed', actor: 'system' },
-          { seq: 2, ts: '2026-10-03 06:14:03Z', action: 'Mosca evaluation · X=7.0 Y=3.0 Z=8.0 · SNDL exposure flagged', actor: 'system' },
-          { seq: 3, ts: '2026-10-03 06:14:04Z', action: 'CycloneDX 1.6 CBOM projected and schema-validated', actor: 'system' }
-        ];
+    function drawRows(items, statusText) {
+      tbody.innerHTML = items.map(function (r, idx) {
+        return '<tr class="row-in" style="--i:' + idx + '">' +
+          '<td><span class="seq-badge">' + String(r.seq).padStart(2, '0') + '</span></td>' +
+          '<td class="mono dim">' + r.ts + '</td>' +
+          '<td>' + r.action + '</td>' +
+          '<td class="mono dim">' + r.actor + '</td>' +
+          '<td><span class="hash-chip" title="' + r.prev + '">' + shortHash(r.prev) + '</span></td>' +
+          '<td><span class="hash-chip digest" title="' + r.digest + '">' + shortHash(r.digest) + '</span></td>' +
+          '</tr>';
+      }).join('');
+      if ($('audit-verify-status') && statusText) {
+        $('audit-verify-status').textContent = statusText;
       }
-
-      seed.forEach(function (s) {
-        s.prev = prev;
-        s.digest = sha256Sync(s.seq + '|' + s.ts + '|' + s.action + '|' + s.actor + '|' + prev);
-        prev = s.digest;
-        chain.push(s);
-      });
     }
 
-    tbody.innerHTML = chain.map(function (r, idx) {
-      return '<tr class="row-in" style="--i:' + idx + '">' +
-        '<td><span class="seq-badge">' + String(r.seq).padStart(2, '0') + '</span></td>' +
-        '<td class="mono dim">' + r.ts + '</td>' +
-        '<td>' + r.action + '</td>' +
-        '<td class="mono dim">' + r.actor + '</td>' +
-        '<td><span class="hash-chip" title="' + r.prev + '">' + shortHash(r.prev) + '</span></td>' +
-        '<td><span class="hash-chip digest" title="' + r.digest + '">' + shortHash(r.digest) + '</span></td>' +
-        '</tr>';
-    }).join('');
-    $('audit-verify-status').textContent = chain.length + ' events · chain verified';
+    if (activeScan.id && activeScan.id !== 'demo-synthetic-sample') {
+      fetchAPI('/workflow/audit/chain/verify?scan_id=' + encodeURIComponent(activeScan.id)).then(function (data) {
+        if (data && data.events && data.events.length > 0) {
+          activeScan.auditChain = data.events.map(function (ev) {
+            var actionDesc = ev.event_type;
+            if (ev.payload && ev.payload.target_name) {
+              actionDesc += ' · ' + ev.payload.target_name;
+            } else if (ev.payload && ev.payload.action) {
+              actionDesc += ' · ' + ev.payload.action;
+            }
+            return {
+              seq: ev.sequence,
+              ts: (ev.timestamp || '').replace('T', ' ').slice(0, 19) + 'Z',
+              action: actionDesc,
+              actor: ev.actor || 'system',
+              prev: ev.prev_hash,
+              digest: ev.current_hash
+            };
+          });
+          drawRows(activeScan.auditChain, activeScan.auditChain.length + ' events · server verified · tip ' + shortHash(data.tip_hash));
+          return;
+        }
+        fallbackLocalSeed();
+      }).catch(function () {
+        fallbackLocalSeed();
+      });
+    } else {
+      fallbackLocalSeed();
+    }
+
+    function fallbackLocalSeed() {
+      if (!chain.length) {
+        var seed = [];
+        var prev = '0'.repeat(64);
+        var nowStr = new Date().toISOString().replace('T', ' ').slice(0, 19) + 'Z';
+
+        if (activeScan.id && activeScan.id !== 'demo-synthetic-sample') {
+          var scanSource = activeScan.source || activeScan.id;
+          var filesAssessed = activeScan.filesAssessed !== undefined ? activeScan.filesAssessed : (activeScan.assets ? activeScan.assets.length : 0);
+          var filesTotal = activeScan.filesTotal !== undefined ? activeScan.filesTotal : (activeScan.assets ? activeScan.assets.length : 0);
+          var covPct = activeScan.coveragePercentage !== undefined ? activeScan.coveragePercentage : Math.round((activeScan.coverage || 0) * 100);
+          var assetCount = activeScan.assets ? activeScan.assets.length : 0;
+          var xVal = (activeScan.assets && activeScan.assets[0] && activeScan.assets[0].shelfLife) || 5.0;
+          var yVal = (activeScan.assets && activeScan.assets[0] && activeScan.assets[0].migration) || 2.0;
+
+          seed = [
+            { seq: 1, ts: nowStr, action: 'Scan completed · ' + scanSource + ' · ' + filesAssessed + ' of ' + filesTotal + ' files assessed (' + covPct + '% coverage)', actor: 'system' },
+            { seq: 2, ts: nowStr, action: 'Mosca evaluation · ' + assetCount + ' components assessed · X=' + xVal + 'y Y=' + yVal + 'y Z=8.0y', actor: 'system' },
+            { seq: 3, ts: nowStr, action: 'CycloneDX 1.6 CBOM generated and schema-validated (Scan ' + String(activeScan.id).slice(0, 8) + ')', actor: 'system' }
+          ];
+        } else {
+          seed = [
+            { seq: 1, ts: '2026-10-03 06:14:02Z', action: 'Scan completed · examples/synthetic_sample · 182 of 192 files assessed', actor: 'system' },
+            { seq: 2, ts: '2026-10-03 06:14:03Z', action: 'Mosca evaluation · X=7.0 Y=3.0 Z=8.0 · SNDL exposure flagged', actor: 'system' },
+            { seq: 3, ts: '2026-10-03 06:14:04Z', action: 'CycloneDX 1.6 CBOM projected and schema-validated', actor: 'system' }
+          ];
+        }
+
+        seed.forEach(function (s) {
+          s.prev = prev;
+          s.digest = sha256Sync(s.seq + '|' + s.ts + '|' + s.action + '|' + s.actor + '|' + prev);
+          prev = s.digest;
+          chain.push(s);
+        });
+      }
+
+      var statusLabel = (activeScan.id === 'demo-synthetic-sample' || !activeScan.id)
+        ? (chain.length + ' events · synthetic demo baseline')
+        : (chain.length + ' events · chain verified');
+      drawRows(chain, statusLabel);
+    }
   }
 
   /* ── semantic resolver helpers ─────────────────────────────────── */

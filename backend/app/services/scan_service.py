@@ -35,6 +35,7 @@ from app.inventory.cbom_reconciliation import CBOMReconciliationEngine
 from app.risk.models import ContextFactors, RiskEvaluation, RiskScenario
 from app.risk.scorer import RiskScorer
 from app.risk.backlog import BacklogBuilder
+from app.web_workflow.audit_store import GLOBAL_AUDIT_STORE
 
 
 class ScanRecord:
@@ -53,6 +54,8 @@ class ScanRecord:
         snapshot: InventorySnapshot,
         cbom_data: Dict[str, Any],
         created_at: Optional[datetime] = None,
+        tenant_id: Optional[str] = None,
+        user_id: Optional[str] = None,
     ):
         self.scan_id = scan_id
         self.target_name = target_name
@@ -65,6 +68,8 @@ class ScanRecord:
         self.snapshot = snapshot
         self.cbom_data = cbom_data
         self.created_at = created_at or datetime.now(timezone.utc)
+        self.tenant_id = tenant_id
+        self.user_id = user_id
 
     @property
     def status(self) -> str:
@@ -131,6 +136,8 @@ class ScanRecord:
             "risk_evaluations": [r.model_dump() for r in self.risk_evaluations],
             "backlog_items": self.backlog_items,
             "cbom_data": self.cbom_data,
+            "tenant_id": self.tenant_id,
+            "user_id": self.user_id,
         }
 
 
@@ -192,7 +199,10 @@ class ScanStore:
                     risk_evaluations=risk_evaluations,
                     backlog_items=data.get("backlog_items", []),
                     snapshot=snapshot,
-                    cbom_data=data.get("cbom_data", {})
+                    cbom_data=data.get("cbom_data", {}),
+                    created_at=datetime.fromisoformat(data["created_at"]) if "created_at" in data else None,
+                    tenant_id=data.get("tenant_id"),
+                    user_id=data.get("user_id"),
                 )
                 self._memory_cache[scan_id] = record
                 return record
@@ -200,8 +210,8 @@ class ScanStore:
                 raise ValueError("Malformed JSON")
         return None
 
-    def list_all(self) -> List[Dict[str, Any]]:
-        """List summary of all persisted scans."""
+    def list_all(self, tenant_id: Optional[str] = None) -> List[Dict[str, Any]]:
+        """List summary of all persisted scans, optionally filtered by tenant."""
         for file_path in self.storage_dir.glob("*.json"):
             scan_id = file_path.stem
             if scan_id not in self._memory_cache:
@@ -212,6 +222,8 @@ class ScanStore:
                 
         scans = []
         for sid, rec in self._memory_cache.items():
+            if tenant_id and rec.tenant_id and rec.tenant_id != tenant_id:
+                continue
             scans.append({
                 "scan_id": sid,
                 "target_name": rec.target_name,
@@ -219,6 +231,8 @@ class ScanStore:
                 "asset_count": len(rec.canonical_assets),
                 "coverage_percentage": rec.coverage.overall_coverage_percentage,
                 "dna_hash": rec.snapshot.cryptographic_dna_hash,
+                "tenant_id": rec.tenant_id,
+                "user_id": rec.user_id,
             })
         return sorted(scans, key=lambda s: s["created_at"], reverse=True)
 
@@ -241,6 +255,8 @@ class ScanService:
         scenario: Optional[RiskScenario] = None,
         scan_id: Optional[str] = None,
         override_manifest: Optional[ScanManifest] = None,
+        tenant_id: Optional[str] = None,
+        user_id: Optional[str] = None,
     ) -> ScanRecord:
         """Analyze a local directory containing source code, manifests, and configs."""
         dir_path = Path(directory_path).resolve()
@@ -452,6 +468,22 @@ class ScanService:
         # Validate CBOM conformity
         self.reconciliation_engine.validate_cyclonedx_16(cbom_data)
 
+        # Authoritative audit event: CBOM_EXPORTED
+        GLOBAL_AUDIT_STORE.append_event(
+            action="CBOM_EXPORTED",
+            actor=user_id or "system",
+            asset_id=scan_id,
+            tenant_id=tenant_id,
+            user_id=user_id,
+            details={
+                "scan_id": scan_id,
+                "spec_version": "1.6",
+                "format": "CycloneDX",
+                "components_count": len(components),
+                "serial_number": cbom_data.get("serialNumber"),
+            },
+        )
+
         # 8. Assemble Record & Save
         record = ScanRecord(
             scan_id=scan_id,
@@ -464,9 +496,30 @@ class ScanService:
             backlog_items=backlog_items,
             snapshot=snapshot,
             cbom_data=cbom_data,
+            tenant_id=tenant_id,
+            user_id=user_id,
         )
 
         self.store.save(record)
+
+        # Authoritative audit event: SCAN_INTAKE
+        GLOBAL_AUDIT_STORE.append_event(
+            action="SCAN_INTAKE",
+            actor=user_id or "system",
+            asset_id=scan_id,
+            tenant_id=tenant_id,
+            user_id=user_id,
+            details={
+                "scan_id": scan_id,
+                "target_name": name,
+                "assessed_files": coverage_report.total_assessed_files,
+                "total_files": manifest.total_files_in_archive,
+                "coverage_percentage": coverage_report.overall_coverage_percentage,
+                "dna_hash": snapshot.cryptographic_dna_hash,
+                "asset_count": len(canonical_assets),
+            },
+        )
+
         shutil.rmtree(output_dir, ignore_errors=True)
         return record
 
@@ -475,6 +528,8 @@ class ScanService:
         archive_path: str,
         target_name: Optional[str] = None,
         scenario: Optional[RiskScenario] = None,
+        tenant_id: Optional[str] = None,
+        user_id: Optional[str] = None,
     ) -> ScanRecord:
         """Safely extract and analyze a user-authorized archive file (.zip, .tar.gz, etc.)."""
         arc_file = Path(archive_path).resolve()
@@ -497,6 +552,8 @@ class ScanService:
                 scenario=scenario,
                 scan_id=manifest.scan_id,
                 override_manifest=manifest,
+                tenant_id=tenant_id,
+                user_id=user_id,
             )
             return record
         finally:
@@ -540,6 +597,23 @@ class ScanService:
         record.risk_evaluations = new_risk_evals
         record.backlog_items = new_backlog_items
         self.store.save(record)
+
+        # Authoritative audit event: RISK_RECALCULATED
+        GLOBAL_AUDIT_STORE.append_event(
+            action="RISK_RECALCULATED",
+            actor=record.user_id or "owner",
+            asset_id=scan_id,
+            tenant_id=record.tenant_id,
+            user_id=record.user_id,
+            details={
+                "scan_id": scan_id,
+                "data_shelf_life_years": context.data_shelf_life_years,
+                "migration_duration_years": context.migration_duration_years,
+                "threat_horizon_years": active_scenario.quantum_threat_horizon_years if active_scenario else 8.0,
+                "violations_count": sum(1 for r in new_risk_evals if r.mosca_condition_violated),
+                "context_source": context.context_source,
+            },
+        )
         return record
 
     @classmethod
@@ -548,9 +622,13 @@ class ScanService:
         directory_path: str,
         target_name: Optional[str] = None,
         scenario: Optional[RiskScenario] = None,
+        tenant_id: Optional[str] = None,
+        user_id: Optional[str] = None,
     ) -> ScanRecord:
         """Classmethod helper routing to global scan service."""
-        return GLOBAL_SCAN_SERVICE.run_scan_on_directory(directory_path, target_name, scenario)
+        return GLOBAL_SCAN_SERVICE.run_scan_on_directory(
+            directory_path, target_name, scenario, tenant_id=tenant_id, user_id=user_id
+        )
 
     @classmethod
     def scan_archive_file(
@@ -558,9 +636,13 @@ class ScanService:
         archive_path: str,
         target_name: Optional[str] = None,
         scenario: Optional[RiskScenario] = None,
+        tenant_id: Optional[str] = None,
+        user_id: Optional[str] = None,
     ) -> ScanRecord:
         """Classmethod helper routing to global scan service."""
-        return GLOBAL_SCAN_SERVICE.run_scan_on_archive(archive_path, target_name, scenario)
+        return GLOBAL_SCAN_SERVICE.run_scan_on_archive(
+            archive_path, target_name, scenario, tenant_id=tenant_id, user_id=user_id
+        )
 
     @classmethod
     def update_context(

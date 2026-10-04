@@ -32,6 +32,8 @@ from app.auth import (
     get_max_upload_size,
     check_upload_rate_limit,
     verify_api_key,
+    get_tenant_id,
+    get_user_id,
     _UPLOAD_RATE_LIMIT_STORE,
 )
 
@@ -141,6 +143,8 @@ async def upload_and_scan(
         record = GLOBAL_SCAN_SERVICE.run_scan_on_archive(
             archive_path=temp_archive,
             target_name=safe_filename,
+            tenant_id=get_tenant_id(request),
+            user_id=get_user_id(request),
         )
         return {
             "status": "completed",
@@ -164,6 +168,7 @@ async def upload_and_scan(
 
 @app.post("/api/v1/scans/directory")
 def scan_directory(
+    request: Request,
     payload: Dict[str, Any] = Body(...),
     _: None = Depends(verify_api_key),
 ):
@@ -186,6 +191,8 @@ def scan_directory(
         record = GLOBAL_SCAN_SERVICE.run_scan_on_directory(
             directory_path=str(target_dir),
             target_name=payload.get("target_name"),
+            tenant_id=get_tenant_id(request),
+            user_id=get_user_id(request),
         )
         return {
             "status": "completed",
@@ -204,16 +211,21 @@ def scan_directory(
 
 
 @app.get("/api/v1/scans")
-def list_scans(_: None = Depends(verify_api_key)):
+def list_scans(request: Request, _: None = Depends(verify_api_key)):
     """List all previously executed scans."""
-    return GLOBAL_SCAN_STORE.list_all()
+    tenant_id = get_tenant_id(request)
+    return GLOBAL_SCAN_STORE.list_all(tenant_id=tenant_id)
 
 
 @app.get("/api/v1/scans/{scan_id}")
-def get_scan(scan_id: str, _: None = Depends(verify_api_key)):
+def get_scan(scan_id: str, request: Request, _: None = Depends(verify_api_key)):
     """Retrieve complete scan record by ID."""
     record = GLOBAL_SCAN_STORE.get(scan_id)
     if not record:
+        raise HTTPException(status_code=404, detail=f"Scan ID not found: {scan_id}")
+    tenant_id = get_tenant_id(request)
+    rec_tenant = getattr(record, "tenant_id", None) if not isinstance(record, dict) else record.get("tenant_id")
+    if tenant_id and tenant_id != "default" and rec_tenant and rec_tenant != "default" and rec_tenant != tenant_id:
         raise HTTPException(status_code=404, detail=f"Scan ID not found: {scan_id}")
     return record if isinstance(record, dict) else record.to_dict()
 
@@ -314,12 +326,18 @@ def get_scan_risk(
 @app.put("/api/v1/scans/{scan_id}/context")
 def update_scan_owner_context(
     scan_id: str,
+    request: Request,
     payload: Dict[str, Any] = Body(...),
     _: None = Depends(verify_api_key),
 ):
     """Enrich a scan with verified owner context (data lifetime X, migration Y, exposure, criticality)."""
     record = GLOBAL_SCAN_STORE.get(scan_id)
     if not record:
+        raise HTTPException(status_code=404, detail=f"Scan ID not found: {scan_id}")
+
+    tenant_id = get_tenant_id(request)
+    rec_tenant = getattr(record, "tenant_id", None) if not isinstance(record, dict) else record.get("tenant_id")
+    if tenant_id and tenant_id != "default" and rec_tenant and rec_tenant != "default" and rec_tenant != tenant_id:
         raise HTTPException(status_code=404, detail=f"Scan ID not found: {scan_id}")
 
     from app.risk.models import ContextFactors, RiskScenario
@@ -357,6 +375,7 @@ def update_scan_owner_context(
 @app.get("/api/v1/scans/{scan_id}/export")
 def get_scan_export(
     scan_id: str,
+    request: Request,
     format: str = Query("cyclonedx"),
     _: None = Depends(verify_api_key),
 ):
@@ -364,6 +383,28 @@ def get_scan_export(
     record = GLOBAL_SCAN_STORE.get(scan_id)
     if not record:
         raise HTTPException(status_code=404, detail=f"Scan ID not found: {scan_id}")
+
+    tenant_id = get_tenant_id(request)
+    rec_tenant = getattr(record, "tenant_id", None) if not isinstance(record, dict) else record.get("tenant_id")
+    if tenant_id and tenant_id != "default" and rec_tenant and rec_tenant != "default" and rec_tenant != tenant_id:
+        raise HTTPException(status_code=404, detail=f"Scan ID not found: {scan_id}")
+
+    try:
+        from app.web_workflow.audit_store import GLOBAL_AUDIT_STORE
+        GLOBAL_AUDIT_STORE.append_event(
+            event_type="CBOM_EXPORTED",
+            actor=get_user_id(request),
+            payload={
+                "scan_id": scan_id,
+                "format": format,
+                "target_name": getattr(record, "target_name", "unknown") if not isinstance(record, dict) else record.get("target_name", "unknown"),
+            },
+            tenant_id=tenant_id,
+            scan_id=scan_id,
+        )
+    except Exception:
+        pass
+
     data = record if isinstance(record, dict) else record.to_dict()
     cbom = data.get("cbom_data", {})
     return cbom
