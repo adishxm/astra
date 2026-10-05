@@ -187,6 +187,28 @@ docker compose --profile test run astra-tests
 ```
 The Docker container executes as an unprivileged user `astra` (UID 1000) with volume persistence at `./data`.
 
+#### Final Docker Acceptance Verification
+
+> **Note**: These are repository-level technical verification results and acceptance evidence executed against the containerized engine, not an official SIH certification or third-party audit endorsement.
+
+- **Host & Engine Environment**: Docker Desktop with WSL2 Linux backend (Docker context: `desktop-linux`).
+- **Production Runtime**: Service `astra-engine` / container `astra-ecdat` initialized with automatic health monitoring (`healthy`).
+- **Least-Privilege Execution**: Container runs as unprivileged non-root user `astra` (`uid=1000`, `gid=1000`).
+- **Health & Web Endpoints**:
+  - `/health` returned HTTP 200 with active FIPS 203/204/205 standards metadata.
+  - Root dashboard `/` returned HTTP 200, serving the complete interactive web UI.
+- **Containerized Test Suite**: Dedicated test image `astra-astra-tests:latest` built and executed cleanly (`188 passed, 1 warning`).
+- **Real E2E Acceptance Flow**:
+  - **Scan Ingestion**: Real repository archive uploaded via `POST /api/v1/scans/upload` (HTTP 200), completing full discovery analysis.
+  - **Evidence Drilldown**: Multi-surface findings retrieved with SHA-256 digests, AST/pattern confidence bands, and line locations.
+  - **Risk Assessment**: Mosca Theorem calculation and PQC migration backlog generated and queryable via REST API.
+  - **CycloneDX 1.6 CBOM**: Valid CycloneDX 1.6 JSON export generated with complete component-dependency relationships.
+  - **Audit Integrity**: SHA-256 Merkle chain verification passed (`valid=True`) with strictly enforced +1 `CBOM_EXPORTED` event delta tracking.
+- **Restart Persistence**:
+  - Container gracefully restarted via `docker compose restart astra-engine` and returned to healthy operational state.
+  - Scan records, findings, audit trail, and CBOM export availability confirmed preserved across restarts via persistent volume (`./data`).
+- **Final Docker Gate**: `PASS`
+
 ---
 
 ### Option E: Synthetic Near-Term Demo Walkthrough
