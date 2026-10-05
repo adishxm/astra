@@ -1,6 +1,6 @@
 {
-  "manifest_version": "2.0",
-  "description": "ASTRA Worker 1 Ground-Truth Cryptographic & Coverage Benchmark Manifest with Explicit Abstention Classification",
+  "manifest_version": "2.1",
+  "description": "ASTRA Worker 1 Expanded 30-Case Ground-Truth Cryptographic & Coverage Benchmark Manifest",
   "cases": [
     {
       "id": "GT-SRC-01",
@@ -8,12 +8,7 @@
       "artifact_category": "SOURCE_CODE",
       "outcome_type": "POSITIVE",
       "expected_crypto_presence": true,
-      "expected_algorithms": [
-        "SHA-256",
-        "AES",
-        "RSA-2048",
-        "ML-KEM"
-      ],
+      "expected_algorithms": ["SHA-256", "AES", "RSA-2048", "ML-KEM"],
       "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
       "rationale": "Valid Python source using hashlib.sha256, AES CBC, RSA 2048, and ML-KEM reference."
     },
@@ -23,11 +18,7 @@
       "artifact_category": "SOURCE_CODE",
       "outcome_type": "POSITIVE",
       "expected_crypto_presence": true,
-      "expected_algorithms": [
-        "AES",
-        "RSA",
-        "MD5"
-      ],
+      "expected_algorithms": ["AES", "RSA", "MD5"],
       "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
       "rationale": "Valid Java source invoking JCE Cipher (AES), KeyPairGenerator (RSA), and MessageDigest (MD5)."
     },
@@ -37,11 +28,7 @@
       "artifact_category": "SOURCE_CODE",
       "outcome_type": "POSITIVE",
       "expected_crypto_presence": true,
-      "expected_algorithms": [
-        "SHA-256",
-        "RSA-2048",
-        "ML-KEM"
-      ],
+      "expected_algorithms": ["SHA-256", "RSA-2048", "ML-KEM"],
       "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
       "rationale": "Valid Go source with sha256.New(), rsa.GenerateKey 2048, and circl.MLKEM768."
     },
@@ -51,12 +38,29 @@
       "artifact_category": "SOURCE_CODE",
       "outcome_type": "POSITIVE",
       "expected_crypto_presence": true,
-      "expected_algorithms": [
-        "AES-256",
-        "MD5"
-      ],
+      "expected_algorithms": ["AES-256", "MD5"],
       "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
       "rationale": "Valid Node.js source using crypto.createCipheriv aes-256-gcm and crypto.createHash md5."
+    },
+    {
+      "id": "GT-SRC-05",
+      "relative_path": "src/positive_c.c",
+      "artifact_category": "SOURCE_CODE",
+      "outcome_type": "POSITIVE",
+      "expected_crypto_presence": true,
+      "expected_algorithms": ["AES-256", "SHA-256"],
+      "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
+      "rationale": "Valid C source invoking OpenSSL EVP_aes_256_cbc and SHA256."
+    },
+    {
+      "id": "GT-SRC-06",
+      "relative_path": "src/positive_rust.rs",
+      "artifact_category": "SOURCE_CODE",
+      "outcome_type": "POSITIVE",
+      "expected_crypto_presence": true,
+      "expected_algorithms": ["AES-256", "SHA-256"],
+      "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
+      "rationale": "Valid Rust source using ring AES_256_GCM and sha2 Sha256."
     },
     {
       "id": "GT-MAN-01",
@@ -64,11 +68,7 @@
       "artifact_category": "MANIFEST",
       "outcome_type": "POSITIVE",
       "expected_crypto_presence": true,
-      "expected_algorithms": [
-        "cryptography",
-        "pycryptodome",
-        "liboqs-python"
-      ],
+      "expected_algorithms": ["cryptography", "pycryptodome", "liboqs-python"],
       "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
       "rationale": "Python dependency manifest declaring cryptography, pycryptodome, and liboqs-python."
     },
@@ -78,12 +78,49 @@
       "artifact_category": "MANIFEST",
       "outcome_type": "POSITIVE",
       "expected_crypto_presence": true,
-      "expected_algorithms": [
-        "crypto-js",
-        "libsodium-wrappers"
-      ],
+      "expected_algorithms": ["crypto-js", "libsodium-wrappers"],
       "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
       "rationale": "Node.js package.json specifying crypto-js and libsodium-wrappers dependencies."
+    },
+    {
+      "id": "GT-MAN-03",
+      "relative_path": "manifests/pom.xml",
+      "artifact_category": "MANIFEST",
+      "outcome_type": "POSITIVE",
+      "expected_crypto_presence": true,
+      "expected_algorithms": ["bcprov-jdk18on"],
+      "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
+      "rationale": "Java Maven pom.xml declaring BouncyCastle dependency."
+    },
+    {
+      "id": "GT-MAN-04",
+      "relative_path": "manifests/go.mod",
+      "artifact_category": "MANIFEST",
+      "outcome_type": "POSITIVE",
+      "expected_crypto_presence": true,
+      "expected_algorithms": ["golang.org/x/crypto"],
+      "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
+      "rationale": "Go module manifest specifying golang.org/x/crypto dependency."
+    },
+    {
+      "id": "GT-MAN-05",
+      "relative_path": "manifests/clean_pom.xml",
+      "artifact_category": "MANIFEST",
+      "outcome_type": "NEGATIVE",
+      "expected_crypto_presence": false,
+      "expected_algorithms": [],
+      "expected_coverage_classification": "ANALYZED_NO_FINDINGS",
+      "rationale": "Clean Maven pom.xml with non-crypto testing dependencies only."
+    },
+    {
+      "id": "GT-MAN-06",
+      "relative_path": "manifests/clean_go.mod",
+      "artifact_category": "MANIFEST",
+      "outcome_type": "NEGATIVE",
+      "expected_crypto_presence": false,
+      "expected_algorithms": [],
+      "expected_coverage_classification": "ANALYZED_NO_FINDINGS",
+      "rationale": "Clean go.mod with testify assertion library only."
     },
     {
       "id": "GT-CFG-01",
@@ -91,13 +128,29 @@
       "artifact_category": "CONFIG",
       "outcome_type": "POSITIVE",
       "expected_crypto_presence": true,
-      "expected_algorithms": [
-        "TLSv1.3",
-        "ECDHE-AES256-GCM",
-        "Hybrid-PQC-KEX"
-      ],
+      "expected_algorithms": ["TLSv1.3", "ECDHE-AES256-GCM", "Hybrid-PQC-KEX"],
       "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
-      "rationale": "Server config declaring TLSv1.3, ECDHE-RSA-AES256-GCM-SHA384 cipher suite, and sntrup761 SSH KEX."
+      "rationale": "Server config declaring TLSv1.3, ECDHE-RSA-AES256-GCM-SHA384 cipher suite."
+    },
+    {
+      "id": "GT-CFG-02",
+      "relative_path": "configs/ssh_config.ini",
+      "artifact_category": "CONFIG",
+      "outcome_type": "POSITIVE",
+      "expected_crypto_presence": true,
+      "expected_algorithms": ["aes256-ctr", "ed25519"],
+      "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
+      "rationale": "SSH configuration file specifying ciphers and host key algorithms."
+    },
+    {
+      "id": "GT-CFG-03",
+      "relative_path": "configs/clean_ssh.ini",
+      "artifact_category": "CONFIG",
+      "outcome_type": "NEGATIVE",
+      "expected_crypto_presence": false,
+      "expected_algorithms": [],
+      "expected_coverage_classification": "ANALYZED_NO_FINDINGS",
+      "rationale": "Clean SSH config specifying host and port only."
     },
     {
       "id": "GT-CRT-01",
@@ -105,9 +158,7 @@
       "artifact_category": "CERTIFICATE",
       "outcome_type": "POSITIVE",
       "expected_crypto_presence": true,
-      "expected_algorithms": [
-        "RSA"
-      ],
+      "expected_algorithms": ["RSA"],
       "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
       "rationale": "Synthetic RSA public key in PEM format."
     },
@@ -117,11 +168,29 @@
       "artifact_category": "CERTIFICATE",
       "outcome_type": "POSITIVE",
       "expected_crypto_presence": true,
-      "expected_algorithms": [
-        "RSA"
-      ],
+      "expected_algorithms": ["RSA"],
       "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
-      "rationale": "Synthetic RSA private key with PRIVATE KEY header; bytes must be flagged and redacted."
+      "rationale": "Synthetic RSA private key with PRIVATE KEY header."
+    },
+    {
+      "id": "GT-CRT-03",
+      "relative_path": "certs/ec_public.pem",
+      "artifact_category": "CERTIFICATE",
+      "outcome_type": "POSITIVE",
+      "expected_crypto_presence": true,
+      "expected_algorithms": ["ECC-Curve"],
+      "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
+      "rationale": "Synthetic ECDSA public key in PEM format."
+    },
+    {
+      "id": "GT-CRT-04",
+      "relative_path": "certs/clean_readme.txt",
+      "artifact_category": "CERTIFICATE",
+      "outcome_type": "NEGATIVE",
+      "expected_crypto_presence": false,
+      "expected_algorithms": [],
+      "expected_coverage_classification": "ANALYZED_NO_FINDINGS",
+      "rationale": "Clean text file with key management documentation."
     },
     {
       "id": "GT-KMS-01",
@@ -129,11 +198,29 @@
       "artifact_category": "CLOUD_KMS",
       "outcome_type": "POSITIVE",
       "expected_crypto_presence": true,
-      "expected_algorithms": [
-        "RSA-2048"
-      ],
+      "expected_algorithms": ["RSA-2048"],
       "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
       "rationale": "Terraform AWS KMS key specification RSA_2048."
+    },
+    {
+      "id": "GT-KMS-02",
+      "relative_path": "iac/azure_keyvault.tf",
+      "artifact_category": "CLOUD_KMS",
+      "outcome_type": "POSITIVE",
+      "expected_crypto_presence": true,
+      "expected_algorithms": ["RSA-2048"],
+      "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
+      "rationale": "Terraform Azure KeyVault key specification RSA_2048."
+    },
+    {
+      "id": "GT-KMS-03",
+      "relative_path": "iac/gcp_kms.tf",
+      "artifact_category": "CLOUD_KMS",
+      "outcome_type": "POSITIVE",
+      "expected_crypto_presence": true,
+      "expected_algorithms": ["SYMMETRIC"],
+      "expected_coverage_classification": "ANALYZED_WITH_FINDINGS",
+      "rationale": "Terraform GCP KMS crypto key specification."
     },
     {
       "id": "GT-NEG-01",
@@ -143,7 +230,7 @@
       "expected_crypto_presence": false,
       "expected_algorithms": [],
       "expected_coverage_classification": "ANALYZED_NO_FINDINGS",
-      "rationale": "Negative control file with non-crypto code and algorithm mentions inside comments. Must produce 0 findings."
+      "rationale": "Negative control file with non-crypto code and algorithm mentions inside comments."
     },
     {
       "id": "GT-NEG-02",
@@ -153,7 +240,47 @@
       "expected_crypto_presence": false,
       "expected_algorithms": [],
       "expected_coverage_classification": "ANALYZED_NO_FINDINGS",
-      "rationale": "Clean configuration with web server port and database host setting. Must produce 0 findings."
+      "rationale": "Clean configuration with web server port and database host setting."
+    },
+    {
+      "id": "GT-NEG-03",
+      "relative_path": "src/negative_clean.py",
+      "artifact_category": "SOURCE_CODE",
+      "outcome_type": "NEGATIVE",
+      "expected_crypto_presence": false,
+      "expected_algorithms": [],
+      "expected_coverage_classification": "ANALYZED_NO_FINDINGS",
+      "rationale": "Clean Python math utility file."
+    },
+    {
+      "id": "GT-NEG-04",
+      "relative_path": "src/negative_clean.java",
+      "artifact_category": "SOURCE_CODE",
+      "outcome_type": "NEGATIVE",
+      "expected_crypto_presence": false,
+      "expected_algorithms": [],
+      "expected_coverage_classification": "ANALYZED_NO_FINDINGS",
+      "rationale": "Clean Java StringUtils file."
+    },
+    {
+      "id": "GT-NEG-05",
+      "relative_path": "src/negative_clean.go",
+      "artifact_category": "SOURCE_CODE",
+      "outcome_type": "NEGATIVE",
+      "expected_crypto_presence": false,
+      "expected_algorithms": [],
+      "expected_coverage_classification": "ANALYZED_NO_FINDINGS",
+      "rationale": "Clean Go math utility file."
+    },
+    {
+      "id": "GT-NEG-06",
+      "relative_path": "src/negative_clean.js",
+      "artifact_category": "SOURCE_CODE",
+      "outcome_type": "NEGATIVE",
+      "expected_crypto_presence": false,
+      "expected_algorithms": [],
+      "expected_coverage_classification": "ANALYZED_NO_FINDINGS",
+      "rationale": "Clean JavaScript filter utility file."
     },
     {
       "id": "GT-UNS-01",
@@ -163,7 +290,7 @@
       "expected_crypto_presence": false,
       "expected_algorithms": [],
       "expected_coverage_classification": "UNSUPPORTED_FORMAT",
-      "rationale": "Binary audio file with unsupported extension .wav. Excluded from binary confusion matrix; reported under coverage accounting."
+      "rationale": "Binary audio file with unsupported extension .wav."
     },
     {
       "id": "GT-UNS-02",
@@ -173,7 +300,17 @@
       "expected_crypto_presence": false,
       "expected_algorithms": [],
       "expected_coverage_classification": "UNPARSEABLE",
-      "rationale": "Corrupted certificate file. Excluded from binary confusion matrix; reported under coverage accounting."
+      "rationale": "Corrupted certificate file."
+    },
+    {
+      "id": "GT-UNS-03",
+      "relative_path": "unsupported/sample.mp3",
+      "artifact_category": "UNSUPPORTED_MEDIA",
+      "outcome_type": "ABSTAIN_UNSUPPORTED",
+      "expected_crypto_presence": false,
+      "expected_algorithms": [],
+      "expected_coverage_classification": "UNSUPPORTED_FORMAT",
+      "rationale": "Binary audio file with unsupported extension .mp3."
     }
   ]
 }

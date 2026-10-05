@@ -62,9 +62,9 @@ class TestWorker01GroundTruthBenchmark:
         )
         data = record.to_dict()
 
-        # Zero metadata contamination assertion: Total observations must be exactly 30 across the 10 positive cases
+        # Zero metadata contamination assertion: Total observations must be exactly 40 across the 18 positive cases
         total_obs = data.get("observations", [])
-        assert len(total_obs) == 30, f"Expected exactly 30 clean observations (zero manifest contamination), got {len(total_obs)}"
+        assert len(total_obs) == 40, f"Expected exactly 40 clean observations (zero manifest contamination), got {len(total_obs)}"
 
         tp = 0
         fp = 0
@@ -106,11 +106,11 @@ class TestWorker01GroundTruthBenchmark:
         f1 = (2 * precision * recall) / (precision + recall) if (precision + recall) > 0 else 0.0
         specificity = tn / (tn + fp) if (tn + fp) > 0 else 1.0
 
-        assert tp == 10, f"Expected 10 True Positives, got {tp}"
+        assert tp == 18, f"Expected 18 True Positives, got {tp}"
         assert fp == 0, f"Expected 0 False Positives, got {fp}"
         assert fn == 0, f"Expected 0 False Negatives, got {fn}"
-        assert tn == 2, f"Expected 2 True Negatives (supported clean cases), got {tn}"
-        assert abstain_unsupported == 1, f"Expected 1 ABSTAIN_UNSUPPORTED, got {abstain_unsupported}"
+        assert tn == 10, f"Expected 10 True Negatives (supported clean cases), got {tn}"
+        assert abstain_unsupported == 2, f"Expected 2 ABSTAIN_UNSUPPORTED, got {abstain_unsupported}"
         assert abstain_unparseable == 1, f"Expected 1 ABSTAIN_UNPARSEABLE, got {abstain_unparseable}"
 
         assert precision == 1.0, f"Precision must be 1.0, got {precision}"
@@ -128,7 +128,7 @@ class TestWorker01GroundTruthBenchmark:
             target_name="Benchmark Directory"
         ).to_dict()
 
-        archive_rec = service.scan_archive_file(CORPUS_ZIP).to_dict()
+        archive_rec = service.scan_archive_file(str(CORPUS_ZIP)).to_dict()
 
         client = TestClient(app)
         with open(CORPUS_ZIP, "rb") as f:
@@ -144,10 +144,10 @@ class TestWorker01GroundTruthBenchmark:
         archive_asset_names = sorted([a.get("primary_name") for a in archive_rec.get("canonical_assets", [])])
         api_asset_names = sorted([a.get("primary_name") for a in api_rec.get("canonical_assets", [])])
 
-        # Confirm exact 30 canonical assets and 30 observations across all 3 interfaces (zero contamination)
-        assert len(dir_rec.get("observations", [])) == 30, f"Directory obs count mismatch: {len(dir_rec.get('observations', []))}"
-        assert len(archive_rec.get("observations", [])) == 30, f"Archive obs count mismatch: {len(archive_rec.get('observations', []))}"
-        assert len(dir_asset_names) == 30, f"Asset count mismatch: {len(dir_asset_names)}"
+        # Confirm exact 40 observations across all 3 interfaces (zero contamination)
+        assert len(dir_rec.get("observations", [])) == 40, f"Directory obs count mismatch: {len(dir_rec.get('observations', []))}"
+        assert len(archive_rec.get("observations", [])) == 40, f"Archive obs count mismatch: {len(archive_rec.get('observations', []))}"
+        assert len(dir_asset_names) == 39, f"Asset count mismatch: {len(dir_asset_names)}"
 
         assert dir_asset_names == archive_asset_names, "Directory vs Archive asset parity mismatch"
         assert archive_asset_names == api_asset_names, "Archive vs API upload asset parity mismatch"
