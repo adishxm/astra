@@ -4,8 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![CI](https://github.com/adishxm/astra/actions/workflows/ci.yml/badge.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
-[![Backend Tests](https://img.shields.io/badge/backend%20tests-165%20passing-brightgreen.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
-[![Frontend Tests](https://img.shields.io/badge/frontend%20tests-192%20passing-brightgreen.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
+[![Backend Tests](https://img.shields.io/badge/backend%20tests-187%20passing-brightgreen.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
+[![Frontend Tests](https://img.shields.io/badge/frontend%20tests-197%20passing-brightgreen.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
 [![Roadmap Score](https://img.shields.io/badge/Roadmap%20Readiness-100%2F100%20Evidence--Derived-brightgreen.svg)]()
 [![3D Visualization](https://img.shields.io/badge/3D%20Engine-Mosca%20Parameter%20Space-orange.svg)]()
 [![Team: HEXARK](https://img.shields.io/badge/Team-HEXARK-blue.svg)]()
@@ -28,6 +28,7 @@
    - [Option D: Docker Deployment](#option-d-docker-deployment)
    - [Option E: Synthetic Near-Term Demo Walkthrough](#option-e-synthetic-near-term-demo-walkthrough)
    - [Option F: Master Judging Rehearsal Runner](#option-f-master-judging-rehearsal-runner)
+   - [Option G: Playwright Browser Acceptance Testing](#option-g-playwright-browser-acceptance-testing)
 4. [System Architecture & Multi-Worker Pipeline](#system-architecture--multi-worker-pipeline)
 5. [Complete Audit Workflow — Step-by-Step](#complete-audit-workflow--step-by-step)
    - [Step 1: Initiate a Scan](#step-1-initiate-a-scan)
@@ -38,6 +39,7 @@
 6. [Interactive Web Dashboard — Real-Time Features](#interactive-web-dashboard--real-time-features)
    - [Drag-and-Drop Archive Intake](#drag-and-drop-archive-intake)
    - [Interactive Mosca Slider ($Z$, $X$, $Y$)](#interactive-mosca-slider)
+   - [6-Factor Grounded Project-Context Editor](#6-factor-grounded-project-context-editor)
    - [3D Parameter Space Visualizer ($X \times Y \times Z$)](#3d-parameter-space-visualizer-x--y--z)
    - [Cryptographic Inventory Browser](#cryptographic-inventory-browser)
    - [Cryptographic DNA Viewer & Drift Regression Alerts](#cryptographic-dna-viewer--drift-regression-alerts)
@@ -51,7 +53,7 @@
    - [Air-Gapped Signed Update Bundle Verification](#air-gapped-signed-update-bundle-verification)
    - [Production Readiness Health Evaluation](#production-readiness-health-evaluation)
 9. [Environment Configuration](#environment-configuration)
-10. [Automated Test Suite (357 Passing Tests)](#automated-test-suite-357-passing-tests)
+10. [Automated Test Suite (384 Passing Tests)](#automated-test-suite-384-passing-tests)
 11. [Multi-Surface Empirical Benchmark (100% Precision & Recall)](#multi-surface-empirical-benchmark-100-precision--recall)
 12. [100-Point Rubric Acceptance & Certification Matrix](#100-point-rubric-acceptance--certification-matrix)
 13. [Troubleshooting & FAQ](#troubleshooting--faq)
@@ -203,6 +205,22 @@ This script exercises:
 4. Live Owner Context Shift & Mosca Escalation ($X=8, Y=3, Z=8 \rightarrow 11 > 8 \rightarrow \text{CRITICAL}$).
 5. CycloneDX 1.6 CBOM Export & Schema Conformance (0 errors).
 6. Certified 100/100 Readiness Scorecard generation.
+
+---
+
+### Option G: Playwright Browser Acceptance Testing
+
+ASTRA provides an automated Playwright browser test harness that spins up a local server and exercises the complete served web application in a headless Chromium browser:
+```bash
+python frontend/tests/browser_acceptance.py
+```
+This automated harness verifies:
+1. **Live Web Dashboard & REST API Connectivity**: Verifies server health, dashboard routing, and dynamic data binding.
+2. **6-Factor Project-Context Editor**: Tests all 6 context factors ($X$, $Y$, exposure, criticality, reach, threat horizon) with live edit, save (`PUT /api/v1/scans/{id}/context`), and persistent reload.
+3. **Scenario Slider Non-Overwriting Invariant**: Ensures interactive client-side exploration does not corrupt or overwrite saved baseline context.
+4. **Downloaded CBOM Schema Validation**: Downloads the exported CycloneDX 1.6 CBOM directly through browser automation and validates it against the official JSON Schema draft-07 (`bom-1.6.schema.json`).
+5. **Audit Chain Delta Enforcement**: Asserts exact +1 event emission in the tamper-evident audit log upon user action.
+6. **Multi-Interface 4-Way Parity**: Validates identical cryptographic detection output across CLI directory scan, CLI archive scan, REST API, and real browser UI.
 
 ---
 
@@ -478,6 +496,16 @@ Access the dashboard at **`http://localhost:8000`** after launching the server.
 - **Instant Client-Side Recalculation**: Urgency counts (`CRITICAL`, `HIGH`, `MEDIUM`, `LOW`) and backlog priority order dynamically recalculate without triggering server re-scans.
 - Items where $X + Y > Z$ instantly flag with glowing red indicators and Store-Now-Decrypt-Later alerts.
 
+### 6-Factor Grounded Project-Context Editor
+Integrated directly within the scan detail and risk views:
+- **Data Secrecy Shelf-Life ($X$)**: Explicitly declare required secrecy retention (1–15 years) for corporate or regulatory data.
+- **Migration Timeline ($Y$)**: Input realistic engineering migration duration (1–10 years).
+- **Network Exposure Level**: 5-tier classification (`1 - Build / Dev Sandbox`, `2 - Localhost Isolated`, `3 - Internal Mesh / Subnet`, `4 - Partner Gateway / B2B`, `5 - Public Internet Facing`).
+- **System Criticality**: 5-tier business impact (`1 - Scratchpad`, `2 - Low Impact`, `3 - Moderate`, `4 - High Impact / Billing / Identity`, `5 - Mission Critical / Core Banking`).
+- **Dependency Reach**: Quantifies internal service blast radius and architectural call-graph fan-out.
+- **Quantum Threat Horizon ($Z$)**: Configures baseline scenario collapse timeline.
+- **API Persistence (`PUT /api/v1/scans/{id}/context`)**: Persists owner-enriched context and tags risk evaluations with `context_source: "OWNER_SUPPLIED"` instead of default assumptions.
+
 ### 3D Parameter Space Visualizer ($X \times Y \times Z$)
 Directly below the Mosca sliders in the `02 / MOSCA RISK` tab, an interactive 3D coordinate space visualizer renders the geometric reality of Store-Now-Decrypt-Later exposure:
 - **3D Coordinate Axes**: Maps Shelf-Life ($X$, 0–25y in amber), Migration Duration ($Y$, 0–10y in cyan), and Threat Horizon ($Z$, 0–15y in purple).
@@ -517,6 +545,7 @@ All endpoints are fully documented with interactive testing at **`http://localho
 | `GET` | `/api/v1/scans/{scan_id}/findings` | Retrieve canonical assets and detected cryptographic observations |
 | `GET` | `/api/v1/scans/{scan_id}/coverage` | Retrieve honest coverage accounting report and blind-spot metrics |
 | `GET` | `/api/v1/scans/{scan_id}/risk` | Retrieve Mosca risk calculations or dynamically re-evaluate via query params (`horizon`, `shelf_life`, `migration`) |
+| `PUT` | `/api/v1/scans/{scan_id}/context` | Enrich scan with verified owner context (lifetime X, migration Y, exposure, criticality) |
 | `GET` | `/api/v1/scans/{scan_id}/export` | Export standardized CycloneDX 1.6 CBOM JSON |
 
 ### Workflow & Governance Endpoints
@@ -603,17 +632,17 @@ Configure ASTRA via `.env` file or environment variables:
 
 ---
 
-## Automated Test Suite (357 Passing Tests)
+## Automated Test Suite (384 Passing Tests)
 
-ASTRA includes an exhaustive automated test suite with **357 tests passing** (165 backend + 192 frontend) across unit, integration, adversarial security, empirical ground truth benchmarks, frontend UI components, 3D parameter space logic, and end-to-end judging rehearsal user journeys:
+ASTRA includes an exhaustive automated test suite with **384 tests passing** (187 backend + 197 frontend) across unit, integration, adversarial security, empirical ground truth benchmarks, frontend UI components, 3D parameter space logic, and end-to-end judging rehearsal user journeys:
 
-### 1. Backend Test Suite (165 Tests)
+### 1. Backend Test Suite (187 Tests)
 ```bash
 python -m pytest backend/tests -v
 ```
 Output:
 ```text
-======================= 165 passed, 1 skipped in 14.82s =======================
+======================= 187 passed, 1 skipped in 46.89s =======================
 ```
 
 #### Backend Module Breakdown
@@ -645,22 +674,25 @@ Output:
 | `test_worker04_phase_c_kms_hsm.py` | 4 | Cloud KMS detector (AWS, Azure, GCP), PKCS#11 HSM detector (SoftHSM2, OpenSC, Luna), security flag analysis |
 | `test_worker04_phase_d_benchmark_matrix.py` | 4 | 7-surface empirical confusion matrix, 0% FPR negative controls, ground-truth label validation across all holdouts |
 | `test_worker04_phase_e_rehearsal_closeout.py` | 4 | Master judging rehearsal dynamic scorecard (100/100), stale counter elimination, frontend byte synchronization |
+| `test_server_derived_principal.py` | 17 | Server-derived principal enforcement, tamper-resistant actor attribution, per-scan tenant isolation, audit chain persistence and restart resilience |
+| `test_worker01_ground_truth_benchmark.py` | 5 | 31-case ground-truth benchmark corpus, CLI/archive/API parity, adversarial path traversal defense, honest abstention reporting for unsupported media & malformed certs |
 
-### 2. Frontend Test Suite (192 Tests Across 48 Test Suites)
+### 2. Frontend Test Suite (197 Tests Across 49 Test Suites)
 ```bash
 cd frontend
 npm test
 ```
 Output:
 ```text
- Test Files  48 passed (48)
-      Tests  192 passed (192)
+ Test Files  49 passed (49)
+      Tests  197 passed (197)
 ```
 
 #### Frontend Verification Scope
 - **Component Primitives**: Modals, Badges, Tabs, Progress Rings, Tooltips, Empty States, and Error Boundaries.
 - **Inventory & CBOM**: CycloneDX 1.6 export modals, algorithm matrix mapping, pagination, filtering, and evidence viewers.
 - **Mosca Risk & 3D Visualization**: Interactive slider recalculation, SNDL deadline tracking, 3D parameter space projection math, depth sorting, and canvas lifecycle.
+- **6-Factor Project-Context Editor**: Live grounded context editing ($X$, $Y$, exposure, criticality, reach, threat horizon), API persistence (`PUT /api/v1/scans/{id}/context`), and form validation.
 - **Scan & Migration Flow**: Drag-and-drop intake, live progress hooks, Kahn topological roadmap rendering, and transition banners.
 
 ---
@@ -698,8 +730,8 @@ Based on the independent evaluation in the *ASTRA / SIH26164 Product Assessment 
 |---|---:|---:|---|
 | **1. SIH26164 Problem Fit & Coverage Breadth** | 20 | **20 / 20** | **Full points awarded (+4):** Published supported-surface matrix accurately delineates verified vs roadmap capabilities. Multi-surface discovery expanded to inspect real OCI Image Layouts with content-addressed gzip layer decompression (`test_worker03_phase_d_oci_cbom.py`), Cloud KMS adapters, and PKCS#11 HSM token configurations. Truthful 4/6 file coverage denominator (66.67%) without sidecar leakage. |
 | **2. Working Scan Engine, API & CLI** | 25 | **25 / 25** | **Full points awarded (+7):** Single unified `scan_id` propagates through manifest, summary, coverage, snapshot, observations, and CBOM. Synchronized exact file denominators. Standard CycloneDX 1.6 CBOM emitted with connected `dependencies` graph linking root application to all components with schema validation (`test_worker03_phase_d_oci_cbom.py`). |
-| **3. Integrated Frontend & User Workflow** | 15 | **15 / 15** | **Full points awarded (+7):** Purpose-specific PQC recommendations implemented (ML-KEM for KEX, ML-DSA/SLH-DSA for Signatures, AES-256-GCM for Symmetric, SHA-256/SHA-3 for Hashes). Truthful category resolution with Asymmetric precedence, demo banner transparency, and server-persisted SHA-256 audit chain. Verified across 192 passing vitest tests. |
-| **4. Validation & Evidence Quality** | 20 | **20 / 20** | **Full points awarded (+10):** Finding-level bipartite matching benchmark across all 7 surfaces penalizes unlabelled extra noise and negative control violations (`test_e2e_corpus_benchmark.py`). Official CycloneDX 1.6 JSON Schema validation passes with 0 errors. Rehearsal test suite verifies 165 backend tests passing. |
+| **3. Integrated Frontend & User Workflow** | 15 | **15 / 15** | **Full points awarded (+7):** Purpose-specific PQC recommendations implemented (ML-KEM for KEX, ML-DSA/SLH-DSA for Signatures, AES-256-GCM for Symmetric, SHA-256/SHA-3 for Hashes). Truthful category resolution with Asymmetric precedence, demo banner transparency, and server-persisted SHA-256 audit chain. Verified across 197 passing vitest tests. |
+| **4. Validation & Evidence Quality** | 20 | **20 / 20** | **Full points awarded (+10):** Finding-level bipartite matching benchmark across all 7 surfaces penalizes unlabelled extra noise and negative control violations (`test_e2e_corpus_benchmark.py`). Official CycloneDX 1.6 JSON Schema validation passes with 0 errors. Rehearsal test suite verifies 187 backend tests passing. |
 | **5. Security & Operational Readiness** | 15 | **15 / 15** | **Full points awarded (+9):** Safe local loopback binding (`127.0.0.1:8000`). Fail-closed hosted mode auth actively rejects unauthorized upload, listing, and read routes (`test_worker03_phase_a_security.py`). Token authentication (`ASTRA_API_KEY`) supports custom header and Bearer token. AC-03 private key redaction (`[REDACTED_PRIVATE_KEY_MATERIAL]`). Air-gapped zero egress verified at network socket level. |
 | **6. Differentiation & Demo Value** | 5 | **5 / 5** | **Full points awarded (+1):** Every recommendation includes algorithm purpose, target standard (FIPS 203 ML-KEM, FIPS 204 ML-DSA, FIPS 205 SLH-DSA), NSA CNSA 2.0 citations, performance impact, and bandwidth/cost trade-offs. Mosca parameters tagged as `OWNER_SUPPLIED` vs `ASSUMPTION`. Live rehearsal runner (`scripts/run_judging_rehearsal.py`) dynamically computes 100/100 points on live test evidence. |
 | **TOTAL MEASURED SCORE** | **100** | **100 / 100** | **100 / 100 AUTOMATED QUALITY GATES PASSED ON TESTED BENCHMARK EVIDENCE** |
@@ -732,7 +764,9 @@ ASTRA operates under strict enterprise security principles:
    When `ASTRA_HOSTED_MODE=true` is set, the `/api/v1/scans/directory` endpoint is disabled to prevent arbitrary server filesystem exploration by unauthenticated users.
 4. **Zero Outbound Telemetry**:
    No outbound network calls, analytics pings, or third-party API dependencies exist. All analysis runs entirely on local CPU.
-5. **Vulnerability Reporting**:
+5. **Server-Derived Principal Isolation**:
+   All audit actions, scan assignments, and export operations strictly derive tenant and user identities from server-configured credentials (`ASTRA_API_KEY`). Untrusted client-supplied headers (`X-Tenant-ID`, `X-User-ID`) are ignored to prevent identity spoofing.
+6. **Vulnerability Reporting**:
    To report a security vulnerability, please email `parinidhijain101@gmail.com`. Do not file public GitHub issues for security vulnerabilities.
 
 ---
