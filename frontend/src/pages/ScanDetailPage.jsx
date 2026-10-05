@@ -22,6 +22,7 @@ import {
   RiskFactorBreakdown,
   RiskTable,
   RiskDetailModal,
+  ContextEditor,
 } from '../components/risk';
 import {
   CbomSummary,
@@ -110,8 +111,8 @@ export default function ScanDetailPage() {
   const unsupportedExtensions = coverage.unsupported_extensions || [];
   const manifestFiles = manifest.files || [];
   const collectorHealth = coverage.collector_health || {};
-  const scenario = scan.scenario || null;
-  const context = scan.context || null;
+  const scenario = (riskEvaluations.length > 0 ? riskEvaluations[0].scenario : null) || scan.scenario || null;
+  const context = scan.context || (riskEvaluations.length > 0 ? riskEvaluations[0].context : null);
 
   // Normalize CBOM items
   const cbomComponents = normalizeCbomInventory(canonicalAssets, scan.observations || []);
@@ -315,6 +316,12 @@ export default function ScanDetailPage() {
         {/* Tab 3: Risk Assessment */}
         <TabPanel id="risk" active={activeTab === 'risk'}>
           <div className="scan-risk-section" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-lg)' }}>
+            <ContextEditor
+              scanId={scanId}
+              context={context}
+              onSaveSuccess={() => refetch()}
+            />
+
             <RiskSummary
               riskEvaluations={riskEvaluations}
               scenario={scenario}

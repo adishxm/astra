@@ -35,6 +35,7 @@ export default function App() {
       <Routes>
         <Route element={<AppLayout />}>
           <Route path="/" element={<DashboardPage />} />
+          <Route path="/index.html" element={<DashboardPage />} />
           <Route path="/scan" element={<ScanPage />} />
           <Route path="/scans/:scanId" element={<ScanDetailPage />} />
           <Route path="/findings" element={<FindingsPage />} />

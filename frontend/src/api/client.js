@@ -194,6 +194,76 @@ export async function apiGet(path, { signal } = {}) {
 }
 
 /**
+ * PUT request with JSON payload, typed ApiError handling, and abort signal support
+ * @param {string} path
+ * @param {any} data
+ * @param {Object} [options]
+ * @param {AbortSignal} [options.signal]
+ * @returns {Promise<any>}
+ */
+export async function apiPut(path, data, { signal } = {}) {
+  const url = `${BASE_URL}${path}`;
+
+  let res;
+  try {
+    res = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(data),
+      signal,
+    });
+  } catch (err) {
+    if (err.name === 'AbortError' || (signal && signal.aborted)) {
+      throw new ApiError('Request aborted', { status: 0, kind: 'aborted' });
+    }
+    throw new ApiError('Unable to connect to ASTRA engine', {
+      status: 0,
+      kind: 'network',
+      detail: err.message,
+    });
+  }
+
+  let body = null;
+  const contentType = res.headers?.get?.('content-type') || '';
+  const hasJson = contentType.includes('application/json');
+
+  try {
+    if (res.status !== 204) {
+      if (hasJson) {
+        body = await res.json();
+      } else {
+        const text = await res.text();
+        if (text) {
+          try {
+            body = JSON.parse(text);
+          } catch {
+            body = text;
+          }
+        }
+      }
+    }
+  } catch {
+    body = null;
+  }
+
+  if (!res.ok) {
+    const rawDetail = body && typeof body === 'object' ? body.detail : body;
+    const kind = classifyStatus(res.status);
+    const message = buildErrorMessage(res.status, rawDetail, res.statusText);
+    throw new ApiError(message, {
+      status: res.status,
+      detail: rawDetail,
+      kind,
+    });
+  }
+
+  return body;
+}
+
+/**
  * Multipart file upload with real upload progress tracking via XMLHttpRequest
  * @param {string} path
  * @param {File | Blob} file

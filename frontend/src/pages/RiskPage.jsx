@@ -13,6 +13,7 @@ import {
   RiskFactorBreakdown,
   RiskTable,
   RiskDetailModal,
+  ContextEditor,
 } from '../components/risk';
 import {
   Sliders,
@@ -301,6 +302,15 @@ export default function RiskPage() {
         />
       ) : (
         <div className="risk-content-stack">
+          {/* Persistent Project Context Editor */}
+          {activeScanId && (
+            <ContextEditor
+              scanId={activeScanId}
+              context={context}
+              onSaveSuccess={() => refetchRisk()}
+            />
+          )}
+
           {/* Summary Overview */}
           <RiskSummary
             riskEvaluations={riskEvaluations}
