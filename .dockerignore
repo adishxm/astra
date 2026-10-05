@@ -1,0 +1,15 @@
+.git
+.env
+.env.*
+!.env.example
+node_modules
+frontend/node_modules
+frontend/dist
+frontend/test-results
+test-results
+.pytest_cache
+__pycache__
+*.pyc
+.brain
+verify.py
+verify2.py

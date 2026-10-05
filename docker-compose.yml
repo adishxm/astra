@@ -3,6 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: runtime
     container_name: astra-ecdat
     ports:
       - "127.0.0.1:8000:8000"
@@ -23,6 +24,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      target: test
     container_name: astra-tests
     command: ["python", "-m", "pytest", "backend/tests", "-v"]
     profiles: ["test"]
