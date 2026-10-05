@@ -13,10 +13,10 @@ This directory serves as the centralized repository of all engineering execution
 | Report | Stage | Description | Status |
 |---|---|---|---|
 | [`project_completion_report.md`](project_completion_report.md) | Final Closeout | Master project completion, certification, and quality assurance report | **COMPLETED & CERTIFIED** |
-| [`final_planning_report.md`](../final_planning_report.md) | Planning Milestone | Initial architecture planning milestone and scope synthesis | **RECORD PRESERVED** |
-| [`00_master_plan.md`](../00_master_plan.md) | Master Plan | Four-worker multi-phase development execution roadmap | **EXECUTED** |
-| [`threat_model.md`](../threat_model.md) | Security Architecture | STRIDE analysis, trust boundaries, and adversarial mitigations | **ACTIVE DEFENSE** |
-| [`traceability_matrix.md`](../traceability_matrix.md) | Requirements Audit | End-to-end mapping from research artifacts to acceptance criteria | **FULL TRACEABILITY** |
+| [`final_planning_report.md`](../.work/final_planning_report.md) | Planning Milestone | Initial architecture planning milestone and scope synthesis | **RECORD PRESERVED** |
+| [`00_master_plan.md`](../.work/00_master_plan.md) | Master Plan | Four-worker multi-phase development execution roadmap | **EXECUTED** |
+| [`threat_model.md`](../.work/threat_model.md) | Security Architecture | STRIDE analysis, trust boundaries, and adversarial mitigations | **ACTIVE DEFENSE** |
+| [`traceability_matrix.md`](../.work/traceability_matrix.md) | Requirements Audit | End-to-end mapping from research artifacts to acceptance criteria | **FULL TRACEABILITY** |
 
 ---
 
