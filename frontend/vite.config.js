@@ -11,11 +11,10 @@ function emitDistIndexPlugin() {
   return {
     name: 'emit-dist-index',
     closeBundle() {
-      const distReactPath = path.resolve(__dirname, 'dist/react.html');
       const distIndexPath = path.resolve(__dirname, 'dist/index.html');
-      if (fs.existsSync(distReactPath)) {
-        fs.copyFileSync(distReactPath, distIndexPath);
-        fs.unlinkSync(distReactPath);
+      const staticIndexPath = path.resolve(__dirname, 'index.html');
+      if (fs.existsSync(staticIndexPath)) {
+        fs.copyFileSync(staticIndexPath, distIndexPath);
       }
     },
   };
