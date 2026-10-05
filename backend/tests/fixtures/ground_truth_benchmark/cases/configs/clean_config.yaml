@@ -1,0 +1,6 @@
+app:
+  port: 8080
+  name: "OrderProcessingService"
+  db:
+    host: "127.0.0.1"
+    max_pool_size: 20

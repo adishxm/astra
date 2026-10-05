@@ -468,21 +468,6 @@ class ScanService:
         # Validate CBOM conformity
         self.reconciliation_engine.validate_cyclonedx_16(cbom_data)
 
-        # Authoritative audit event: CBOM_EXPORTED
-        GLOBAL_AUDIT_STORE.append_event(
-            action="CBOM_EXPORTED",
-            actor=user_id or "system",
-            asset_id=scan_id,
-            tenant_id=tenant_id,
-            user_id=user_id,
-            details={
-                "scan_id": scan_id,
-                "spec_version": "1.6",
-                "format": "CycloneDX",
-                "components_count": len(components),
-                "serial_number": cbom_data.get("serialNumber"),
-            },
-        )
 
         # 8. Assemble Record & Save
         record = ScanRecord(
@@ -545,6 +530,9 @@ class ScanService:
                 declared_scope=name,
             )
         )
+        if manifest.sandbox_directory is None:
+            raise RuntimeError("Sandbox directory was not initialized during intake.")
+
         try:
             record = self.run_scan_on_directory(
                 directory_path=manifest.sandbox_directory,

@@ -138,12 +138,16 @@ def test_audit_chain_store_persistence_across_restart(tmp_path):
     assert verify_report["tip_hash"] == tip_initial
 
 
-def test_scan_workflow_auto_audit_events():
+def test_scan_workflow_auto_audit_events(monkeypatch):
     """Verify that scanning, exporting CBOM, and enriching context auto-emit verified audit events."""
+    api_keys = {
+        "finance-key": {"tenant_id": "finance-division", "user_id": "crypto-analyst-99"}
+    }
+    monkeypatch.setenv("ASTRA_API_KEYS", json.dumps(api_keys))
+
     zip_buf = create_minimal_crypto_zip()
     headers = {
-        "X-Tenant-ID": "finance-division",
-        "X-User-ID": "crypto-analyst-99",
+        "X-ASTRA-API-KEY": "finance-key",
     }
 
     # 1. Intake scan upload
@@ -197,10 +201,16 @@ def test_scan_workflow_auto_audit_events():
     assert risk_events[0]["details"]["tenant_id"] == "finance-division"
 
 
-def test_tenant_scoping_and_isolation():
+def test_tenant_scoping_and_isolation(monkeypatch):
     """Verify tenant isolation between Tenant Alpha and Tenant Beta."""
-    alpha_headers = {"X-Tenant-ID": "tenant-alpha", "X-User-ID": "alice"}
-    beta_headers = {"X-Tenant-ID": "tenant-beta", "X-User-ID": "bob"}
+    api_keys = {
+        "alpha-key": {"tenant_id": "tenant-alpha", "user_id": "alice"},
+        "beta-key": {"tenant_id": "tenant-beta", "user_id": "bob"},
+    }
+    monkeypatch.setenv("ASTRA_API_KEYS", json.dumps(api_keys))
+
+    alpha_headers = {"X-ASTRA-API-KEY": "alpha-key"}
+    beta_headers = {"X-ASTRA-API-KEY": "beta-key"}
 
     # Upload scan for Alpha
     zip_alpha = create_minimal_crypto_zip()
@@ -250,9 +260,14 @@ def test_tenant_scoping_and_isolation():
     assert any(e.get("asset_id") == scan_id_b for e in beta_audit.get("events", []))
 
 
-def test_manual_audit_append_endpoint():
+def test_manual_audit_append_endpoint(monkeypatch):
     """Verify POST /api/v1/workflow/audit/chain/append creates tamper-evident audit links."""
-    headers = {"X-Tenant-ID": "ops-compliance", "X-User-ID": "qa-lead"}
+    api_keys = {
+        "ops-key": {"tenant_id": "ops-compliance", "user_id": "qa-lead"}
+    }
+    monkeypatch.setenv("ASTRA_API_KEYS", json.dumps(api_keys))
+
+    headers = {"X-ASTRA-API-KEY": "ops-key"}
     append_payload = {
         "action": "PEER_REVIEW_APPROVED",
         "actor": "qa-lead",

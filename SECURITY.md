@@ -20,6 +20,7 @@ ASTRA is built with strict boundary security principles:
 7. **API Token Authentication**: Configurable via `ASTRA_API_KEY`, enforcing token validation (`X-ASTRA-API-KEY` or `Authorization: Bearer <key>`) on all mutating endpoints.
 8. **Upload Quota Enforcement**: Maximum archive upload size is strictly capped at 50 MB (configurable via `ASTRA_MAX_UPLOAD_SIZE_BYTES`) with chunked stream monitoring rejecting oversized requests with `HTTP 413`.
 9. **Formal Threat Model**: Full STRIDE analysis and trust boundary architecture is documented in [.brain/.work/threat_model.md](.brain/.work/threat_model.md).
+10. **Server-Derived Principal Isolation**: A valid `ASTRA_API_KEY` maps to a single server-configured principal (`ASTRA_DEFAULT_TENANT_ID` / `ASTRA_DEFAULT_USER_ID`). Untrusted client request headers (`X-Tenant-ID`, `X-User-ID`) are strictly ignored and cannot override principal identity or access scope.
 
 ---
 

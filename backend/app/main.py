@@ -217,9 +217,7 @@ def list_scans(request: Request, _: None = Depends(verify_api_key)):
     return GLOBAL_SCAN_STORE.list_all(tenant_id=tenant_id)
 
 
-@app.get("/api/v1/scans/{scan_id}")
-def get_scan(scan_id: str, request: Request, _: None = Depends(verify_api_key)):
-    """Retrieve complete scan record by ID."""
+def _get_scan_record_scoped(scan_id: str, request: Request) -> Any:
     record = GLOBAL_SCAN_STORE.get(scan_id)
     if not record:
         raise HTTPException(status_code=404, detail=f"Scan ID not found: {scan_id}")
@@ -227,15 +225,20 @@ def get_scan(scan_id: str, request: Request, _: None = Depends(verify_api_key)):
     rec_tenant = getattr(record, "tenant_id", None) if not isinstance(record, dict) else record.get("tenant_id")
     if tenant_id and tenant_id != "default" and rec_tenant and rec_tenant != "default" and rec_tenant != tenant_id:
         raise HTTPException(status_code=404, detail=f"Scan ID not found: {scan_id}")
+    return record
+
+
+@app.get("/api/v1/scans/{scan_id}")
+def get_scan(scan_id: str, request: Request, _: None = Depends(verify_api_key)):
+    """Retrieve complete scan record by ID."""
+    record = _get_scan_record_scoped(scan_id, request)
     return record if isinstance(record, dict) else record.to_dict()
 
 
 @app.get("/api/v1/scans/{scan_id}/findings")
-def get_scan_findings(scan_id: str, _: None = Depends(verify_api_key)):
+def get_scan_findings(scan_id: str, request: Request, _: None = Depends(verify_api_key)):
     """Retrieve canonical assets and observations for a scan."""
-    record = GLOBAL_SCAN_STORE.get(scan_id)
-    if not record:
-        raise HTTPException(status_code=404, detail=f"Scan ID not found: {scan_id}")
+    record = _get_scan_record_scoped(scan_id, request)
     data = record if isinstance(record, dict) else record.to_dict()
     observations = []
     if isinstance(record, dict):
@@ -253,11 +256,9 @@ def get_scan_findings(scan_id: str, _: None = Depends(verify_api_key)):
 
 
 @app.get("/api/v1/scans/{scan_id}/coverage")
-def get_scan_coverage(scan_id: str, _: None = Depends(verify_api_key)):
+def get_scan_coverage(scan_id: str, request: Request, _: None = Depends(verify_api_key)):
     """Retrieve truthful coverage report for a scan."""
-    record = GLOBAL_SCAN_STORE.get(scan_id)
-    if not record:
-        raise HTTPException(status_code=404, detail=f"Scan ID not found: {scan_id}")
+    record = _get_scan_record_scoped(scan_id, request)
     data = record if isinstance(record, dict) else record.to_dict()
     return data.get("coverage", {})
 
@@ -265,15 +266,14 @@ def get_scan_coverage(scan_id: str, _: None = Depends(verify_api_key)):
 @app.get("/api/v1/scans/{scan_id}/risk")
 def get_scan_risk(
     scan_id: str,
+    request: Request,
     horizon: Optional[float] = Query(None, description="Quantum threat horizon Z in years (scenario assumption)"),
     shelf_life: Optional[float] = Query(None, description="Data secrecy shelf-life X in years"),
     migration: Optional[float] = Query(None, description="Migration duration Y in years"),
     _: None = Depends(verify_api_key),
 ):
     """Retrieve Mosca risk calculations or dynamically re-evaluate under custom scenario assumptions."""
-    record = GLOBAL_SCAN_STORE.get(scan_id)
-    if not record:
-        raise HTTPException(status_code=404, detail=f"Scan ID not found: {scan_id}")
+    record = _get_scan_record_scoped(scan_id, request)
     data = record if isinstance(record, dict) else record.to_dict()
 
     if horizon is not None or shelf_life is not None or migration is not None:
@@ -391,16 +391,18 @@ def get_scan_export(
 
     try:
         from app.web_workflow.audit_store import GLOBAL_AUDIT_STORE
+        actor_id = get_user_id(request) or (f"user-{tenant_id}" if tenant_id else "system")
         GLOBAL_AUDIT_STORE.append_event(
-            event_type="CBOM_EXPORTED",
-            actor=get_user_id(request),
-            payload={
+            action="CBOM_EXPORTED",
+            actor=actor_id,
+            asset_id=scan_id,
+            tenant_id=tenant_id,
+            user_id=get_user_id(request),
+            details={
                 "scan_id": scan_id,
                 "format": format,
                 "target_name": getattr(record, "target_name", "unknown") if not isinstance(record, dict) else record.get("target_name", "unknown"),
             },
-            tenant_id=tenant_id,
-            scan_id=scan_id,
         )
     except Exception:
         pass
@@ -414,16 +416,20 @@ def get_scan_export(
 @app.get("/api/v1/workflow/evidence/{asset_id}", response_model=List[CanonicalEvidence])
 def get_evidence_drilldown(
     asset_id: str,
+    request: Request,
     _: None = Depends(verify_api_key),
 ):
-    """Evidence drill-down for a specific asset across all executed scans."""
+    """Evidence drill-down for a specific asset across all executed scans scoped to tenant."""
     evidences = []
-    # Search in-memory cache and persisted records
+    tenant_id = get_tenant_id(request)
     for s_meta in GLOBAL_SCAN_STORE.list_all():
         rec = GLOBAL_SCAN_STORE.get(s_meta["scan_id"])
         if not rec:
             continue
         data = rec if isinstance(rec, dict) else rec.to_dict()
+        rec_tenant = data.get("tenant_id")
+        if tenant_id and tenant_id != "default" and rec_tenant and rec_tenant != "default" and rec_tenant != tenant_id:
+            continue
         for asset in data.get("canonical_assets", []):
             if asset.get("asset_id") == asset_id:
                 for obs in asset.get("observations", []):
@@ -432,21 +438,29 @@ def get_evidence_drilldown(
 
 
 @app.get("/api/v1/workflow/export", response_model=InventoryExport)
-def get_latest_export(_: None = Depends(verify_api_key)):
-    """Sanitized export of the latest scan findings."""
+def get_latest_export(
+    request: Request,
+    _: None = Depends(verify_api_key),
+):
+    """Sanitized export of the latest scan findings scoped to caller tenant."""
+    tenant_id = get_tenant_id(request)
     all_scans = GLOBAL_SCAN_STORE.list_all()
-    if not all_scans:
+    filtered_data = []
+    for s_meta in all_scans:
+        rec = GLOBAL_SCAN_STORE.get(s_meta["scan_id"])
+        if not rec:
+            continue
+        data = rec if isinstance(rec, dict) else rec.to_dict()
+        rec_tenant = data.get("tenant_id")
+        if tenant_id and tenant_id != "default" and rec_tenant and rec_tenant != "default" and rec_tenant != tenant_id:
+            continue
+        filtered_data.append(data)
+
+    if not filtered_data:
         return InventoryExport(assets=[], relationships=[], audit_trail=[])
 
-    latest_id = all_scans[0]["scan_id"]
-    rec = GLOBAL_SCAN_STORE.get(latest_id)
-    if not rec:
-        return InventoryExport(assets=[], relationships=[], audit_trail=[])
-    data = rec if isinstance(rec, dict) else rec.to_dict()
-
-    assets = []
-    for a in data.get("canonical_assets", []):
-        assets.append(a)
+    latest_data = filtered_data[0]
+    assets = list(latest_data.get("canonical_assets", []))
 
     return InventoryExport(
         assets=assets,

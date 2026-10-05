@@ -1,0 +1,4 @@
+server:
+  tls_version: "TLSv1.3"
+  cipher_suite: "ECDHE-RSA-AES256-GCM-SHA384"
+  ssh_kex: "sntrup761x25519-sha512@openssh.com"
