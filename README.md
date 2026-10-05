@@ -1,6 +1,7 @@
 # ASTRA — Algorithm Security Tracking and Risk Assessment
 ### SIH26164 Enterprise Cryptographic Discovery & Analysis Tool (ECDAT)
 
+[![Live Prototype](https://img.shields.io/badge/Live%20Prototype-astra--ecdat.vercel.app-7928CA?style=flat&logo=vercel&logoColor=white)](https://astra-ecdat.vercel.app/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python: 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![CI](https://github.com/adishxm/astra/actions/workflows/ci.yml/badge.svg)](https://github.com/adishxm/astra/actions/workflows/ci.yml)
@@ -14,6 +15,8 @@
 [![Profile: Sovereign](https://img.shields.io/badge/Profile-Air--Gapped%20Sovereign-red.svg)]()
 
 > **ASTRA by Team HEXARK is an open-source cryptographic discovery and CBOM prototype aligned with SIH26164 (ECDAT). Scan source, manifests, configs and certificates, evaluate Mosca PQC migration risk, and export CycloneDX 1.6 CBOM.**
+>
+> 🌐 **Live Prototype Deployment**: [https://astra-ecdat.vercel.app/](https://astra-ecdat.vercel.app/) — *Access the interactive web dashboard, real-time 3D Mosca parameter space visualizer, and CycloneDX 1.6 CBOM explorer online without local installation.*
 
 ---
 
@@ -22,6 +25,7 @@
 1. [Executive Summary & Problem Alignment](#executive-summary--problem-alignment)
 2. [Supported Scope & Limitations (SIH26164 Matrix)](#supported-scope--limitations-sih26164-matrix)
 3. [60-Second Quickstart & Launch Options](#60-second-quickstart--launch-options)
+   - [Live Prototype: Instant Web Access](#live-prototype-instant-web-access)
    - [Option A: One-Click Windows Launcher (`launch.bat`)](#option-a-one-click-windows-launcher-launchbat-recommended)
    - [Option B: Zero-Dependency CLI Scan](#option-b-zero-dependency-cli-scan)
    - [Option C: FastAPI Web Server & Interactive Dashboard](#option-c-fastapi-web-server--interactive-dashboard)
@@ -102,6 +106,18 @@ To maintain absolute credibility and transparent engineering standards, ASTRA ex
 ---
 
 ## 60-Second Quickstart & Launch Options
+
+### Live Prototype: Instant Web Access
+
+For instant interactive testing without cloning or local Python installation:
+
+👉 **[https://astra-ecdat.vercel.app/](https://astra-ecdat.vercel.app/)**
+
+- **Explore Pre-Loaded Scans**: Inspect multi-surface cryptographic assets (Python, Java, Go, Rust, C/C++, Dockerfiles, OCI layouts, X.509 certs).
+- **Interactive Mosca Simulation**: Test dynamic sliders for quantum threat horizon ($Z$), data secrecy ($X$), and migration timeline ($Y$) with real-time urgency recalculations and interactive 3D parameter space visualization.
+- **CBOM Export & Validation**: Download standards-compliant CycloneDX 1.6 CBOM JSON directly in your browser.
+
+---
 
 ### Option A: One-Click Windows Launcher (`launch.bat`) (Recommended)
 
@@ -483,6 +499,8 @@ Cryptographic Components: 7
 
 ## Interactive Web Dashboard — Real-Time Features
 
+> 🌐 **Live Prototype Available**: Access the hosted deployment directly at **[https://astra-ecdat.vercel.app/](https://astra-ecdat.vercel.app/)** or launch locally at `http://localhost:8000`.
+
 Access the dashboard at **`http://localhost:8000`** after launching the server.
 
 ### Drag-and-Drop Archive Intake
@@ -777,6 +795,8 @@ ASTRA operates under strict enterprise security principles:
 ┌──────────────────────────────────────────────────────────────────┐
 │                   ASTRA Quick Reference Card                     │
 ├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ONLINE:   https://astra-ecdat.vercel.app/ (Live Prototype)      │
 │                                                                  │
 │  LAUNCH:   launch.bat                 (Windows One-Click)        │
 │                                                                  │
