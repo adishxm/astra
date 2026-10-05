@@ -14,7 +14,7 @@ import shutil
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from app.core.config import INTAKE_ENGINE_VERSION, COLLECTOR_VERSION, RULESET_VERSION
 from app.intake.extractor import SafeArchiveExtractor
@@ -56,6 +56,7 @@ class ScanRecord:
         created_at: Optional[datetime] = None,
         tenant_id: Optional[str] = None,
         user_id: Optional[str] = None,
+        context: Optional[ContextFactors] = None,
     ):
         self.scan_id = scan_id
         self.target_name = target_name
@@ -70,6 +71,7 @@ class ScanRecord:
         self.created_at = created_at or datetime.now(timezone.utc)
         self.tenant_id = tenant_id
         self.user_id = user_id
+        self.context = context
 
     @property
     def status(self) -> str:
@@ -138,6 +140,7 @@ class ScanRecord:
             "cbom_data": self.cbom_data,
             "tenant_id": self.tenant_id,
             "user_id": self.user_id,
+            "context": self.context.model_dump() if getattr(self, "context", None) else {},
         }
 
 
@@ -250,7 +253,7 @@ class ScanService:
 
     def run_scan_on_directory(
         self,
-        directory_path: str,
+        directory_path: Union[str, Path],
         target_name: Optional[str] = None,
         scenario: Optional[RiskScenario] = None,
         scan_id: Optional[str] = None,
@@ -510,7 +513,7 @@ class ScanService:
 
     def run_scan_on_archive(
         self,
-        archive_path: str,
+        archive_path: Union[str, Path],
         target_name: Optional[str] = None,
         scenario: Optional[RiskScenario] = None,
         tenant_id: Optional[str] = None,
@@ -584,6 +587,7 @@ class ScanService:
 
         record.risk_evaluations = new_risk_evals
         record.backlog_items = new_backlog_items
+        record.context = context
         self.store.save(record)
 
         # Authoritative audit event: RISK_RECALCULATED
@@ -607,7 +611,7 @@ class ScanService:
     @classmethod
     def scan_directory(
         cls,
-        directory_path: str,
+        directory_path: Union[str, Path],
         target_name: Optional[str] = None,
         scenario: Optional[RiskScenario] = None,
         tenant_id: Optional[str] = None,
@@ -621,7 +625,7 @@ class ScanService:
     @classmethod
     def scan_archive_file(
         cls,
-        archive_path: str,
+        archive_path: Union[str, Path],
         target_name: Optional[str] = None,
         scenario: Optional[RiskScenario] = None,
         tenant_id: Optional[str] = None,

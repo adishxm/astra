@@ -471,9 +471,9 @@ def get_latest_export(
 
 
 # Mount Web Dashboard Static Assets
-STATIC_DIR = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
-if not STATIC_DIR.exists():
-    STATIC_DIR = Path(__file__).resolve().parent / "static"
+STATIC_DIR = Path(__file__).resolve().parent / "static"
+if not (STATIC_DIR / "index.html").exists():
+    STATIC_DIR = Path(__file__).resolve().parent.parent.parent / "frontend" / "dist"
 STATIC_DIR.mkdir(parents=True, exist_ok=True)
 
 if (STATIC_DIR / "index.html").exists():
